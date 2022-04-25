@@ -1,7 +1,9 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage = (): JSX.Element => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
@@ -10,7 +12,7 @@ export const LoginPage = (): JSX.Element => {
     }
 
     const redirectCreateNewAccount = () => {
-
+        navigate("/register");
     }
 
     return (
