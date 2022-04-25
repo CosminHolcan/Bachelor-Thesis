@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataAbstractionLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,28 @@ namespace DataAbstractionLayer
 
         public PatientDoctorManagementDbContext(DbContextOptions<PatientDoctorManagementDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+
+        public DbSet<Doctor> Doctors { get; set; }
+
+        public DbSet<Administrator> Administrators { get; set; }
+
+        public DbSet<Medicine> Medicines { get; set; }
+
+        public DbSet<Specialization> Specializations { get; set; }
+
+        public DbSet<Treatment> Treatments { get; set; }
+
+        public DbSet<Disease> Diseases { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Data Source=DESKTOP-M4L4HDE;Database=PatientDoctorManagement;Integrated Security=SSPI");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Treatment>().HasKey(treatment => new { treatment.PatientId, treatment.DiseaseId, treatment.DoctorId, treatment.StartingDate });
         }
     }
 }

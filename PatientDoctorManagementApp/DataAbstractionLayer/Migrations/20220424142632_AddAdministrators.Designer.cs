@@ -4,14 +4,16 @@ using DataAbstractionLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAbstractionLayer.Migrations
 {
     [DbContext(typeof(PatientDoctorManagementDbContext))]
-    partial class PatientDoctorManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220424142632_AddAdministrators")]
+    partial class AddAdministrators
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,7 +166,12 @@ namespace DataAbstractionLayer.Migrations
                     b.Property<DateTime>("StartingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("AdministratorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("PatientId", "DiseaseId", "DoctorId", "StartingDate");
+
+                    b.HasIndex("AdministratorId");
 
                     b.HasIndex("DiseaseId");
 
@@ -223,6 +230,10 @@ namespace DataAbstractionLayer.Migrations
 
             modelBuilder.Entity("DataAbstractionLayer.Models.Treatment", b =>
                 {
+                    b.HasOne("DataAbstractionLayer.Models.Administrator", null)
+                        .WithMany("Treatments")
+                        .HasForeignKey("AdministratorId");
+
                     b.HasOne("DataAbstractionLayer.Models.Disease", "Disease")
                         .WithMany("Treatments")
                         .HasForeignKey("DiseaseId")
@@ -276,6 +287,11 @@ namespace DataAbstractionLayer.Migrations
                         .HasForeignKey("TreatmentsPatientId", "TreatmentsDiseaseId", "TreatmentsDoctorId", "TreatmentsStartingDate")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAbstractionLayer.Models.Administrator", b =>
+                {
+                    b.Navigation("Treatments");
                 });
 
             modelBuilder.Entity("DataAbstractionLayer.Models.Disease", b =>

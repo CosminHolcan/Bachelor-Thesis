@@ -1,0 +1,3 @@
+export const isUserLoggedIn = (): boolean => {
+    return localStorage.getItem('token') != null;
+}

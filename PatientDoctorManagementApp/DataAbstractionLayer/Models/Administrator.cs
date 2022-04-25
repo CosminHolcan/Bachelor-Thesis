@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAbstractionLayer.Enums
+namespace DataAbstractionLayer.Models
 {
-    public enum UserType
+    public class Administrator: User
     {
-        Patient,
-        Doctor,
-        Administrator
     }
 }

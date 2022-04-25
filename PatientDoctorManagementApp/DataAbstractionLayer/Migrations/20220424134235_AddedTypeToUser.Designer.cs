@@ -4,46 +4,22 @@ using DataAbstractionLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAbstractionLayer.Migrations
 {
     [DbContext(typeof(PatientDoctorManagementDbContext))]
-    partial class PatientDoctorManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220424134235_AddedTypeToUser")]
+    partial class AddedTypeToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
-
-            modelBuilder.Entity("DataAbstractionLayer.Models.Administrator", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Administrators");
-                });
 
             modelBuilder.Entity("DataAbstractionLayer.Models.Disease", b =>
                 {
@@ -161,14 +137,19 @@ namespace DataAbstractionLayer.Migrations
                     b.Property<Guid>("DoctorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("MedicineId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("StartingDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("PatientId", "DiseaseId", "DoctorId", "StartingDate");
+                    b.HasKey("PatientId", "DiseaseId", "DoctorId", "MedicineId");
 
                     b.HasIndex("DiseaseId");
 
                     b.HasIndex("DoctorId");
+
+                    b.HasIndex("MedicineId");
 
                     b.ToTable("Treatments");
                 });
@@ -186,30 +167,6 @@ namespace DataAbstractionLayer.Migrations
                     b.HasIndex("PatientsId");
 
                     b.ToTable("DiseasePatient");
-                });
-
-            modelBuilder.Entity("MedicineTreatment", b =>
-                {
-                    b.Property<Guid>("MedicinesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TreatmentsPatientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TreatmentsDiseaseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TreatmentsDoctorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("TreatmentsStartingDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("MedicinesId", "TreatmentsPatientId", "TreatmentsDiseaseId", "TreatmentsDoctorId", "TreatmentsStartingDate");
-
-                    b.HasIndex("TreatmentsPatientId", "TreatmentsDiseaseId", "TreatmentsDoctorId", "TreatmentsStartingDate");
-
-                    b.ToTable("MedicineTreatment");
                 });
 
             modelBuilder.Entity("DataAbstractionLayer.Models.Doctor", b =>
@@ -235,8 +192,14 @@ namespace DataAbstractionLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataAbstractionLayer.Models.Patient", "Patient")
+                    b.HasOne("DataAbstractionLayer.Models.Medicine", "Medicine")
                         .WithMany("Treatments")
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAbstractionLayer.Models.Patient", "Patient")
+                        .WithMany()
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -244,6 +207,8 @@ namespace DataAbstractionLayer.Migrations
                     b.Navigation("Disease");
 
                     b.Navigation("Doctor");
+
+                    b.Navigation("Medicine");
 
                     b.Navigation("Patient");
                 });
@@ -263,21 +228,6 @@ namespace DataAbstractionLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MedicineTreatment", b =>
-                {
-                    b.HasOne("DataAbstractionLayer.Models.Medicine", null)
-                        .WithMany()
-                        .HasForeignKey("MedicinesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAbstractionLayer.Models.Treatment", null)
-                        .WithMany()
-                        .HasForeignKey("TreatmentsPatientId", "TreatmentsDiseaseId", "TreatmentsDoctorId", "TreatmentsStartingDate")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DataAbstractionLayer.Models.Disease", b =>
                 {
                     b.Navigation("Treatments");
@@ -288,7 +238,7 @@ namespace DataAbstractionLayer.Migrations
                     b.Navigation("Treatments");
                 });
 
-            modelBuilder.Entity("DataAbstractionLayer.Models.Patient", b =>
+            modelBuilder.Entity("DataAbstractionLayer.Models.Medicine", b =>
                 {
                     b.Navigation("Treatments");
                 });
