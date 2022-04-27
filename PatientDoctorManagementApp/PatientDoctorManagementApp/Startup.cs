@@ -27,7 +27,9 @@ namespace PatientDoctorManagementApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
             services.AddSingleton<BLLContext, BLLContext>();
+            services.AddScoped<JWTService>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -48,6 +50,12 @@ namespace PatientDoctorManagementApp
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(options => options
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+            );
 
             app.UseAuthorization();
 
