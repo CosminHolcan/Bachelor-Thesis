@@ -11,6 +11,16 @@ namespace BusinessLogicLayer
     {
         public PatientsBLL(BLLContext bllContext): base(bllContext) { }
 
+        public Patient GetPatientByEmail(string email)
+        {
+            return this._bllContext.DALContext.Patients.GetPatientByEmail(email);
+        }
+
+        public Patient GetPatientById(Guid id)
+        {
+            return this._bllContext.DALContext.Patients.GetPatientById(id);
+        }
+
         public void AddPatient(Patient patient)
         {
             this._bllContext.DALContext.Patients.AddPatient(patient);

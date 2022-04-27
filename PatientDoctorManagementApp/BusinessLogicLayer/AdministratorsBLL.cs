@@ -16,9 +16,9 @@ namespace BusinessLogicLayer
             this._bllContext.DALContext.Administrators.AddAdministrator(administrator);
         }
 
-        public Administrator GetAdministrator(string email, string password)
+        public Administrator GetAdministratorByEmail(string email)
         {
-            return this._bllContext.DALContext.Administrators.GetAdministrator(email, password);
+            return this._bllContext.DALContext.Administrators.GetAdministratorByEmail(email);
         }
     }
 }

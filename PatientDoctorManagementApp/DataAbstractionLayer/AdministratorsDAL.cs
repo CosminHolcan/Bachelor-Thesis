@@ -18,9 +18,9 @@ namespace DataAbstractionLayer
             this._dalContext.DbContext.SaveChanges();
         }
 
-        public Administrator GetAdministrator(string email, string password)
+        public Administrator GetAdministratorByEmail(string email)
         {
-            return this._dalContext.DbContext.Administrators.FirstOrDefault((Administrator administrator) => administrator.Email == email && administrator.Password == password);
+            return this._dalContext.DbContext.Administrators.FirstOrDefault((Administrator administrator) => administrator.Email == email);
         }
     }
 }

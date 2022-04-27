@@ -11,6 +11,7 @@ namespace PatientDoctorManagementApp
     public class JWTService
     {
         private string _securityKey = "MIIDE9447NFBD73NF73NL43QP03JFD94J";
+
         public string Generate(Guid userGuid)
         {
             SymmetricSecurityKey symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityKey));
@@ -21,6 +22,21 @@ namespace PatientDoctorManagementApp
             JwtSecurityToken securityToken = new JwtSecurityToken(header, payload);
 
             return new JwtSecurityTokenHandler().WriteToken(securityToken);
+        }
+
+        public JwtSecurityToken Verify(string jwtString)
+        {
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            byte[] key = Encoding.ASCII.GetBytes(_securityKey);
+            tokenHandler.ValidateToken(jwtString, new TokenValidationParameters()
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            }, out SecurityToken validatedToken);
+
+            return (JwtSecurityToken)validatedToken;
         }
     }
 }

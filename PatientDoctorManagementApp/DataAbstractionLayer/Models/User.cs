@@ -3,7 +3,7 @@ using DataAbstractionLayer.Models;
 using System;
 using System.Collections.Generic;
 
-namespace DataAbstractionLayer
+namespace DataAbstractionLayer.Models
 {
     public class User
     {

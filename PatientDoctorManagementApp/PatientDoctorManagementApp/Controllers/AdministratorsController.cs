@@ -1,7 +1,9 @@
 ﻿using BusinessLogicLayer;
 using DataAbstractionLayer.Models;
+using DataAbstractionLayer.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using PatientDoctorManagementApp.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,9 +29,16 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpPost("addAdministrator")]
-        public string AddAdministrator(Administrator administrator)
+        public string AddAdministrator(RegisterDTO registerDTO)
         {
-            administrator.Password = EncryptionDecryption.Encrypt(administrator.Password);
+            Administrator administrator = new Administrator()
+            {
+                FirstName = registerDTO.FirstName,
+                LastName = registerDTO.LastName,
+                Email = registerDTO.Email,
+                Password = EncryptionDecryption.Encrypt(registerDTO.Password),
+                UserType = UserType.Administrator
+            };
             this._bllContext.Administrators.AddAdministrator(administrator);
             return EncryptionDecryption.Decrypt(administrator.Password);
         }

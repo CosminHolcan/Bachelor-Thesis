@@ -1,5 +1,6 @@
 ﻿using BusinessLogicLayer;
 using DataAbstractionLayer.Models;
+using DataAbstractionLayer.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PatientDoctorManagementApp.DTO;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace PatientDoctorManagementApp.Controllers
 {
@@ -26,31 +28,105 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterDTO registerDTO)
         {
-            Patient patient = new Patient()
+            Administrator existingAdministrator = this._bllContext.Administrators.GetAdministratorByEmail(registerDTO.Email);
+            if (existingAdministrator != null)
+                return BadRequest(new
+                {
+                    error = "There is already an account with this email."
+                });
+
+            Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(registerDTO.Email);
+            if (existingDoctor != null)
+                return BadRequest(new
+                {
+                    error = "There is already an account with this email."
+                });
+
+            Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(registerDTO.Email);
+            if (existingPatient != null)
+                return BadRequest(new
+                {
+                    error = "There is already an account with this email."
+                });
+
+            Patient newPatient = new Patient()
             {
                 Id = new Guid(),
                 FirstName = registerDTO.FirstName,
                 LastName = registerDTO.LastName,
                 Email = registerDTO.Email,
-                Password = EncryptionDecryption.Encrypt(registerDTO.Password)
+                Password = EncryptionDecryption.Encrypt(registerDTO.Password),
+                UserType = UserType.Patient
             };
-            this._bllContext.Patients.AddPatient(patient);
+            this._bllContext.Patients.AddPatient(newPatient);
 
-            return Ok("success");
+            return Ok(new
+            {
+                message = "success"
+            });
         }
 
         [HttpPost("login")]
         public IActionResult Login(LoginDTO loginDTO)
         {
-            Administrator administrator = this._bllContext.Administrators.GetAdministrator(loginDTO.Email, EncryptionDecryption.Encrypt(loginDTO.Password));
-            string jwtString = this._jwtService.Generate(administrator.Id);
+            Administrator existingAdministrator = this._bllContext.Administrators.GetAdministratorByEmail(loginDTO.Email);
+            Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(loginDTO.Email);
+            Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(loginDTO.Email);
+
+            if (existingAdministrator == null && existingDoctor == null && existingPatient == null)
+                return BadRequest(new
+                {
+                    error = "There is no account with this email."
+                });
+
+            if (existingAdministrator != null)
+                return HandleFoundAccountByEmail(existingAdministrator, loginDTO);
+
+            if (existingDoctor != null)
+                return HandleFoundAccountByEmail(existingDoctor, loginDTO);
+
+            return HandleFoundAccountByEmail(existingPatient, loginDTO);
+        }
+
+        [HttpGet("user")]
+        public IActionResult GetUser()
+        {
+            string jwtString = Request.Cookies["jwt"];
+            JwtSecurityToken token = _jwtService.Verify(jwtString);
+            Guid userId = new Guid(token.Issuer);
+            Patient patient = this._bllContext.Patients.GetPatientById(userId);
+
+            return Ok(patient);
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+
+            return Ok(new
+            {
+                message = "success"
+            });
+        }
+
+        private IActionResult HandleFoundAccountByEmail(User user, LoginDTO loginDTO)
+        {
+            if (user.Password != EncryptionDecryption.Encrypt(loginDTO.Password))
+                return BadRequest(new
+                {
+                    error = "Your email or password is incorrect."
+                });
+
+            string jwtString = this._jwtService.Generate(user.Id);
 
             Response.Cookies.Append("jwt", jwtString, new CookieOptions
             {
                 HttpOnly = true
             });
 
-            return Ok(new { administrator.UserType });
+            return Ok(new { user.UserType });
         }
+
     }
 }

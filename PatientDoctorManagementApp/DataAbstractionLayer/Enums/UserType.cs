@@ -8,8 +8,8 @@ namespace DataAbstractionLayer.Enums
 {
     public enum UserType
     {
-        Patient,
-        Doctor,
-        Administrator
+        Administrator = 0,
+        Dcotor = 1,
+        Patient = 2
     }
 }
