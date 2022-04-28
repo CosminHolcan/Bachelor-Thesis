@@ -1,6 +1,8 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IRegisterDTO } from "../../DTO/RegisterDTO";
+import { LogoutUser, RegisterUser } from "../../Services/authentificationService";
 
 export const RegisterPage = (): JSX.Element => {
     const navigate = useNavigate();
@@ -10,12 +12,33 @@ export const RegisterPage = (): JSX.Element => {
     const [lastName, setLastName] = useState<string>('');
 
     const handleSubmit = async (e: any) => {
+        const registerDTO: IRegisterDTO = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password
+        };
 
+        RegisterUser(registerDTO)
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error.response.data.message);
+            });
+
+        LogoutUser()
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error.response.data.message);
+            });
     }
 
     const redirectLoginPage = () => {
+        console.log(localStorage.getItem("userType"));
         navigate("/login");
-
     }
 
     return (

@@ -32,21 +32,21 @@ namespace PatientDoctorManagementApp.Controllers
             if (existingAdministrator != null)
                 return BadRequest(new
                 {
-                    error = "There is already an account with this email."
+                    message = "There is already an account with this email."
                 });
 
             Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(registerDTO.Email);
             if (existingDoctor != null)
                 return BadRequest(new
                 {
-                    error = "There is already an account with this email."
+                    message = "There is already an account with this email."
                 });
 
             Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(registerDTO.Email);
             if (existingPatient != null)
                 return BadRequest(new
                 {
-                    error = "There is already an account with this email."
+                    message = "There is already an account with this email."
                 });
 
             Patient newPatient = new Patient()
@@ -76,7 +76,7 @@ namespace PatientDoctorManagementApp.Controllers
             if (existingAdministrator == null && existingDoctor == null && existingPatient == null)
                 return BadRequest(new
                 {
-                    error = "There is no account with this email."
+                    message = "There is no account with this email."
                 });
 
             if (existingAdministrator != null)
@@ -115,7 +115,7 @@ namespace PatientDoctorManagementApp.Controllers
             if (user.Password != EncryptionDecryption.Encrypt(loginDTO.Password))
                 return BadRequest(new
                 {
-                    error = "Your email or password is incorrect."
+                    message = "Your email or password is incorrect."
                 });
 
             string jwtString = this._jwtService.Generate(user.Id);

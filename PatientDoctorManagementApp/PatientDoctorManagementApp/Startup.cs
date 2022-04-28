@@ -52,7 +52,7 @@ namespace PatientDoctorManagementApp
             app.UseRouting();
 
             app.UseCors(options => options
-                .WithOrigins(new []{ "http://localhost:3000"})
+                .WithOrigins(new []{ "http://localhost:3000", "http://localhost:8000", "http://localhost:44368"})
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
