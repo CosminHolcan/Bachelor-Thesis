@@ -62,7 +62,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             return Ok(new
             {
-                message = "success"
+                userType = UserType.Patient
             });
         }
 
