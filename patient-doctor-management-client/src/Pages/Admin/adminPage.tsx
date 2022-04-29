@@ -1,16 +1,20 @@
 import { Label, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react"
+import { AddDisease } from "../../Components/AddDisease/addDisease";
 import { AddSpecialization } from "../../Components/AddSpecialization/addSpecialization";
+import { UpdateDisease } from "../../Components/UpdateDisease/updateDisease";
 import { UpdateSpecialization } from "../../Components/UpdateSpecialization/updateSpecialization";
 import { AdminFeatures } from "../../Enums/adminFeatures";
 import { IBaseModel } from "../../Models/BaseModel";
-import { SpecializationService } from "../../Utils/services";
+import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
+import { DiseasesService, SpecializationService } from "../../Utils/services";
 import { styleStack } from "./adminPage.styles"
 
 export const AdminPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [specializations, setSpecializations] = useState<IBaseModel[]>([]);
+    const [diseases, setDiseases] = useState<IBaseModelNameAndDescription[]>([]);
 
     const onSuccess = (): void => {
         setSelectedOption('');
@@ -28,10 +32,21 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleUpdateSpecializationSelected = (): void => {
-        SpecializationService.GetSpecializationsNames()
+        SpecializationService.GetAllSpecializations()
             .then(function (response) {
                 setSpecializations(response.data);
                 handleOptionChanged(AdminFeatures.UpdateSpecialization);
+            })
+            .catch(function (error) {
+                setErrorMessage('Server error');
+            })
+    }
+
+    const handleUpdateDiseaseSelected = (): void => {
+        DiseasesService.GetAllDiseases()
+            .then(function (response) {
+                setDiseases(response.data);
+                handleOptionChanged(AdminFeatures.UpdateDisease);
             })
             .catch(function (error) {
                 setErrorMessage('Server error');
@@ -44,6 +59,10 @@ export const AdminPage = (): JSX.Element => {
                 return (<AddSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
             case AdminFeatures.UpdateSpecialization:
                 return (<UpdateSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} specializations={specializations} />);
+            case AdminFeatures.AddDisease:
+                return (<AddDisease onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
+            case AdminFeatures.UpdateDisease:
+                return (<UpdateDisease onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} diseases={diseases} />);
         }
         return (<div></div>)
     }
@@ -87,12 +106,12 @@ export const AdminPage = (): JSX.Element => {
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label>
+                        <Label onClick={() => { handleOptionChanged(AdminFeatures.AddDisease); }}>
                             Add a new disease
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label>
+                        <Label onClick={() => { handleUpdateDiseaseSelected(); }}>
                             Update an existing disease
                         </Label>
                     </StackItem>

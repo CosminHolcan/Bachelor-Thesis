@@ -28,7 +28,7 @@ namespace DataAbstractionLayer
 
         public void UpdateSpecialization(Specialization specialization)
         {
-            Specialization existingSpecialization = this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Id == specialization.Id);
+            Specialization existingSpecialization = this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization s) => s.Id == specialization.Id);
             if (existingSpecialization == null)
                 throw new Exception("There is no specialization with this id.");
 

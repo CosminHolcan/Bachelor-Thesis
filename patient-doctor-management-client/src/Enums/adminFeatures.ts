@@ -1,4 +1,6 @@
 export enum AdminFeatures {
     AddSpecialization = "AddSpecialization",
-    UpdateSpecialization = "UpdateSpecialization"
+    UpdateSpecialization = "UpdateSpecialization",
+    AddDisease = "AddDisease",
+    UpdateDisease = "UpdateDisease"
 }

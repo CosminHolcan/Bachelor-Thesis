@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from "axios";
+import { IAddDiseaseDTO } from "../DTO/AddDiseaseDTO";
 import { IAddSpecializationDTO } from "../DTO/AddSpecializationDTO";
-import { IUpdateSpecializationDTO } from "../DTO/IUpdateSpecializationDTO";
+import { IUpdateSpecializationDTO } from "../DTO/UpdateSpecializationDTO";
 import { ILoginDTO } from "../DTO/LoginDTO";
 import { IRegisterDTO } from "../DTO/RegisterDTO";
+import { IUpdateBaseDTO } from "../DTO/UpdateBaseDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -33,7 +35,21 @@ export namespace SpecializationService {
         return axios.post(`${BASE_URL}Specializations/update`, updateSpecializationDTO);
     }
 
-    export const GetSpecializationsNames = (): Promise<AxiosResponse<any, any>> => {
+    export const GetAllSpecializations = (): Promise<AxiosResponse<any, any>> => {
         return axios.get(`${BASE_URL}Specializations/all`);
+    }
+}
+
+export namespace DiseasesService {
+    export const AddDisease = (addDiseaseDTO: IAddDiseaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Diseases/add`, addDiseaseDTO);
+    }
+
+    export const UpdateDisease = (updateDiseaseDTO: IUpdateBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Diseases/update`, updateDiseaseDTO);
+    }
+
+    export const GetAllDiseases = (): Promise<AxiosResponse<any, any>> => {
+        return axios.get(`${BASE_URL}Diseases/all`);
     }
 }

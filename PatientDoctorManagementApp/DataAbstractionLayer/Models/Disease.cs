@@ -10,7 +10,7 @@ namespace DataAbstractionLayer.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Descripttion { get; set; }
+        public string Description { get; set; }
         public virtual ICollection<Patient> Patients { get; set; }
         public virtual ICollection<Treatment> Treatments { get; set; }
     }
