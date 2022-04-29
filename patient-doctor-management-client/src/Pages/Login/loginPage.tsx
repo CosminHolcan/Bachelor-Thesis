@@ -18,8 +18,8 @@ export const LoginPage = (): JSX.Element => {
 
         AuthorizationService.LoginUser(loginDTO)
             .then(function (response) {
+                localStorage.setItem("jwt", response.data.jwt);
                 localStorage.setItem("userType", response.data.userType);
-                console.log(localStorage.getItem("userType"));
                 navigate("/patientDoctorManagement");
             })
             .catch(function (error) {

@@ -1,5 +1,6 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import { useEffect, useState } from "react"
+import { IAddSpecializationDTO } from "../../DTO/AddSpecializationDTO";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { SpecializationService } from "../../Utils/services";
 
@@ -17,7 +18,12 @@ export const AddSpecialization = (props: IAdministrationFeatureProps): JSX.Eleme
             return;
         }
 
-        SpecializationService.AddSpecialization(name)
+        const addSpecializationDTO : IAddSpecializationDTO = {
+            jwt : localStorage.getItem("jwt") ?? '',
+            specializationName : name
+        };
+
+        SpecializationService.AddSpecialization(addSpecializationDTO)
             .then(function (response) {
                 props.onSuccess();
             })

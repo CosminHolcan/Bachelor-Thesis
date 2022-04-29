@@ -22,6 +22,7 @@ export const RegisterPage = (): JSX.Element => {
 
         AuthorizationService.RegisterUser(registerDTO)
             .then(function (response) {
+                localStorage.setItem('jwt', response.data.jwt);
                 localStorage.setItem('userType', response.data.userType);
                 navigate("/patientDoctorManagement");
             })
@@ -37,7 +38,6 @@ export const RegisterPage = (): JSX.Element => {
     }
 
     const redirectLoginPage = () => {
-        console.log(localStorage.getItem("userType"));
         navigate("/login");
     }
 

@@ -22,5 +22,10 @@ namespace DataAbstractionLayer
         {
             return this._dalContext.DbContext.Administrators.FirstOrDefault((Administrator administrator) => administrator.Email == email);
         }
+
+        public Administrator GetAdministratorById(Guid id)
+        {
+            return this._dalContext.DbContext.Administrators.FirstOrDefault((Administrator administrator) => administrator.Id == id);
+        }
     }
 }

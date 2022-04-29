@@ -1,11 +1,16 @@
 import { Label, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react"
 import { AddSpecialization } from "../../Components/AddSpecialization/addSpecialization";
+import { UpdateSpecialization } from "../../Components/UpdateSpecialization/updateSpecialization";
+import { AdminFeatures } from "../../Enums/adminFeatures";
+import { IBaseModel } from "../../Models/BaseModel";
+import { SpecializationService } from "../../Utils/services";
 import { styleStack } from "./adminPage.styles"
 
 export const AdminPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [specializations, setSpecializations] = useState<IBaseModel[]>([]);
 
     const onSuccess = (): void => {
         setSelectedOption('');
@@ -22,10 +27,23 @@ export const AdminPage = (): JSX.Element => {
         setErrorMessage('');
     }
 
+    const handleUpdateSpecializationSelected = (): void => {
+        SpecializationService.GetSpecializationsNames()
+            .then(function (response) {
+                setSpecializations(response.data);
+                handleOptionChanged(AdminFeatures.UpdateSpecialization);
+            })
+            .catch(function (error) {
+                setErrorMessage('Server error');
+            })
+    }
+
     const getSelectedOption = (): JSX.Element => {
         switch (selectedOption) {
-            case "AddSpecialization":
+            case AdminFeatures.AddSpecialization:
                 return (<AddSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
+            case AdminFeatures.UpdateSpecialization:
+                return (<UpdateSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} specializations={specializations} />);
         }
         return (<div></div>)
     }
@@ -86,12 +104,12 @@ export const AdminPage = (): JSX.Element => {
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label onClick={() => { handleOptionChanged("AddSpecialization"); }}>
+                        <Label onClick={() => { handleOptionChanged(AdminFeatures.AddSpecialization); }}>
                             Add a new specialization
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label>
+                        <Label onClick={() => { handleUpdateSpecializationSelected(); }}>
                             Update an existing specialization
                         </Label>
                     </StackItem>

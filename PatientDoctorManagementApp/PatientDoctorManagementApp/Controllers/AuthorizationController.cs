@@ -119,13 +119,11 @@ namespace PatientDoctorManagementApp.Controllers
                 });
 
             string jwtString = this._jwtService.Generate(user.Id);
-
-            Response.Cookies.Append("jwt", jwtString, new CookieOptions
+            return Ok(new
             {
-                HttpOnly = true
+                userType = user.UserType,
+                jwt = jwtString
             });
-
-            return Ok(new { user.UserType });
         }
 
     }

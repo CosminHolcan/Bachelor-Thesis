@@ -20,5 +20,10 @@ namespace BusinessLogicLayer
         {
             return this._bllContext.DALContext.Administrators.GetAdministratorByEmail(email);
         }
+
+        public Administrator GetAdministratorById(Guid id)
+        {
+            return this._bllContext.DALContext.Administrators.GetAdministratorById(id);
+        }
     }
 }
