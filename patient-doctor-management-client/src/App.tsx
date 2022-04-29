@@ -6,14 +6,16 @@ import { IPrivateRouteProps } from './Components/PrivateRoute/privateRoute.types
 import { RegisterPage } from './Pages/Register/registerPage';
 import { UserPage } from './Pages/User/userPage';
 import { AuthorizationService } from './Utils/services';
+import { initializeIcons } from '@fluentui/react';
 
 export const App = (): JSX.Element => {
-  const isUserLoggedIn: boolean = AuthorizationService.IsUserLoggedIn();
+  const isUserLoggedIn: boolean = localStorage.getItem("userType") != null;
 
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
-    isAuthenticated: isUserLoggedIn,
     authenticationPath: '/login',
   };
+
+  initializeIcons();
 
   return (
     <Router>
@@ -21,7 +23,7 @@ export const App = (): JSX.Element => {
         <Route path='/' element={isUserLoggedIn ? <UserPage /> : <LoginPage />} />
         <Route path='login' element={<LoginPage />} />
         <Route path='register' element={<RegisterPage />} />
-        <Route path='pacientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
+        <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
       </Routes>
     </Router>
   );

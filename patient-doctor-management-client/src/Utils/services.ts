@@ -21,3 +21,9 @@ export namespace AuthorizationService {
         return axios.post(`${BASE_URL}Authorization/logout`);
     }
 }
+
+export namespace SpecializationService {
+    export const AddSpecialization = (specialization: string): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Specialization/add`);
+    }
+}

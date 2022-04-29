@@ -1,7 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { IPrivateRouteProps } from "./privateRoute.types";
 
-export default function PrivateRoute({ isAuthenticated, authenticationPath, outlet }: IPrivateRouteProps) {
+export default function PrivateRoute({ authenticationPath, outlet }: IPrivateRouteProps) {
+    const isAuthenticated: boolean = localStorage.getItem("userType") != null;
+    
     if (isAuthenticated) {
         return outlet;
     } else {

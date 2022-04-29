@@ -18,9 +18,9 @@ export const LoginPage = (): JSX.Element => {
 
         AuthorizationService.LoginUser(loginDTO)
             .then(function (response) {
-                localStorage.setItem('userType', response.data.userType);
+                localStorage.setItem("userType", response.data.userType);
                 console.log(localStorage.getItem("userType"));
-                navigate("/pacientDoctorManagement");
+                navigate("/patientDoctorManagement");
             })
             .catch(function (error) {
                 setErrorMessage(error.response.data.message)

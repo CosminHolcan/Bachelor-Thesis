@@ -23,7 +23,7 @@ export const RegisterPage = (): JSX.Element => {
         AuthorizationService.RegisterUser(registerDTO)
             .then(function (response) {
                 localStorage.setItem('userType', response.data.userType);
-                navigate("/pacientDoctorManagement");
+                navigate("/patientDoctorManagement");
             })
             .catch(function (error) {
                 setErrorMessage(error.response.data.message)
