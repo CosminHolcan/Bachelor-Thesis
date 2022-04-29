@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IAddDiseaseDTO } from "../DTO/AddDiseaseDTO";
+import { IAddBaseDTO } from "../DTO/AddBaseDTO";
 import { IAddSpecializationDTO } from "../DTO/AddSpecializationDTO";
 import { IUpdateSpecializationDTO } from "../DTO/UpdateSpecializationDTO";
 import { ILoginDTO } from "../DTO/LoginDTO";
@@ -41,7 +41,7 @@ export namespace SpecializationService {
 }
 
 export namespace DiseasesService {
-    export const AddDisease = (addDiseaseDTO: IAddDiseaseDTO): Promise<AxiosResponse<any, any>> => {
+    export const AddDisease = (addDiseaseDTO: IAddBaseDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Diseases/add`, addDiseaseDTO);
     }
 
@@ -51,5 +51,19 @@ export namespace DiseasesService {
 
     export const GetAllDiseases = (): Promise<AxiosResponse<any, any>> => {
         return axios.get(`${BASE_URL}Diseases/all`);
+    }
+}
+
+export namespace MedicinesService {
+    export const AddMedicine = (addMedicineDTO: IAddBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Medicines/add`, addMedicineDTO);
+    }
+
+    export const UpdateMedicine = (updateMedicineDTO: IUpdateBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Medicines/update`, updateMedicineDTO);
+    }
+
+    export const GetAllMedicines = (): Promise<AxiosResponse<any, any>> => {
+        return axios.get(`${BASE_URL}Medicines/all`);
     }
 }

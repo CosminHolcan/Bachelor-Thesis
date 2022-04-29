@@ -14,8 +14,9 @@ namespace BusinessLogicLayer
         private Lazy<AdministratorsBLL> _administratorsBLL;
         private Lazy<DiseasesBLL> _diseasesBLL;
         private Lazy<DoctorsBLL> _doctorsBLL;
-        private Lazy<SpecializationsBLL> _specializationsBLL;
         private Lazy<PatientsBLL> _patientsBLL;
+        private Lazy<MedicinesBLL> _medicinesBLL;
+        private Lazy<SpecializationsBLL> _specializationsBLL;
         #endregion
 
         #region Properties
@@ -24,6 +25,7 @@ namespace BusinessLogicLayer
         public DiseasesBLL Diseases => _diseasesBLL.Value;
         public DoctorsBLL Doctors => _doctorsBLL.Value;
         public PatientsBLL Patients => _patientsBLL.Value;
+        public MedicinesBLL Medicines => _medicinesBLL.Value;
         public SpecializationsBLL Specializations => _specializationsBLL.Value;
         #endregion
 
@@ -34,8 +36,9 @@ namespace BusinessLogicLayer
             _administratorsBLL = new Lazy<AdministratorsBLL>(() => new AdministratorsBLL(this));
             _diseasesBLL = new Lazy<DiseasesBLL>(() => new DiseasesBLL(this));
             _doctorsBLL = new Lazy<DoctorsBLL>(() => new DoctorsBLL(this));
-            _specializationsBLL = new Lazy<SpecializationsBLL>(() => new SpecializationsBLL(this));
             _patientsBLL = new Lazy<PatientsBLL>(() => new PatientsBLL(this));
+            _medicinesBLL = new Lazy<MedicinesBLL>(() => new MedicinesBLL(this));
+            _specializationsBLL = new Lazy<SpecializationsBLL>(() => new SpecializationsBLL(this));
         }
         #endregion
 
@@ -62,11 +65,14 @@ namespace BusinessLogicLayer
                 if (_doctorsBLL.IsValueCreated)
                     _doctorsBLL = null;
 
-                if (_specializationsBLL.IsValueCreated)
-                    _specializationsBLL = null;
-
                 if (_patientsBLL.IsValueCreated)
                     _patientsBLL = null;
+
+                if (_medicinesBLL.IsValueCreated)
+                    _medicinesBLL = null;
+
+                if (_specializationsBLL.IsValueCreated)
+                    _specializationsBLL = null;
             }
         }
 

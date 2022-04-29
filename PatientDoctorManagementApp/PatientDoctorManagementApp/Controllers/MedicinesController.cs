@@ -12,19 +12,19 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DiseasesController: ControllerBase
+    public class MedicinesController: ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
 
-        public DiseasesController(BLLContext bllContext, JWTService jwtService)
+        public MedicinesController(BLLContext bllContext, JWTService jwtService)
         {
             _bllContext = bllContext;
             _jwtService = jwtService;
         }
 
         [HttpPost("add")]
-        public IActionResult AddDisease(AddBaseDTO dto)
+        public IActionResult AddMedicine(AddBaseDTO dto)
         {
             JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
             Guid userId = new Guid(token.Issuer);
@@ -40,7 +40,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             try
             {
-                this._bllContext.Diseases.AddDisease(name: dto.Entity.Name, description: dto.Entity.Description);
+                this._bllContext.Medicines.AddMedicine(name: dto.Entity.Name, description: dto.Entity.Description);
                 return Ok(new
                 {
                     message = "success"
@@ -56,13 +56,13 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpGet("all")]
-        public List<Disease> GetAllDiseases()
+        public List<Medicine> GetAllMedicines()
         {
-            return this._bllContext.Diseases.GetAllDiseases();
+            return this._bllContext.Medicines.GetAllMedicines();
         }
 
         [HttpPost("update")]
-        public IActionResult UpdateDisease(UpdateDiseaseDTO dto)
+        public IActionResult UpdateMedicine(UpdateMedicineDTO dto)
         {
             JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
             Guid userId = new Guid(token.Issuer);
@@ -78,7 +78,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             try
             {
-                this._bllContext.Diseases.UpdateDisease(dto.Entity);
+                this._bllContext.Medicines.UpdateMedicine(dto.Entity);
                 return Ok(new
                 {
                     message = "success"

@@ -1,10 +1,18 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
+import Multiselect from "multiselect-react-dropdown";
 import { useEffect, useState } from "react"
-import { IAddBaseDTO } from "../../DTO/AddBaseDTO";
+import { text } from "stream/consumers";
+import { IAddSpecializationDTO } from "../../DTO/AddSpecializationDTO";
+import { IUpdateBaseDTO } from "../../DTO/UpdateBaseDTO";
+import { IUpdateSpecializationDTO } from "../../DTO/UpdateSpecializationDTO";
+import { IBaseModel } from "../../Models/BaseModel";
+import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
-import { DiseasesService, SpecializationService } from "../../Utils/services";
+import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
+import { IUpdateMedicineProps } from "./updateMedicine.types";
 
-export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
+export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
+    const [selectedMedicine, setSelectedMedicine] = useState<IBaseModelNameAndDescription>();
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
 
@@ -13,21 +21,37 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
             props.setErrorMessage('');
     }, [name, description]);
 
+    useEffect(() => {
+        setName(selectedMedicine?.name ?? '');
+        setDescription(selectedMedicine?.description ?? '');
+    }, [selectedMedicine]);
+
     const handleOnButtonClicked = async (e: any) => {
+        var newErrorMessage: string = '';
+
+        if (selectedMedicine == null || selectedMedicine.id == '')
+            newErrorMessage += "You must select an option."
+
+
         if (name.trim() === "" || description.trim() === "") {
-            props.setErrorMessage("Name and description can not be empty.");
+            newErrorMessage += "New name and description can not be empty."
+        }
+
+        if (newErrorMessage !== '') {
+            props.setErrorMessage(newErrorMessage);
             return;
         }
 
-        const addDiseaseDTO: IAddBaseDTO = {
+        const updateMedicineDTO: IUpdateBaseDTO = {
             jwt: localStorage.getItem("jwt") ?? '',
             entity: {
+                id: selectedMedicine?.id ?? '',
                 name: name,
                 description: description
             }
         };
 
-        DiseasesService.AddDisease(addDiseaseDTO)
+        MedicinesService.UpdateMedicine(updateMedicineDTO)
             .then(function (response) {
                 props.onSuccess();
             })
@@ -40,12 +64,20 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
         <Stack>
             <StackItem>
                 <Label>
-                    Add a new disease
+                    Update a disease
                 </Label>
             </StackItem>
             <StackItem>
+                <Multiselect
+                    singleSelect={true}
+                    options={props.medicines}
+                    onSelect={(selectedList, selectedItem) => { setSelectedMedicine(selectedItem) }}
+                    displayValue="name"
+                />
+            </StackItem>
+            <StackItem style={{ marginTop: "5vh" }}>
                 <Label>
-                    Name
+                    New name
                 </Label>
             </StackItem>
             <StackItem>
@@ -55,9 +87,9 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
                     onChange={(event: any) => setName(event.target.value)}
                 />
             </StackItem>
-            <StackItem>
+            <StackItem >
                 <Label>
-                    Description
+                    New description
                 </Label>
             </StackItem>
             <StackItem>
@@ -72,5 +104,6 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
                 <button onClick={handleOnButtonClicked}>Save</button>
             </StackItem>
         </Stack>
+
     )
 }

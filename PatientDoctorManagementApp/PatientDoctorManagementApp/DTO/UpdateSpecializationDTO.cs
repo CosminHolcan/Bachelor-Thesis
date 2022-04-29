@@ -8,6 +8,6 @@ namespace PatientDoctorManagementApp.DTO
 {
     public class UpdateSpecializationDTO : BaseDTO
     {
-        public Specialization specialization { get; set; }
+        public Specialization Specialization { get; set; }
     }
 }

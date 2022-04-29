@@ -2,9 +2,9 @@ import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import { useEffect, useState } from "react"
 import { IAddBaseDTO } from "../../DTO/AddBaseDTO";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
-import { DiseasesService, SpecializationService } from "../../Utils/services";
+import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
 
-export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
+export const AddMedicine = (props: IAdministrationFeatureProps): JSX.Element => {
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
 
@@ -19,7 +19,7 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
             return;
         }
 
-        const addDiseaseDTO: IAddBaseDTO = {
+        const addMedicineDTO: IAddBaseDTO = {
             jwt: localStorage.getItem("jwt") ?? '',
             entity: {
                 name: name,
@@ -27,7 +27,7 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
             }
         };
 
-        DiseasesService.AddDisease(addDiseaseDTO)
+        MedicinesService.AddMedicine(addMedicineDTO)
             .then(function (response) {
                 props.onSuccess();
             })
@@ -40,7 +40,7 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
         <Stack>
             <StackItem>
                 <Label>
-                    Add a new disease
+                    Add a new medicine
                 </Label>
             </StackItem>
             <StackItem>

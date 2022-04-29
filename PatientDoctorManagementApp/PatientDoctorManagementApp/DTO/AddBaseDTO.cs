@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace PatientDoctorManagementApp.DTO
 {
-    public class AddDiseaseDTO: BaseDTO
+    public class AddBaseDTO: BaseDTO
     {
-        public AddBaseEntityDTO Disease { get; set; }
+        public AddBaseEntityDTO Entity { get; set; }
     }
 }

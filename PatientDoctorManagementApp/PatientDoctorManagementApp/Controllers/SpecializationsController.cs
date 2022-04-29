@@ -78,7 +78,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             try
             {
-                this._bllContext.Specializations.UpdateSpecialization(dto.specialization);
+                this._bllContext.Specializations.UpdateSpecialization(dto.Specialization);
                 return Ok(new
                 {
                     message = "success"

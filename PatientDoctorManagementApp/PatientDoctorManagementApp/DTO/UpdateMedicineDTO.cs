@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace PatientDoctorManagementApp.DTO
 {
-    public class UpdateDiseaseDTO : BaseDTO
+    public class UpdateMedicineDTO : BaseDTO
     {
-        public Disease Entity { get; set; }
+        public Medicine Entity { get; set; }
     }
 }
-
