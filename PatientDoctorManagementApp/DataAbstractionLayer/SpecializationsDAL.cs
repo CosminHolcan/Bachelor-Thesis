@@ -13,14 +13,14 @@ namespace DataAbstractionLayer
 
         public void AddSpecialization(string specializationName)
         {
+            if (this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Name == specializationName) != null)
+                throw new Exception("There is already a specialization with this name.");
+
             Specialization specialization = new Specialization()
             {
                 Id = new Guid(),
                 Name = specializationName
             };
-
-            if (this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Name == specializationName) != null)
-                throw new Exception("There is already a specialization with this name.");
 
             this._dalContext.DbContext.Specializations.Add(specialization);
             this._dalContext.DbContext.SaveChanges();
