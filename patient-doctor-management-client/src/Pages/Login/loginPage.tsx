@@ -53,6 +53,7 @@ export const LoginPage = (): JSX.Element => {
                     Password
                 </Label>
                 <TextField
+                    type="password"
                     rows={1}
                     value={password}
                     onChange={(event: any) => { setPassword(event.target.value); handleChangedEmailOrPassword(); }}

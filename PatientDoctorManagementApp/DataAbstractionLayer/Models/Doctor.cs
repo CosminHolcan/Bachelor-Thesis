@@ -8,7 +8,7 @@ namespace DataAbstractionLayer.Models
 {
     public class Doctor: User
     {
-        public Specialization specialization { get; set; }
+        public Specialization Specialization { get; set; }
         public virtual ICollection<Treatment> Treatments { get; set; }
     }
 }

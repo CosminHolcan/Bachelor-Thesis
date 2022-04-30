@@ -5,15 +5,12 @@ import { IUpdateSpecializationDTO } from "../DTO/UpdateSpecializationDTO";
 import { ILoginDTO } from "../DTO/LoginDTO";
 import { IRegisterDTO } from "../DTO/RegisterDTO";
 import { IUpdateBaseDTO } from "../DTO/UpdateBaseDTO";
+import { IAddDoctorDTO } from "../DTO/AddDoctor";
 
 const BASE_URL = "https://localhost:44368/api/";
 
 export namespace AuthorizationService {
-    export const IsUserLoggedIn = (): boolean => {
-        return localStorage.getItem('jwt') != null;
-    }
-
-    export const LoginUser =(loginDTO: ILoginDTO) => {
+    export const LoginUser = (loginDTO: ILoginDTO) => {
         return axios.post(`${BASE_URL}Authorization/login`, loginDTO);
     }
 
@@ -23,6 +20,10 @@ export namespace AuthorizationService {
 
     export const LogoutUser = (): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Authorization/logout`);
+    }
+
+    export const IsUserLoggedIn = (jwt: string): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Authorization/isUserLoggedIn`);
     }
 }
 
@@ -65,5 +66,11 @@ export namespace MedicinesService {
 
     export const GetAllMedicines = (): Promise<AxiosResponse<any, any>> => {
         return axios.get(`${BASE_URL}Medicines/all`);
+    }
+}
+
+export namespace DoctorsService {
+    export const AddDoctor = (addDoctorDTO: IAddDoctorDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Doctors/add`, addDoctorDTO);
     }
 }

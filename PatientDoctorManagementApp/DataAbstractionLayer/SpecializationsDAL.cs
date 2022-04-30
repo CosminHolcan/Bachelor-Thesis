@@ -40,5 +40,10 @@ namespace DataAbstractionLayer
         {
             return this._dalContext.DbContext.Specializations.ToList();
         }
+
+        public Specialization GetSpecializationById(Guid id)
+        {
+            return this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Id == id);
+        }
     }
 }

@@ -15,5 +15,25 @@ namespace DataAbstractionLayer
         {
             return this._dalContext.DbContext.Doctors.FirstOrDefault((Doctor doctor) => doctor.Email == email);
         }
+
+        public void AddDoctor(string firstName, string lastName, string email, string password, Guid specializationId)
+        {
+            Specialization specialization = this._dalContext.Specializations.GetSpecializationById(specializationId);
+            if (specialization == null)
+                throw new Exception("There is no such a specialization");
+
+            Doctor doctor = new Doctor()
+            {
+                Id = new Guid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = password,
+                Specialization = specialization
+            };
+
+            this._dalContext.DbContext.Doctors.Add(doctor);
+            this._dalContext.DbContext.SaveChanges();
+        }
     }
 }

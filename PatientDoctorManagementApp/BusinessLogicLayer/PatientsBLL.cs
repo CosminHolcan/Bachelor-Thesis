@@ -21,9 +21,10 @@ namespace BusinessLogicLayer
             return this._bllContext.DALContext.Patients.GetPatientById(id);
         }
 
-        public void AddPatient(Patient patient)
+        public Patient AddPatient(string firstName, string lastName, string email, string password)
         {
-            this._bllContext.DALContext.Patients.AddPatient(patient);
+            this.CheckUniqueEmail(email);
+            return this._bllContext.DALContext.Patients.AddPatient(firstName, lastName, email, password);
         }
     }
 }

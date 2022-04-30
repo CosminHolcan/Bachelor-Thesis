@@ -9,13 +9,18 @@ import { AuthorizationService } from './Utils/services';
 import { initializeIcons } from '@fluentui/react';
 
 export const App = (): JSX.Element => {
-  const isUserLoggedIn: boolean = localStorage.getItem("userType") != null;
+  const isUserLoggedIn: boolean = localStorage.getItem("jwt") != null;
 
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
     authenticationPath: '/login',
   };
 
-  initializeIcons();
+  const refreshToken = (): void => {
+    
+  }
+
+  setInterval(refreshToken, 10000);
+
 
   return (
     <Router>

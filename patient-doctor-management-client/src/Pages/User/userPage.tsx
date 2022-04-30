@@ -63,6 +63,7 @@ export const UserPage = (): JSX.Element => {
 
     const handleLogout = () => {
         localStorage.removeItem("userType");
+        localStorage.removeItem("jwt");
         navigate("/login");
     }
 

@@ -1,5 +1,5 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IRegisterDTO } from "../../DTO/RegisterDTO";
 import { AuthorizationService } from "../../Utils/services";
@@ -8,11 +8,30 @@ export const RegisterPage = (): JSX.Element => {
     const navigate = useNavigate();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [repeatPassword, setRepeatPassword] = useState<string>('');
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
 
+    useEffect(() => {
+        setErrorMessage('');
+    }, [firstName, lastName, email, password, repeatPassword]);
+
     const handleSubmit = async (e: any) => {
+        var newErrorMessage: string = '';
+        if (firstName.trim() === "" || lastName.trim() === "" || email.trim() === "" || password.trim() === "") {
+            newErrorMessage += "All fields are required, none of them can be empty."
+        }
+
+        if (password !== repeatPassword) {
+            newErrorMessage += "The password and repeat password fields don't match.";
+        }
+
+        if (newErrorMessage !== '') {
+            setErrorMessage(newErrorMessage);
+            return;
+        }
+
         const registerDTO: IRegisterDTO = {
             firstName: firstName,
             lastName: lastName,
@@ -78,16 +97,32 @@ export const RegisterPage = (): JSX.Element => {
                     Password
                 </Label>
                 <TextField
+                    type="password"
                     rows={1}
                     value={password}
                     onChange={(event: any) => setPassword(event.target.value)}
                 />
             </StackItem>
+            <StackItem>
+                <Label>
+                    Repeat Password
+                </Label>
+                <TextField
+                    type="password"
+                    rows={1}
+                    value={repeatPassword}
+                    onChange={(event: any) => setRepeatPassword(event.target.value)}
+                />
+            </StackItem>
             <button onClick={handleSubmit}>Create</button>
             <button onClick={redirectLoginPage}>Already having an account ? Log in here</button>
             {
-                errorMessage && 
-                    <p>{errorMessage}</p>
+                errorMessage &&
+                <StackItem>
+                    <Label>
+                        {errorMessage}
+                    </Label>
+                </StackItem>
             }
         </Stack>
     )

@@ -1,6 +1,7 @@
 import { Label, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react"
 import { AddDisease } from "../../Components/AddDisease/addDisease";
+import { AddDoctor } from "../../Components/AddDoctor/addDoctor";
 import { AddMedicine } from "../../Components/AddMedicine/addMedicine";
 import { AddSpecialization } from "../../Components/AddSpecialization/addSpecialization";
 import { UpdateDisease } from "../../Components/UpdateDisease/updateDisease";
@@ -68,6 +69,17 @@ export const AdminPage = (): JSX.Element => {
             })
     }
 
+    const handleAddDoctorSelected = (): void => {
+        SpecializationService.GetAllSpecializations()
+            .then(function (response) {
+                setSpecializations(response.data);
+                handleOptionChanged(AdminFeatures.AddDoctor);
+            })
+            .catch(function (error) {
+                setErrorMessage('Server error');
+            })
+    }
+
     const getSelectedOption = (): JSX.Element => {
         switch (selectedOption) {
             case AdminFeatures.AddSpecialization:
@@ -82,6 +94,8 @@ export const AdminPage = (): JSX.Element => {
                 return (<AddMedicine onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
             case AdminFeatures.UpdateMedicine:
                 return (<UpdateMedicine onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} medicines={diseases} />);
+            case AdminFeatures.AddDoctor:
+                return (<AddDoctor onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} specializations={specializations} />);
         }
         return (<div></div>)
     }
@@ -96,7 +110,7 @@ export const AdminPage = (): JSX.Element => {
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label>
+                        <Label onClick={() => { handleAddDoctorSelected(); }}>
                             Add a doctor account
                         </Label>
                     </StackItem>

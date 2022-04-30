@@ -18,7 +18,7 @@ namespace PatientDoctorManagementApp
             SigningCredentials credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
             JwtHeader header = new JwtHeader(credentials);
 
-            JwtPayload payload = new JwtPayload(userGuid.ToString(), null, null, null, DateTime.Today.AddDays(1));
+            JwtPayload payload = new JwtPayload(userGuid.ToString(), null, null, null, DateTime.Today.AddDays(100));
             JwtSecurityToken securityToken = new JwtSecurityToken(header, payload);
 
             return new JwtSecurityTokenHandler().WriteToken(securityToken);

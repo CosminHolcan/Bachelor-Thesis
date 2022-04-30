@@ -28,42 +28,23 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterDTO registerDTO)
         {
-            Administrator existingAdministrator = this._bllContext.Administrators.GetAdministratorByEmail(registerDTO.Email);
-            if (existingAdministrator != null)
-                return BadRequest(new
-                {
-                    message = "There is already an account with this email."
-                });
-
-            Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(registerDTO.Email);
-            if (existingDoctor != null)
-                return BadRequest(new
-                {
-                    message = "There is already an account with this email."
-                });
-
-            Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(registerDTO.Email);
-            if (existingPatient != null)
-                return BadRequest(new
-                {
-                    message = "There is already an account with this email."
-                });
-
-            Patient newPatient = new Patient()
+            try
             {
-                Id = new Guid(),
-                FirstName = registerDTO.FirstName,
-                LastName = registerDTO.LastName,
-                Email = registerDTO.Email,
-                Password = EncryptionDecryption.Encrypt(registerDTO.Password),
-                UserType = UserType.Patient
-            };
-            this._bllContext.Patients.AddPatient(newPatient);
-
-            return Ok(new
+                Patient patient = this._bllContext.Patients.AddPatient(registerDTO.FirstName, registerDTO.LastName, registerDTO.Email, EncryptionDecryption.Encrypt(registerDTO.Password));
+                string jwtString = this._jwtService.Generate(patient.Id);
+                return Ok(new
+                {
+                    userType = UserType.Patient,
+                    jwt = jwtString
+                });
+            }
+            catch (Exception exception)
             {
-                userType = UserType.Patient
-            });
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
 
         [HttpPost("login")]
@@ -86,6 +67,19 @@ namespace PatientDoctorManagementApp.Controllers
                 return HandleFoundAccountByEmail(existingDoctor, loginDTO);
 
             return HandleFoundAccountByEmail(existingPatient, loginDTO);
+        }
+
+        [HttpPost("refreshToken")]
+        public IActionResult RefreshToken(BaseDTO dto)
+        {
+            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+            Guid userId = new Guid(token.Issuer);
+            string newToken = _jwtService.Generate(userId);
+
+            return Ok(new
+            {
+                jwt = newToken
+            });
         }
 
         [HttpGet("user")]

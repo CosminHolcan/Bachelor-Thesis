@@ -25,5 +25,10 @@ namespace BusinessLogicLayer
         {
             return this._bllContext.DALContext.Specializations.GetAllSpecializations();
         }
+
+        public Specialization GetSpecializationById(Guid id)
+        {
+            return this._bllContext.DALContext.Specializations.GetSpecializationById(id);
+        }
     }
 }

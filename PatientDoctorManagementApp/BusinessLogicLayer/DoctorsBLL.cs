@@ -15,5 +15,11 @@ namespace BusinessLogicLayer
         {
             return this._bllContext.DALContext.Doctors.GetDoctorByEmail(email);
         }
+
+        public void AddDoctor(string firstName, string lastName, string email, string password, Guid specializationId)
+        {
+            this.CheckUniqueEmail(email);
+            this._bllContext.DALContext.Doctors.AddDoctor(firstName, lastName, email, password, specializationId);
+        }
     }
 }

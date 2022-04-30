@@ -1,4 +1,5 @@
-﻿using DataAbstractionLayer.Models;
+﻿using DataAbstractionLayer.Enums;
+using DataAbstractionLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,22 @@ namespace DataAbstractionLayer
             return this._dalContext.DbContext.Patients.FirstOrDefault((Patient patient) => patient.Id == id);
         }
 
-        public void AddPatient(Patient patient)
+        public Patient AddPatient(string firstName, string lastName, string email, string password)
         {
+            Patient patient = new Patient()
+            {
+                Id = new Guid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = password,
+                UserType = UserType.Patient
+            };
+
             this._dalContext.DbContext.Patients.Add(patient);
             this._dalContext.DbContext.SaveChanges();
+
+            return patient;
         }
     }
 }
