@@ -6,6 +6,7 @@ import { ILoginDTO } from "../DTO/LoginDTO";
 import { IRegisterDTO } from "../DTO/RegisterDTO";
 import { IUpdateBaseDTO } from "../DTO/UpdateBaseDTO";
 import { IAddDoctorDTO } from "../DTO/AddDoctor";
+import { IBaseDTO } from "../DTO/BaseDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -22,8 +23,8 @@ export namespace AuthorizationService {
         return axios.post(`${BASE_URL}Authorization/logout`);
     }
 
-    export const IsUserLoggedIn = (jwt: string): Promise<AxiosResponse<any, any>> => {
-        return axios.post(`${BASE_URL}Authorization/isUserLoggedIn`);
+    export const RefreshToken = (jwt: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Authorization/refreshToken`, jwt);
     }
 }
 

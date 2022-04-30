@@ -72,14 +72,24 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("refreshToken")]
         public IActionResult RefreshToken(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-            string newToken = _jwtService.Generate(userId);
-
-            return Ok(new
+            try
             {
-                jwt = newToken
-            });
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                string newToken = _jwtService.Generate(userId);
+
+                return Ok(new
+                {
+                    jwt = newToken
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
 
         [HttpGet("user")]

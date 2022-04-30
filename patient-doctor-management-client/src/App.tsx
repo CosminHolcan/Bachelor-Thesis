@@ -1,12 +1,14 @@
 import './App.css';
 import { LoginPage } from './Pages/Login/loginPage';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, NavigateFunction, Route, Routes, useNavigate } from 'react-router-dom'
 import PrivateRoute from './Components/PrivateRoute/privateRoute';
 import { IPrivateRouteProps } from './Components/PrivateRoute/privateRoute.types';
 import { RegisterPage } from './Pages/Register/registerPage';
 import { UserPage } from './Pages/User/userPage';
 import { AuthorizationService } from './Utils/services';
 import { initializeIcons } from '@fluentui/react';
+import { useEffect } from 'react';
+import { MILLISECONDS_IN_A_DAY } from './globalConstants';
 
 export const App = (): JSX.Element => {
   const isUserLoggedIn: boolean = localStorage.getItem("jwt") != null;
@@ -14,12 +16,6 @@ export const App = (): JSX.Element => {
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
     authenticationPath: '/login',
   };
-
-  const refreshToken = (): void => {
-    
-  }
-
-  setInterval(refreshToken, 10000);
 
 
   return (

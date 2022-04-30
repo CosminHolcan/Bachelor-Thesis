@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MenuItem } from "../../Enums/menuItem";
 import { UserType } from "../../Enums/userTypes";
+import { MILLISECONDS_IN_A_DAY } from "../../globalConstants";
+import { AuthorizationService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { styleContentArea, styleStack } from "./userPage.style";
 
@@ -13,6 +15,21 @@ const LOGOUT_ICON: string = "Leave";
 export const UserPage = (): JSX.Element => {
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState<string>(MenuItem.MyAccount);
+
+    const refreshToken = (): void => {
+        var token = localStorage.getItem("jwt");
+        token && AuthorizationService.RefreshToken({ jwt: token })
+          .then((response) => {
+            localStorage.setItem("jwt", response.data.jwt);
+          })
+          .catch(function (error) {
+            localStorage.removeItem("jwt");
+            localStorage.removeItem("userType");
+            navigate("/login");
+          });
+      }
+    
+      setInterval(refreshToken, MILLISECONDS_IN_A_DAY);
 
     const getMenuItems = (): MenuItem[] => {
         const result: MenuItem[] = [MenuItem.MyAccount];
