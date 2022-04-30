@@ -44,5 +44,10 @@ namespace DataAbstractionLayer
         {
             return this._dalContext.DbContext.Diseases.FirstOrDefault((Disease disease) => disease.Name == name);
         }
+
+        public Disease GetDiseaseById(Guid id)
+        {
+            return this._dalContext.DbContext.Diseases.FirstOrDefault((Disease disease) => disease.Id == id);
+        }
     }
 }

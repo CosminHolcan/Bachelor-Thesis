@@ -13,13 +13,13 @@ namespace BusinessLogicLayer
 
         public void AddDisease(string name, string description)
         {
-            this.CheckName(name);
+            this.CheckUniqueNameAdd(name);
             this._bllContext.DALContext.Diseases.AddDisease(name, description);
         }
 
         public void UpdateDisease(Disease disease)
         {
-            this.CheckName(disease.Name);
+            this.CheckUniqueNameUpdate(disease);
             this._bllContext.DALContext.Diseases.UpdateDisease(disease);
         }
 
@@ -28,10 +28,22 @@ namespace BusinessLogicLayer
             return this._bllContext.DALContext.Diseases.GetAllDiseases();
         }
 
-        private void CheckName(string name)
+        private void CheckUniqueNameAdd(string name)
         {
             if (this._bllContext.DALContext.Diseases.GetDiseaseByName(name) != null)
                 throw new Exception("There is already a disease with this name.");
+        }
+
+        private void CheckUniqueNameUpdate(Disease disease)
+        {
+            Disease existingDisease = this._bllContext.DALContext.Diseases.GetDiseaseById(disease.Id);
+            if (existingDisease == null)
+                throw new Exception("There is no disease with this id.");
+
+            if (disease.Name == existingDisease.Name)
+                return;
+
+            this.CheckUniqueNameAdd(disease.Name);
         }
 
     }

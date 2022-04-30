@@ -5,6 +5,7 @@ import { AddDisease } from "../../Components/AddDisease/addDisease";
 import { AddDoctor } from "../../Components/AddDoctor/addDoctor";
 import { AddMedicine } from "../../Components/AddMedicine/addMedicine";
 import { AddSpecialization } from "../../Components/AddSpecialization/addSpecialization";
+import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { UpdateDisease } from "../../Components/UpdateDisease/updateDisease";
 import { UpdateMedicine } from "../../Components/UpdateMedicine/updateMedicine";
 import { UpdateSpecialization } from "../../Components/UpdateSpecialization/updateSpecialization";
@@ -266,22 +267,18 @@ export const AdminPage = (): JSX.Element => {
             </Stack>
             {loadingData
                 ?
-                <Stack horizontalAlign='center' verticalAlign='center' style={{ marginTop: "10vh" }}>
-                    <StackItem>
-                        <TailSpin width={100} height={100} color="blue" />
-                    </StackItem>
-                    <StackItem>
-                        <Label style={{ fontSize: 20 }}>
-                            Loading
-                        </Label>
-                    </StackItem>
-                </Stack>
+                <LoadingSpinner
+                    height={100}
+                    width={100}
+                    labelStyle={{ fontSize: 20 }}
+                    wrapStackStyle={{ marginTop: "10vh" }}
+                />
                 :
                 selectedOption !== '' && getSelectedOption()}
             {errorMessage !== '' &&
                 <StackItem>
-                    <Label style={{ color: "red" }}>
-                        {errorMessage}
+                    <Label style={{ color: "red", marginTop: "5vh" }}>
+                        Error: {errorMessage}
                     </Label>
                 </StackItem>}
         </Stack>

@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from './globalConstants';
 import { TailSpin } from 'react-loader-spinner';
 import { delay } from './Utils/functions';
+import { LoadingSpinner } from './Components/LoadingSpinner/loadingSpinner';
 
 export const App = (): JSX.Element => {
   const [isLoadingData, setLoadingData] = useState<boolean>(false);
@@ -18,6 +19,8 @@ export const App = (): JSX.Element => {
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
     authenticationPath: '/login',
   };
+
+  initializeIcons();
 
   const isUserLoggedIn = (): boolean => {
     return localStorage.getItem("jwt") != null;
@@ -50,16 +53,12 @@ export const App = (): JSX.Element => {
           </Routes>
         </Router>
         :
-        <Stack horizontalAlign='center' verticalAlign='center' style={{height: "100vh"}}>
-          <StackItem>
-            <TailSpin width={300} height={300} color="blue" />
-          </StackItem>
-          <StackItem>
-            <Label style={{ fontSize: 40 }}>
-              Loading
-            </Label>
-          </StackItem>
-        </Stack>
+        <LoadingSpinner
+          height={300}
+          width={300}
+          labelStyle={{ fontSize: 40 }}
+          wrapStackStyle={{ height: "100vh" }}
+        />
       }
     </>
   );

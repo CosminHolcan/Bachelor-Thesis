@@ -10,6 +10,7 @@ import { IBaseModel } from "../../Models/BaseModel";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { SpecializationService } from "../../Utils/services";
+import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { IUpdateSpecializationProps } from "./updateSpecialization.types";
 
 export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Element => {
@@ -66,16 +67,12 @@ export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Ele
         <>
             {processingRequest
                 ?
-                <Stack horizontalAlign='center' verticalAlign='center' style={{ marginTop: "10vh" }}>
-                    <StackItem>
-                        <TailSpin width={100} height={100} color="blue" />
-                    </StackItem>
-                    <StackItem>
-                        <Label style={{ fontSize: 20 }}>
-                            Loading
-                        </Label>
-                    </StackItem>
-                </Stack>
+                <LoadingSpinner
+                    height={100}
+                    width={100}
+                    labelStyle={{ fontSize: 20 }}
+                    wrapStackStyle={{ marginTop: "10vh" }}
+                />
                 :
                 <Stack>
                     <StackItem>

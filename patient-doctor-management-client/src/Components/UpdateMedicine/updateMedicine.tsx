@@ -12,6 +12,7 @@ import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescr
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
+import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { IUpdateMedicineProps } from "./updateMedicine.types";
 
 export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
@@ -75,16 +76,12 @@ export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
         <>
             {processingRequest
                 ?
-                <Stack horizontalAlign='center' verticalAlign='center' style={{ marginTop: "10vh" }}>
-                    <StackItem>
-                        <TailSpin width={100} height={100} color="blue" />
-                    </StackItem>
-                    <StackItem>
-                        <Label style={{ fontSize: 20 }}>
-                            Loading
-                        </Label>
-                    </StackItem>
-                </Stack>
+                <LoadingSpinner
+                    height={100}
+                    width={100}
+                    labelStyle={{ fontSize: 20 }}
+                    wrapStackStyle={{ marginTop: "10vh" }}
+                />
                 :
                 <Stack>
                     <StackItem>
