@@ -13,9 +13,6 @@ namespace DataAbstractionLayer
 
         public void AddDisease(string name, string description)
         {
-            if (this._dalContext.DbContext.Diseases.FirstOrDefault((Disease disease) => disease.Name == name) != null)
-                throw new Exception("There is already a disease with this name.");
-
             Disease disease = new Disease()
             {
                 Id = new Guid(),
@@ -41,6 +38,11 @@ namespace DataAbstractionLayer
         public List<Disease> GetAllDiseases()
         {
             return this._dalContext.DbContext.Diseases.ToList();
+        }
+
+        public Disease GetDiseaseByName(string name)
+        {
+            return this._dalContext.DbContext.Diseases.FirstOrDefault((Disease disease) => disease.Name == name);
         }
     }
 }

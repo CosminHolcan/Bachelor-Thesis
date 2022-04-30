@@ -13,9 +13,6 @@ namespace DataAbstractionLayer
 
         public void AddSpecialization(string specializationName)
         {
-            if (this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Name == specializationName) != null)
-                throw new Exception("There is already a specialization with this name.");
-
             Specialization specialization = new Specialization()
             {
                 Id = new Guid(),
@@ -44,6 +41,11 @@ namespace DataAbstractionLayer
         public Specialization GetSpecializationById(Guid id)
         {
             return this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Id == id);
+        }
+
+        public Specialization GetSpecializationByName(string name)
+        {
+            return this._dalContext.DbContext.Specializations.FirstOrDefault((Specialization specialization) => specialization.Name == name);
         }
     }
 }

@@ -1,10 +1,13 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
 import { useEffect, useState } from "react"
+import { TailSpin } from "react-loader-spinner";
 import { IAddBaseDTO } from "../../DTO/AddBaseDTO";
 import { IAddDoctorDTO } from "../../DTO/AddDoctor";
+import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
+import { delay } from "../../Utils/functions";
 import { DoctorsService } from "../../Utils/services";
 import { IAddDoctorProps } from "./addDoctor.types";
 
@@ -15,6 +18,7 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
     const [password, setPassword] = useState<string>('');
     const [repeatPassword, setRepeatPassword] = useState<string>('');
     const [selectedSpecialization, setSelectedSpecialization] = useState<IBaseModel>();
+    const [processingRequest, setProcessingRequest] = useState<boolean>(false);
 
     useEffect(() => {
         if (props.errorMessage !== '')
@@ -24,11 +28,11 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
     const handleOnButtonClicked = async (e: any) => {
         var newErrorMessage: string = '';
         if (firstName.trim() === "" || lastName.trim() === "" || email.trim() === "" || password.trim() === "") {
-            newErrorMessage += "All fields are required, none of them can be empty.";
+            newErrorMessage += "All fields are required, none of them can be empty. ";
         }
 
         if (!selectedSpecialization) {
-            newErrorMessage += "No selected specialization.";
+            newErrorMessage += "No selected specialization. ";
         }
 
         if (password !== repeatPassword) {
@@ -39,6 +43,8 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
             props.setErrorMessage(newErrorMessage);
             return;
         }
+
+        setProcessingRequest(true);
 
         const addDoctorDTO: IAddDoctorDTO = {
             jwt: localStorage.getItem("jwt") ?? '',
@@ -52,92 +58,112 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
         };
 
         DoctorsService.AddDoctor(addDoctorDTO)
-            .then(function (response) {
+            .then(async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setProcessingRequest(false);
                 props.onSuccess();
             })
-            .catch(function (error) {
-                props.setErrorMessage(error.response.data.message)
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setProcessingRequest(false);
+                props.setErrorMessage(error.response.data.message);
             });
     }
 
     return (
-        <Stack>
-            <StackItem>
-                <Label>
-                    Add a new doctor
-                </Label>
-            </StackItem>
-            <StackItem>
-                <Label>
-                    First Name
-                </Label>
-            </StackItem>
-            <StackItem>
-                <TextField
-                    rows={1}
-                    value={firstName}
-                    onChange={(event: any) => setFirstName(event.target.value)}
-                />
-            </StackItem>
-            <StackItem>
-                <Label>
-                    Last Name
-                </Label>
-            </StackItem>
-            <StackItem>
-                <TextField
-                    rows={1}
-                    value={lastName}
-                    onChange={(event: any) => setLastName(event.target.value)}
-                />
-            </StackItem>
-            <StackItem>
-                <Label>
-                    Email
-                </Label>
-            </StackItem>
-            <StackItem>
-                <TextField
-                    rows={1}
-                    value={email}
-                    onChange={(event: any) => setEmail(event.target.value)}
-                />
-            </StackItem>
-            <StackItem>
-                <Label>
-                    Password
-                </Label>
-            </StackItem>
-            <StackItem>
-                <TextField
-                    type="password"
-                    rows={1}
-                    value={password}
-                    onChange={(event: any) => setPassword(event.target.value)}
-                />
-            </StackItem>
-            <StackItem>
-                <Label>
-                    Repeat Password
-                </Label>
-                <TextField
-                    type="password"
-                    rows={1}
-                    value={repeatPassword}
-                    onChange={(event: any) => setRepeatPassword(event.target.value)}
-                />
-            </StackItem>
-            <StackItem>
-                <Multiselect
-                    singleSelect={true}
-                    options={props.specializations}
-                    onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
-                    displayValue="name"
-                />
-            </StackItem>
-            <StackItem>
-                <button onClick={handleOnButtonClicked}>Save</button>
-            </StackItem>
-        </Stack>
+        <>
+            {processingRequest
+                ?
+                <Stack horizontalAlign='center' verticalAlign='center' style={{ marginTop: "10vh" }}>
+                    <StackItem>
+                        <TailSpin width={100} height={100} color="blue" />
+                    </StackItem>
+                    <StackItem>
+                        <Label style={{ fontSize: 20 }}>
+                            Loading
+                        </Label>
+                    </StackItem>
+                </Stack>
+                :
+                <Stack>
+                    <StackItem>
+                        <Label>
+                            Add a new doctor
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <Label>
+                            First Name
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <TextField
+                            rows={1}
+                            value={firstName}
+                            onChange={(event: any) => setFirstName(event.target.value)}
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <Label>
+                            Last Name
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <TextField
+                            rows={1}
+                            value={lastName}
+                            onChange={(event: any) => setLastName(event.target.value)}
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <Label>
+                            Email
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <TextField
+                            rows={1}
+                            value={email}
+                            onChange={(event: any) => setEmail(event.target.value)}
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <Label>
+                            Password
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <TextField
+                            type="password"
+                            rows={1}
+                            value={password}
+                            onChange={(event: any) => setPassword(event.target.value)}
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <Label>
+                            Repeat Password
+                        </Label>
+                        <TextField
+                            type="password"
+                            rows={1}
+                            value={repeatPassword}
+                            onChange={(event: any) => setRepeatPassword(event.target.value)}
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <Multiselect
+                            singleSelect={true}
+                            options={props.specializations}
+                            onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
+                            displayValue="name"
+                        />
+                    </StackItem>
+                    <StackItem>
+                        <button onClick={handleOnButtonClicked}>Save</button>
+                    </StackItem>
+                </Stack>
+            }
+        </>
     )
 }

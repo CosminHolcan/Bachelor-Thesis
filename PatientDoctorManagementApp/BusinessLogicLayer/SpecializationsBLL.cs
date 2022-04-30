@@ -13,11 +13,13 @@ namespace BusinessLogicLayer
 
         public void AddSpecialization(string specializationName)
         {
+            this.CheckName(specializationName);
             this._bllContext.DALContext.Specializations.AddSpecialization(specializationName);
         }
 
         public void UpdateSpecialization(Specialization specialization)
         {
+            this.CheckName(specialization.Name);
             this._bllContext.DALContext.Specializations.UpdateSpecialization(specialization);
         }
 
@@ -29,6 +31,12 @@ namespace BusinessLogicLayer
         public Specialization GetSpecializationById(Guid id)
         {
             return this._bllContext.DALContext.Specializations.GetSpecializationById(id);
+        }
+
+        private void CheckName(string name)
+        {
+            if (this._bllContext.DALContext.Specializations.GetSpecializationByName(name) != null)
+                throw new Exception("There is already a specialization with this name.");
         }
     }
 }

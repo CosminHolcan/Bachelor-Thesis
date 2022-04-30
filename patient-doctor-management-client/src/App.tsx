@@ -6,26 +6,61 @@ import { IPrivateRouteProps } from './Components/PrivateRoute/privateRoute.types
 import { RegisterPage } from './Pages/Register/registerPage';
 import { UserPage } from './Pages/User/userPage';
 import { AuthorizationService } from './Utils/services';
-import { initializeIcons } from '@fluentui/react';
-import { useEffect } from 'react';
-import { MILLISECONDS_IN_A_DAY } from './globalConstants';
+import { initializeIcons, Label, Stack, StackItem } from '@fluentui/react';
+import { useEffect, useState } from 'react';
+import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from './globalConstants';
+import { TailSpin } from 'react-loader-spinner';
+import { delay } from './Utils/functions';
 
 export const App = (): JSX.Element => {
-  const isUserLoggedIn: boolean = localStorage.getItem("jwt") != null;
+  const [isLoadingData, setLoadingData] = useState<boolean>(false);
 
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
     authenticationPath: '/login',
   };
 
+  const isUserLoggedIn = (): boolean => {
+    return localStorage.getItem("jwt") != null;
+  }
+
+  var token = localStorage.getItem("jwt");
+  !isLoadingData && token && AuthorizationService.RefreshToken({ jwt: token })
+    .then(async (response) => {
+      localStorage.setItem("jwt", response.data.jwt);
+      await delay(WAITING_MILLISECONDS);
+      setLoadingData(true);
+    })
+    .catch(async (error) => {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("userType");
+      await delay(WAITING_MILLISECONDS);
+      setLoadingData(true);
+    })
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/' element={isUserLoggedIn ? <UserPage /> : <LoginPage />} />
-        <Route path='login' element={<LoginPage />} />
-        <Route path='register' element={<RegisterPage />} />
-        <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
-      </Routes>
-    </Router>
+    <>
+      {isLoadingData
+        ?
+        <Router>
+          <Routes>
+            <Route path='/' element={isUserLoggedIn() ? <UserPage /> : <LoginPage />} />
+            <Route path='login' element={<LoginPage />} />
+            <Route path='register' element={<RegisterPage />} />
+            <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
+          </Routes>
+        </Router>
+        :
+        <Stack horizontalAlign='center' verticalAlign='center' style={{height: "100vh"}}>
+          <StackItem>
+            <TailSpin width={300} height={300} color="blue" />
+          </StackItem>
+          <StackItem>
+            <Label style={{ fontSize: 40 }}>
+              Loading
+            </Label>
+          </StackItem>
+        </Stack>
+      }
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { Label, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react"
+import { TailSpin } from "react-loader-spinner";
 import { AddDisease } from "../../Components/AddDisease/addDisease";
 import { AddDoctor } from "../../Components/AddDoctor/addDoctor";
 import { AddMedicine } from "../../Components/AddMedicine/addMedicine";
@@ -8,8 +9,10 @@ import { UpdateDisease } from "../../Components/UpdateDisease/updateDisease";
 import { UpdateMedicine } from "../../Components/UpdateMedicine/updateMedicine";
 import { UpdateSpecialization } from "../../Components/UpdateSpecialization/updateSpecialization";
 import { AdminFeatures } from "../../Enums/adminFeatures";
+import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
 import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
+import { delay } from "../../Utils/functions";
 import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
 import { styleStack } from "./adminPage.styles"
 
@@ -19,10 +22,14 @@ export const AdminPage = (): JSX.Element => {
     const [specializations, setSpecializations] = useState<IBaseModel[]>([]);
     const [diseases, setDiseases] = useState<IBaseModelNameAndDescription[]>([]);
     const [medicines, setMedicines] = useState<IBaseModelNameAndDescription[]>([]);
-
+    const [loadingData, setLoadingData] = useState<boolean>(false);
 
     const onSuccess = (): void => {
         setSelectedOption('');
+    }
+
+    const onStartingRequest = (): void => {
+        setLoadingData(true);
     }
 
     const handleOptionChanged = (value: string): void => {
@@ -37,45 +44,89 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleUpdateSpecializationSelected = (): void => {
+        if (selectedOption === AdminFeatures.UpdateSpecialization) {
+            setSelectedOption('');
+            setErrorMessage('');
+            return;
+        }
+
+        setLoadingData(true);
         SpecializationService.GetAllSpecializations()
-            .then(function (response) {
+            .then(async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setSpecializations(response.data);
                 handleOptionChanged(AdminFeatures.UpdateSpecialization);
             })
-            .catch(function (error) {
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setErrorMessage('Server error');
             })
     }
 
     const handleUpdateDiseaseSelected = (): void => {
+        if (selectedOption === AdminFeatures.UpdateDisease) {
+            setSelectedOption('');
+            setErrorMessage('');
+            return;
+        }
+
+        setLoadingData(true);
         DiseasesService.GetAllDiseases()
-            .then(function (response) {
+            .then(async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setDiseases(response.data);
                 handleOptionChanged(AdminFeatures.UpdateDisease);
             })
-            .catch(function (error) {
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setErrorMessage('Server error');
             })
     }
 
     const handleUpdateMedicineSelected = (): void => {
+        if (selectedOption === AdminFeatures.UpdateMedicine) {
+            setSelectedOption('');
+            setErrorMessage('');
+            return;
+        }
+
+        setLoadingData(true);
         MedicinesService.GetAllMedicines()
-            .then(function (response) {
-                setDiseases(response.data);
+            .then(async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+                setMedicines(response.data);
                 handleOptionChanged(AdminFeatures.UpdateMedicine);
             })
-            .catch(function (error) {
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setErrorMessage('Server error');
             })
     }
 
     const handleAddDoctorSelected = (): void => {
+        if (selectedOption === AdminFeatures.AddDoctor) {
+            setSelectedOption('');
+            setErrorMessage('');
+            return;
+        }
+
+        setLoadingData(true);
         SpecializationService.GetAllSpecializations()
-            .then(function (response) {
+            .then(async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setSpecializations(response.data);
                 handleOptionChanged(AdminFeatures.AddDoctor);
             })
-            .catch(function (error) {
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
                 setErrorMessage('Server error');
             })
     }
@@ -83,19 +134,65 @@ export const AdminPage = (): JSX.Element => {
     const getSelectedOption = (): JSX.Element => {
         switch (selectedOption) {
             case AdminFeatures.AddSpecialization:
-                return (<AddSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
+                return (
+                    <AddSpecialization
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                    />
+                );
             case AdminFeatures.UpdateSpecialization:
-                return (<UpdateSpecialization onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} specializations={specializations} />);
+                return (
+                    <UpdateSpecialization
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                        specializations={specializations}
+                    />
+                );
             case AdminFeatures.AddDisease:
-                return (<AddDisease onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
+                return (
+                    <AddDisease
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                    />
+                );
             case AdminFeatures.UpdateDisease:
-                return (<UpdateDisease onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} diseases={diseases} />);
+                return (
+                    <UpdateDisease
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                        diseases={diseases}
+                    />
+                );
             case AdminFeatures.AddMedicine:
-                return (<AddMedicine onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} />);
+                return (
+                    <AddMedicine
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                    />
+                );
             case AdminFeatures.UpdateMedicine:
-                return (<UpdateMedicine onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} medicines={diseases} />);
+                return (
+                    <UpdateMedicine
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                        medicines={medicines}
+                    />
+                );
             case AdminFeatures.AddDoctor:
-                return (<AddDoctor onSuccess={onSuccess} errorMessage={errorMessage} setErrorMessage={setErrorMessage} specializations={specializations} />);
+                return (
+                    <AddDoctor
+                        onSuccess={onSuccess}
+                        errorMessage={errorMessage}
+                        setErrorMessage={setErrorMessage}
+                        specializations={specializations}
+                    />
+                );
         }
         return (<div></div>)
     }
@@ -167,10 +264,23 @@ export const AdminPage = (): JSX.Element => {
                     </StackItem>
                 </Stack>
             </Stack>
-            {selectedOption !== '' && getSelectedOption()}
+            {loadingData
+                ?
+                <Stack horizontalAlign='center' verticalAlign='center' style={{ marginTop: "10vh" }}>
+                    <StackItem>
+                        <TailSpin width={100} height={100} color="blue" />
+                    </StackItem>
+                    <StackItem>
+                        <Label style={{ fontSize: 20 }}>
+                            Loading
+                        </Label>
+                    </StackItem>
+                </Stack>
+                :
+                selectedOption !== '' && getSelectedOption()}
             {errorMessage !== '' &&
                 <StackItem>
-                    <Label>
+                    <Label style={{ color: "red" }}>
                         {errorMessage}
                     </Label>
                 </StackItem>}

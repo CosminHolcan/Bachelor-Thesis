@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MenuItem } from "../../Enums/menuItem";
 import { UserType } from "../../Enums/userTypes";
-import { MILLISECONDS_IN_A_DAY } from "../../globalConstants";
+import { MILLISECONDS_IN_HALF_HOUR } from "../../globalConstants";
 import { AuthorizationService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { styleContentArea, styleStack } from "./userPage.style";
@@ -29,7 +29,7 @@ export const UserPage = (): JSX.Element => {
           });
       }
     
-      setInterval(refreshToken, MILLISECONDS_IN_A_DAY);
+      setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
 
     const getMenuItems = (): MenuItem[] => {
         const result: MenuItem[] = [MenuItem.MyAccount];
