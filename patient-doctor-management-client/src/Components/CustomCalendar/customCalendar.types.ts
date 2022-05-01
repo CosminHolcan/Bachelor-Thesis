@@ -1,8 +1,8 @@
 import { IDoctorDTO } from "../../DTO/DoctorDTO";
 import { IAppointment } from "../../Models/Appointment";
 
-export interface IAppointmentSlotProps {
-    startTime: Date | undefined;
-    selectedDoctor: IDoctorDTO | undefined;
+export interface ICustomCalendarProps {
     appointments: IAppointment[] | undefined;
+    startingWeekDate: Date | undefined;
+    selectedDoctor: IDoctorDTO | undefined;
 }
