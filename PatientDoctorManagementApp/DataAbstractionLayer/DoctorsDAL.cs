@@ -11,6 +11,16 @@ namespace DataAbstractionLayer
     {
         public DoctorsDAL(DALContext dalContext): base(dalContext) { }
 
+        public List<Doctor> GetAllDoctors()
+        {
+            List<Doctor> doctors = this._dalContext.DbContext.Doctors.ToList();
+            doctors.ForEach((Doctor d) =>
+            {
+                this._dalContext.DbContext.Entry(d).Reference(d => d.Specialization).Load();
+            });
+            return doctors;
+        }
+
         public Doctor GetDoctorByEmail(string email)
         {
             return this._dalContext.DbContext.Doctors.FirstOrDefault((Doctor doctor) => doctor.Email == email);

@@ -23,6 +23,22 @@ namespace PatientDoctorManagementApp.Controllers
             _jwtService = jwtService;
         }
 
+        [HttpPost("all")]
+        public IActionResult GetAllDoctors(BaseDTO dto)
+        {
+            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+
+            return Ok(new
+            {
+                doctors = this._bllContext.Doctors.GetAllDoctors().Select((Doctor doctor) => new DoctorDTO
+                {
+                    Id = doctor.Id,
+                    Specialization = doctor.Specialization.Name,
+                    Name = doctor.FirstName + " "+ doctor.LastName
+                })
+            });
+        }
+
         [HttpPost("add")]
         public IActionResult AddDoctor(AddDoctorDTO dto)
         {

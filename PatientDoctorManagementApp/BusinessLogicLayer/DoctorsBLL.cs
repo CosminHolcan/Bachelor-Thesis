@@ -11,6 +11,11 @@ namespace BusinessLogicLayer
     {
         public DoctorsBLL(BLLContext bllContext) : base(bllContext) { }
 
+        public List<Doctor> GetAllDoctors()
+        {
+            return this._bllContext.DALContext.Doctors.GetAllDoctors();
+        }
+
         public Doctor GetDoctorByEmail(string email)
         {
             return this._bllContext.DALContext.Doctors.GetDoctorByEmail(email);

@@ -1,7 +1,9 @@
 export enum MenuItem {
-    MyAccount = "MyAccount",
+    MyAccount = "My Account",
     Admin = "Admin",
     PrescribeRecipes = "Prescribe recipes",
     SeeMyRecipes = "See my recipes",
-    Logout = "Logout"
+    Logout = "Logout",
+    CalendarPatient = "Make an appointment",
+    CalendarDoctor = "See my appointments"
 }

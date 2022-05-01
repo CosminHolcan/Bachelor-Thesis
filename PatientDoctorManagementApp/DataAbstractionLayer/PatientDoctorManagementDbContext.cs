@@ -28,6 +28,8 @@ namespace DataAbstractionLayer
 
         public DbSet<Disease> Diseases { get; set; }
 
+        public DbSet<Appointment> Appointments { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Data Source=DESKTOP-M4L4HDE;Database=PatientDoctorManagement;Integrated Security=SSPI");
@@ -36,6 +38,7 @@ namespace DataAbstractionLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Treatment>().HasKey(treatment => new { treatment.PatientId, treatment.DiseaseId, treatment.DoctorId, treatment.StartingDate });
+            modelBuilder.Entity<Appointment>().HasKey(appointment => new { appointment.DoctorId, appointment.PatientId, appointment.StartTime });
         }
     }
 }

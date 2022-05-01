@@ -74,4 +74,8 @@ export namespace DoctorsService {
     export const AddDoctor = (addDoctorDTO: IAddDoctorDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Doctors/add`, addDoctorDTO);
     }
+
+    export const GetAllDoctors = (baseDTO: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Doctors/all`, baseDTO);
+    }
 }
