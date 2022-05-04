@@ -12,6 +12,7 @@ namespace BusinessLogicLayer
         #region Members
         private Lazy<DALContext> _dalContext;
         private Lazy<AdministratorsBLL> _administratorsBLL;
+        private Lazy<AppointmentsBLL> _appointmentsBLL;
         private Lazy<DiseasesBLL> _diseasesBLL;
         private Lazy<DoctorsBLL> _doctorsBLL;
         private Lazy<PatientsBLL> _patientsBLL;
@@ -22,6 +23,7 @@ namespace BusinessLogicLayer
         #region Properties
         public DALContext DALContext => _dalContext.Value;
         public AdministratorsBLL Administrators => _administratorsBLL.Value;
+        public AppointmentsBLL Appointments => _appointmentsBLL.Value;
         public DiseasesBLL Diseases => _diseasesBLL.Value;
         public DoctorsBLL Doctors => _doctorsBLL.Value;
         public PatientsBLL Patients => _patientsBLL.Value;
@@ -34,6 +36,7 @@ namespace BusinessLogicLayer
         {
             _dalContext = new Lazy<DALContext>(() => new DALContext());
             _administratorsBLL = new Lazy<AdministratorsBLL>(() => new AdministratorsBLL(this));
+            _appointmentsBLL = new Lazy<AppointmentsBLL>(() => new AppointmentsBLL(this));
             _diseasesBLL = new Lazy<DiseasesBLL>(() => new DiseasesBLL(this));
             _doctorsBLL = new Lazy<DoctorsBLL>(() => new DoctorsBLL(this));
             _patientsBLL = new Lazy<PatientsBLL>(() => new PatientsBLL(this));
@@ -58,6 +61,9 @@ namespace BusinessLogicLayer
 
                 if (_administratorsBLL.IsValueCreated)
                     _administratorsBLL = null;
+
+                if (_appointmentsBLL.IsValueCreated)
+                    _appointmentsBLL = null;
 
                 if (_diseasesBLL.IsValueCreated)
                     _diseasesBLL = null;

@@ -21,6 +21,11 @@ namespace DataAbstractionLayer
             return doctors;
         }
 
+        public Doctor GetDoctorById(Guid id)
+        {
+            return this._dalContext.DbContext.Doctors.FirstOrDefault((Doctor doctor) => doctor.Id == id);
+        }
+
         public Doctor GetDoctorByEmail(string email)
         {
             return this._dalContext.DbContext.Doctors.FirstOrDefault((Doctor doctor) => doctor.Email == email);

@@ -26,11 +26,11 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterDTO registerDTO)
+        public IActionResult Register(RegisterDTO dto)
         {
             try
             {
-                Patient patient = this._bllContext.Patients.AddPatient(registerDTO.FirstName, registerDTO.LastName, registerDTO.Email, EncryptionDecryption.Encrypt(registerDTO.Password));
+                Patient patient = this._bllContext.Patients.AddPatient(dto.FirstName, dto.LastName, dto.Email, EncryptionDecryption.Encrypt(dto.Password));
                 string jwtString = this._jwtService.Generate(patient.Id);
                 return Ok(new
                 {
@@ -48,11 +48,11 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(LoginDTO loginDTO)
+        public IActionResult Login(LoginDTO dto)
         {
-            Administrator existingAdministrator = this._bllContext.Administrators.GetAdministratorByEmail(loginDTO.Email);
-            Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(loginDTO.Email);
-            Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(loginDTO.Email);
+            Administrator existingAdministrator = this._bllContext.Administrators.GetAdministratorByEmail(dto.Email);
+            Doctor existingDoctor = this._bllContext.Doctors.GetDoctorByEmail(dto.Email);
+            Patient existingPatient = this._bllContext.Patients.GetPatientByEmail(dto.Email);
 
             if (existingAdministrator == null && existingDoctor == null && existingPatient == null)
                 return BadRequest(new
@@ -61,12 +61,12 @@ namespace PatientDoctorManagementApp.Controllers
                 });
 
             if (existingAdministrator != null)
-                return HandleFoundAccountByEmail(existingAdministrator, loginDTO);
+                return HandleFoundAccountByEmail(existingAdministrator, dto);
 
             if (existingDoctor != null)
-                return HandleFoundAccountByEmail(existingDoctor, loginDTO);
+                return HandleFoundAccountByEmail(existingDoctor, dto);
 
-            return HandleFoundAccountByEmail(existingPatient, loginDTO);
+            return HandleFoundAccountByEmail(existingPatient, dto);
         }
 
         [HttpPost("refreshToken")]

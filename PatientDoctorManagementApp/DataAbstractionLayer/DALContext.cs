@@ -11,6 +11,7 @@ namespace DataAbstractionLayer
         #region Members
         private Lazy<PatientDoctorManagementDbContext> _dbContext;
         private Lazy<AdministratorsDAL> _administratorsDAL;
+        private Lazy<AppointmentsDAL> _appointmentsDAL;
         private Lazy<DiseasesDAL> _diseasesDAL;
         private Lazy<DoctorsDAL> _doctorsDAL;
         private Lazy<MedicinesDAL> _medicinesDAL;
@@ -22,6 +23,7 @@ namespace DataAbstractionLayer
         #region Properties
         public PatientDoctorManagementDbContext DbContext => _dbContext.Value;
         public AdministratorsDAL Administrators => _administratorsDAL.Value;
+        public AppointmentsDAL Appointments => _appointmentsDAL.Value;
         public DiseasesDAL Diseases => _diseasesDAL.Value;
         public DoctorsDAL Doctors => _doctorsDAL.Value;
         public MedicinesDAL Medicines => _medicinesDAL.Value;
@@ -35,6 +37,7 @@ namespace DataAbstractionLayer
         {
             _dbContext = new Lazy<PatientDoctorManagementDbContext>(() => new PatientDoctorManagementDbContext());
             _administratorsDAL = new Lazy<AdministratorsDAL>(() => new AdministratorsDAL(this));
+            _appointmentsDAL = new Lazy<AppointmentsDAL>(() => new AppointmentsDAL(this));
             _diseasesDAL = new Lazy<DiseasesDAL>(() => new DiseasesDAL(this));
             _doctorsDAL = new Lazy<DoctorsDAL>(() => new DoctorsDAL(this));
             _medicinesDAL = new Lazy<MedicinesDAL>(() => new MedicinesDAL(this));
@@ -60,6 +63,9 @@ namespace DataAbstractionLayer
 
                 if (_administratorsDAL.IsValueCreated)
                     _administratorsDAL = null;
+
+                if (_appointmentsDAL.IsValueCreated)
+                    _appointmentsDAL = null;
 
                 if (_diseasesDAL.IsValueCreated)
                     _diseasesDAL = null;

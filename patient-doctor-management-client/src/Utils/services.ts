@@ -7,6 +7,8 @@ import { IRegisterDTO } from "../DTO/RegisterDTO";
 import { IUpdateBaseDTO } from "../DTO/UpdateBaseDTO";
 import { IAddDoctorDTO } from "../DTO/AddDoctor";
 import { IBaseDTO } from "../DTO/BaseDTO";
+import { IAddAppointmentDTO } from "../DTO/AddAppointmentDTO";
+import { IGetAppointmentByDoctorForPatientDTO } from "../DTO/GetAppointmentByDoctorForPatientDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -75,7 +77,17 @@ export namespace DoctorsService {
         return axios.post(`${BASE_URL}Doctors/add`, addDoctorDTO);
     }
 
-    export const GetAllDoctors = (baseDTO: IBaseDTO): Promise<AxiosResponse<any, any>> => {
-        return axios.post(`${BASE_URL}Doctors/all`, baseDTO);
+    export const GetAllDoctors = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Doctors/all`, dto);
+    }
+}
+
+export namespace AppointmentsService {
+    export const AddAppointment = (addAppointmentDTO: IAddAppointmentDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Appointments/add`, addAppointmentDTO);
+    }
+
+    export const GetAppointmentsByDoctorForPatient = (dto: IGetAppointmentByDoctorForPatientDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Appointments/getByDoctorForPatient`, dto);
     }
 }

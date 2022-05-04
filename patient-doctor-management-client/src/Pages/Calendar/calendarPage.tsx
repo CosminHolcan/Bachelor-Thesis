@@ -2,15 +2,18 @@ import { Stack } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
 import { Icon, Label, StackItem } from "office-ui-fabric-react";
 import { useEffect, useState } from "react";
-import { AppointmentSlot } from "../../Components/AppointmentSlot/appointmentSlot";
+import { AppointmentSlotForPatientView } from "../../Components/AppointmentSlot/appointmentSlot";
 import { CustomCalendar } from "../../Components/CustomCalendar/customCalendar";
+import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { IDoctorDTO } from "../../DTO/DoctorDTO";
+import { IGetAppointmentByDoctorForPatientDTO } from "../../DTO/GetAppointmentByDoctorForPatientDTO";
 import { UserType } from "../../Enums/userTypes";
-import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, NONE } from "../../globalConstants";
+import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, NONE, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointment } from "../../Models/Appointment";
+import { IAppointmentsByDoctorForPatient } from "../../Models/AppointmentsByDoctorForPatient";
 import { IBaseModel } from "../../Models/BaseModel";
-import { convertNumberMonthToString } from "../../Utils/functions";
-import { DoctorsService } from "../../Utils/services";
+import { convertNumberMonthToString, delay } from "../../Utils/functions";
+import { AppointmentsService, DoctorsService } from "../../Utils/services";
 import { ICalendarPageProps } from "./calendarPage.types";
 
 const ICON_LEFT: string = "CaretSolidLeft";
@@ -54,8 +57,42 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
 
     const [doctorsToShow, setDoctorsToShow] = useState<IDoctorDTO[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<IDoctorDTO>();
-    const [appointments, setAppointments] = useState<IAppointment[]>([]);
+    const [appointments, setAppointments] = useState<IAppointmentsByDoctorForPatient>();
     const [startingWeekDate, setStartingWeekDate] = useState<Date>(getFirstStartingWeekDate());
+    const [loadingData, setLoadingData] = useState<boolean>(false);
+    const [refreshData, setRefreshData] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!refreshData || !selectedDoctor)
+            return;
+
+        const dto: IGetAppointmentByDoctorForPatientDTO = {
+            jwt: localStorage.getItem("jwt") ?? '',
+            doctorId: selectedDoctor.id
+        };
+
+        setLoadingData(true);
+
+        AppointmentsService.GetAppointmentsByDoctorForPatient(dto)
+            .then(async (response) => {
+                await delay(WAITING_MILLISECONDS);
+                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(time));
+                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(time));
+                const newAppointments: IAppointmentsByDoctorForPatient = {
+                    patientAppointments: patientAppointments,
+                    otherAppointments: otherAppointments
+                };
+                setAppointments(newAppointments);
+                setLoadingData(false);
+                setRefreshData(false);
+            })
+            .catch(async (error) => {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+                setRefreshData(false);
+            })
+
+    }, [refreshData])
 
     useEffect(() => {
         if (props.doctors == [])
@@ -67,6 +104,30 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
     useEffect(() => {
         if (!selectedDoctor)
             return;
+
+        const dto: IGetAppointmentByDoctorForPatientDTO = {
+            jwt: localStorage.getItem("jwt") ?? '',
+            doctorId: selectedDoctor.id
+        };
+
+        setLoadingData(true);
+
+        AppointmentsService.GetAppointmentsByDoctorForPatient(dto)
+            .then(async (response) => {
+                await delay(WAITING_MILLISECONDS);
+                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(time));
+                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(time));
+                const newAppointments: IAppointmentsByDoctorForPatient = {
+                    patientAppointments: patientAppointments,
+                    otherAppointments: otherAppointments
+                };
+                setAppointments(newAppointments);
+                setLoadingData(false);
+            })
+            .catch(async (error) => {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            })
 
         setStartingWeekDate(getFirstStartingWeekDate());
     }, [selectedDoctor]);
@@ -97,38 +158,52 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
             <StackItem>
                 <Multiselect
                     singleSelect={true}
-                    options={doctorsToShow.map((doctor) => { return { name: doctor.name, specialization: doctor.specialization } })}
+                    options={doctorsToShow}
                     groupBy="specialization"
                     onSelect={(selectedList, selectedItem) => { setSelectedDoctor(selectedItem) }}
                     displayValue="name"
                 />
             </StackItem>
-            <Stack horizontal horizontalAlign="center" style={{ marginTop: "2vh" }}>
-                {showLeftArrow() &&
-                    <StackItem onClick={() => { handleLeftArrowClicked(); }}>
-                        <Icon
-                            iconName={ICON_LEFT}
-                            style={{ fontSize: "4vh", marginRight: "3vw" }}
-                        />
-                    </StackItem>
-                }
-                <StackItem>
-                    <Label style={{ fontSize: 20 }}>
-                        {convertNumberMonthToString(startingWeekDate.getMonth()) + ", " + startingWeekDate.getDate()}
-                    </Label>
-                </StackItem>
-                <StackItem onClick={() => { handleRightArrowClicked(); }}>
-                    <Icon
-                        iconName={ICON_RIGHT}
-                        style={{ fontSize: "4vh", marginLeft: "3vw" }}
+            {selectedDoctor && !loadingData &&
+                <Stack>
+                    <Stack horizontal horizontalAlign="center" style={{ marginTop: "2vh" }}>
+                        {showLeftArrow() &&
+                            <StackItem onClick={() => { handleLeftArrowClicked(); }}>
+                                <Icon
+                                    iconName={ICON_LEFT}
+                                    style={{ fontSize: "4vh", marginRight: "3vw" }}
+                                />
+                            </StackItem>
+                        }
+                        <StackItem>
+                            <Label style={{ fontSize: 20 }}>
+                                {convertNumberMonthToString(startingWeekDate.getMonth()) + ", " + startingWeekDate.getDate()}
+                            </Label>
+                        </StackItem>
+                        <StackItem onClick={() => { handleRightArrowClicked(); }}>
+                            <Icon
+                                iconName={ICON_RIGHT}
+                                style={{ fontSize: "4vh", marginLeft: "3vw" }}
+                            />
+                        </StackItem>
+                    </Stack>
+
+                    <CustomCalendar
+                        appointments={appointments}
+                        startingWeekDate={startingWeekDate}
+                        selectedDoctor={selectedDoctor}
+                        setRefreshData={setRefreshData}
                     />
-                </StackItem>
-            </Stack>
-            <CustomCalendar
-                appointments={appointments}
-                startingWeekDate={startingWeekDate}
-                selectedDoctor={selectedDoctor}
-            />
+                </Stack>
+            }
+            {loadingData &&
+                <LoadingSpinner
+                    height={300}
+                    width={300}
+                    labelStyle={{ fontSize: 40 }}
+                    wrapStackStyle={{ height: "80vh" }}
+                />
+            }
         </Stack>
     )
 }
