@@ -90,4 +90,8 @@ export namespace AppointmentsService {
     export const GetAppointmentsByDoctorForPatient = (dto: IGetAppointmentByDoctorForPatientDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Appointments/getByDoctorForPatient`, dto);
     }
+
+    export const GetAppointmentByDoctor = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Appointments/getByDoctor`, dto);
+    }
 }

@@ -32,3 +32,10 @@ export const convertNumberMonthToString = (month: number): string => {
             return "";
     }
 }
+
+export const convertDateStringFromServerToLocal = (date: string): string => {
+    if (date[date.length-1] !== 'Z')
+        date = date.concat("Z");
+
+    return date;
+} 

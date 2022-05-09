@@ -4,9 +4,9 @@ import { StatusAppointmentSlot } from "../../Enums/statusAppointmentSlot";
 import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_DAY } from "../../globalConstants";
 import { AppointmentsService } from "../../Utils/services";
-import { IAppointmentSlotForPatientViewProps } from "./appointmentSlot.types"
+import { IAppointmentSlotPatientViewProps } from "./appointmentSlotPatientView.types"
 
-export const AppointmentSlotForPatientView = (props: IAppointmentSlotForPatientViewProps): JSX.Element => {
+export const AppointmentSlotPatientView = (props: IAppointmentSlotPatientViewProps): JSX.Element => {
     const getStatus = (): StatusAppointmentSlot => {
         if (props.appointments.patientAppointments.findIndex((time: Date) => time.getTime() === props.startTime.getTime()) !== -1)
             return StatusAppointmentSlot.RESERVED_TO_CURRENT_PATIENT;

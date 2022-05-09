@@ -1,11 +1,14 @@
 import { Pivot, PivotItem, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { IDoctorDTO } from "../../DTO/DoctorDTO";
 import { MenuItem } from "../../Enums/menuItem";
 import { UserType } from "../../Enums/userTypes";
-import { MILLISECONDS_IN_HALF_HOUR } from "../../globalConstants";
-import { AuthorizationService, DoctorsService } from "../../Utils/services";
+import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from "../../globalConstants";
+import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
+import { convertDateStringFromServerToLocal, delay } from "../../Utils/functions";
+import { AppointmentsService, AuthorizationService, DoctorsService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { CalendarPage } from "../Calendar/calendarPage";
 import { styleContentArea, styleStack } from "./userPage.style";
@@ -19,8 +22,8 @@ export const UserPage = (): JSX.Element => {
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState<string>(MenuItem.MyAccount);
     const [doctors, setDoctors] = useState<IDoctorDTO[]>([]);
-    var userTypeString = localStorage.getItem("userType");
-    const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
+    const [appointmentsForDoctor, setAppointmentsForDoctor] = useState<IAppointmentForDoctor[]>([]);
+    const [loadingData, setLoadingData] = useState<boolean>(false);
 
     const refreshToken = (): void => {
         var token = localStorage.getItem("jwt");
@@ -39,13 +42,33 @@ export const UserPage = (): JSX.Element => {
 
     const handleCalendarPatientClicked = (): void => {
         DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
-                .then((function (response) {
-                    setDoctors(response.data.doctors);
-                }))
-                .catch((function (error) {
-                    console.log(error);
-                }));
+            .then((function (response) {
+                setDoctors(response.data.doctors);
+            }))
+            .catch((function (error) {
+                console.log(error);
+            }));
+    }
 
+    const handleCalendarDoctorClicked = (): void => {
+        setLoadingData(true);
+
+        AppointmentsService.GetAppointmentByDoctor({ jwt: localStorage.getItem("jwt") ?? '' })
+            .then((async function (response) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+
+                const appointmentsData = response.data.appointments;
+                const newAppointmentsForDoctor: IAppointmentForDoctor[] = appointmentsData.map((appointment: any) => ({
+                    patientName: appointment.patientName,
+                    startTime: new Date(convertDateStringFromServerToLocal(appointment.startTime))
+                }));
+                setAppointmentsForDoctor(newAppointmentsForDoctor);
+            }))
+            .catch((async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            }))
     }
 
     const handleLogout = () => {
@@ -64,7 +87,11 @@ export const UserPage = (): JSX.Element => {
         }
 
         if (item.props.itemKey === MenuItem.CalendarPatient) {
-            handleCalendarPatientClicked()
+            handleCalendarPatientClicked();
+        }
+
+        if (item.props.itemKey === MenuItem.CalendarDoctor) {
+            handleCalendarDoctorClicked();
         }
 
         if (selectedTab === item.props.itemKey)
@@ -86,7 +113,7 @@ export const UserPage = (): JSX.Element => {
                 result.push(MenuItem.Admin);
                 break;
             case UserType.Doctor:
-                result.concat([MenuItem.PrescribeRecipes]);
+                result = result.concat([MenuItem.CalendarDoctor]);
                 break;
             case UserType.Patient:
                 result = result.concat([MenuItem.CalendarPatient, MenuItem.SeeMyRecipes]);
@@ -117,6 +144,21 @@ export const UserPage = (): JSX.Element => {
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CALENDAR_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                         <CalendarPage doctors={doctors} />
+                    </PivotItem>
+                )
+            case MenuItem.CalendarDoctor:
+                return (
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CALENDAR_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                        {!loadingData ?
+                            <CalendarPage doctors={[]} appointments={appointmentsForDoctor} />
+                            :
+                            <LoadingSpinner
+                                height={300}
+                                width={300}
+                                labelStyle={{ fontSize: 40 }}
+                                wrapStackStyle={{ height: "80vh" }}
+                            />}
+
                     </PivotItem>
                 )
             case MenuItem.Logout:

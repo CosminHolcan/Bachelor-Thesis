@@ -1,4 +1,5 @@
-﻿using DataAbstractionLayer.Models;
+﻿using DataAbstractionLayer.Enums;
+using DataAbstractionLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,8 @@ namespace DataAbstractionLayer
                 LastName = lastName,
                 Email = email,
                 Password = password,
-                Specialization = specialization
+                Specialization = specialization,
+                UserType = UserType.Doctor
             };
 
             this._dalContext.DbContext.Doctors.Add(doctor);

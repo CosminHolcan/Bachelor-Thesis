@@ -2,7 +2,7 @@ import { Stack } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
 import { Icon, Label, StackItem } from "office-ui-fabric-react";
 import { useEffect, useState } from "react";
-import { AppointmentSlotForPatientView } from "../../Components/AppointmentSlot/appointmentSlot";
+import { AppointmentSlotPatientView } from "../../Components/AppointmentSlotPatientView/appointmentSlotPatientView";
 import { CustomCalendar } from "../../Components/CustomCalendar/customCalendar";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { IDoctorDTO } from "../../DTO/DoctorDTO";
@@ -12,7 +12,7 @@ import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, NONE, WAITING_MILLISECONDS }
 import { IAppointment } from "../../Models/Appointment";
 import { IAppointmentsByDoctorForPatient } from "../../Models/AppointmentsByDoctorForPatient";
 import { IBaseModel } from "../../Models/BaseModel";
-import { convertNumberMonthToString, delay } from "../../Utils/functions";
+import { convertDateStringFromServerToLocal, convertNumberMonthToString, delay } from "../../Utils/functions";
 import { AppointmentsService, DoctorsService } from "../../Utils/services";
 import { ICalendarPageProps } from "./calendarPage.types";
 
@@ -115,8 +115,8 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
         AppointmentsService.GetAppointmentsByDoctorForPatient(dto)
             .then(async (response) => {
                 await delay(WAITING_MILLISECONDS);
-                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(time));
-                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(time));
+                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(convertDateStringFromServerToLocal(time)));
+                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(convertDateStringFromServerToLocal(time)));
                 const newAppointments: IAppointmentsByDoctorForPatient = {
                     patientAppointments: patientAppointments,
                     otherAppointments: otherAppointments
@@ -136,6 +136,13 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
         return startingWeekDate.getTime() != getFirstStartingWeekDate().getTime();
     }
 
+    const showContent = (): boolean => {
+        if (isLoggedInDoctor)
+            return true;
+
+        return selectedDoctor !== undefined && !loadingData;
+    }
+
     const handleLeftArrowClicked = (): void => {
         const newStartingWeekDate = new Date();
         newStartingWeekDate.setTime(startingWeekDate.getTime() - MILLISECONDS_IN_WEEK);
@@ -150,21 +157,25 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
 
     return (
         <Stack>
-            <StackItem>
-                <Label>
-                    Doctor
-                </Label>
-            </StackItem>
-            <StackItem>
-                <Multiselect
-                    singleSelect={true}
-                    options={doctorsToShow}
-                    groupBy="specialization"
-                    onSelect={(selectedList, selectedItem) => { setSelectedDoctor(selectedItem) }}
-                    displayValue="name"
-                />
-            </StackItem>
-            {selectedDoctor && !loadingData &&
+            {!isLoggedInDoctor && doctorsToShow.length > 0 &&
+                <Stack>
+                    <StackItem>
+                        <Label>
+                            Doctor
+                        </Label>
+                    </StackItem>
+                    <StackItem>
+                        <Multiselect
+                            singleSelect={true}
+                            options={doctorsToShow}
+                            groupBy="specialization"
+                            onSelect={(selectedList, selectedItem) => { setSelectedDoctor(selectedItem) }}
+                            displayValue="name"
+                        />
+                    </StackItem>
+                </Stack>
+            }
+            {showContent() &&
                 <Stack>
                     <Stack horizontal horizontalAlign="center" style={{ marginTop: "2vh" }}>
                         {showLeftArrow() &&
@@ -189,7 +200,8 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
                     </Stack>
 
                     <CustomCalendar
-                        appointments={appointments}
+                        appointmentsPatientView={isLoggedInDoctor ? undefined : appointments}
+                        appointmentsDoctorView={isLoggedInDoctor ? props.appointments : undefined}
                         startingWeekDate={startingWeekDate}
                         selectedDoctor={selectedDoctor}
                         setRefreshData={setRefreshData}

@@ -68,5 +68,28 @@ namespace PatientDoctorManagementApp.Controllers
                 });
             }
         }
+
+        [HttpPost("getByDoctor")]
+        public IActionResult GetAppointmentsByDoctor(BaseDTO dto)
+        {
+            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+            Guid doctorId = new Guid(token.Issuer);
+
+            try
+            {
+                List<AppointmentForDoctor> result = this._bllContext.Appointments.GetAppointmentsByDoctor(doctorId);
+                return Ok(new
+                {
+                    appointments = result
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
+        }
     }
 }

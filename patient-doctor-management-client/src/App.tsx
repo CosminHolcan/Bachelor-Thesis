@@ -14,7 +14,11 @@ import { delay } from './Utils/functions';
 import { LoadingSpinner } from './Components/LoadingSpinner/loadingSpinner';
 
 export const App = (): JSX.Element => {
-  const [isLoadingData, setLoadingData] = useState<boolean>(false);
+  const isUserJWTTokenOnStorage = (): boolean => {
+    return localStorage.getItem("jwt") != null;
+  }
+
+  const [showLoadingSpinner, setShowLoadingSpinner] = useState<boolean>(isUserJWTTokenOnStorage());
 
   const defaultProtectedRouteProps: Omit<IPrivateRouteProps, 'outlet'> = {
     authenticationPath: '/login',
@@ -22,43 +26,41 @@ export const App = (): JSX.Element => {
 
   initializeIcons();
 
-  const isUserLoggedIn = (): boolean => {
-    return localStorage.getItem("jwt") != null;
-  }
-
   var token = localStorage.getItem("jwt");
-  !isLoadingData && token && AuthorizationService.RefreshToken({ jwt: token })
-    .then(async (response) => {
-      localStorage.setItem("jwt", response.data.jwt);
-      await delay(WAITING_MILLISECONDS);
-      setLoadingData(true);
-    })
-    .catch(async (error) => {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("userType");
-      await delay(WAITING_MILLISECONDS);
-      setLoadingData(true);
-    })
+  if (token != null) {
+    AuthorizationService.RefreshToken({ jwt: token })
+      .then(async (response) => {
+        localStorage.setItem("jwt", response.data.jwt);
+        await delay(WAITING_MILLISECONDS);
+        setShowLoadingSpinner(false);
+      })
+      .catch(async (error) => {
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("userType");
+        await delay(WAITING_MILLISECONDS);
+        setShowLoadingSpinner(false);
+      })
+  }
 
   return (
     <>
-      {isLoadingData
+      {showLoadingSpinner
         ?
-        <Router>
-          <Routes>
-            <Route path='/' element={isUserLoggedIn() ? <UserPage /> : <LoginPage />} />
-            <Route path='login' element={<LoginPage />} />
-            <Route path='register' element={<RegisterPage />} />
-            <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
-          </Routes>
-        </Router>
-        :
         <LoadingSpinner
           height={300}
           width={300}
           labelStyle={{ fontSize: 40 }}
           wrapStackStyle={{ height: "100vh" }}
         />
+        :
+        <Router>
+          <Routes>
+            <Route path='/' element={isUserJWTTokenOnStorage() ? <UserPage /> : <LoginPage />} />
+            <Route path='login' element={<LoginPage />} />
+            <Route path='register' element={<RegisterPage />} />
+            <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
+          </Routes>
+        </Router>
       }
     </>
   );

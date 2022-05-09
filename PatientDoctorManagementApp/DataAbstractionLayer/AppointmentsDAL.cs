@@ -26,7 +26,13 @@ namespace DataAbstractionLayer
 
         public List<Appointment> GetAppointmentsByDoctor(Guid doctorId)
         {
-            return this._dalContext.DbContext.Appointments.Where((Appointment appointment) => appointment.DoctorId == doctorId).ToList();
+            List<Appointment> appointments = this._dalContext.DbContext.Appointments.Where((Appointment appointment) => appointment.DoctorId == doctorId).ToList();
+            appointments.ForEach((Appointment a) =>
+            {
+                this._dalContext.DbContext.Entry(a).Reference(a => a.Patient).Load();
+            });
+
+            return appointments;
         }
     }
 }

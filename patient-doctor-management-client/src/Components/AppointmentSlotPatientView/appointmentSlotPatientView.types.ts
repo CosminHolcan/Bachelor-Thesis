@@ -2,7 +2,7 @@ import { IDoctorDTO } from "../../DTO/DoctorDTO";
 import { IAppointment } from "../../Models/Appointment";
 import { IAppointmentsByDoctorForPatient } from "../../Models/AppointmentsByDoctorForPatient";
 
-export interface IAppointmentSlotForPatientViewProps {
+export interface IAppointmentSlotPatientViewProps {
     startTime: Date;
     selectedDoctor: IDoctorDTO | undefined;
     appointments: IAppointmentsByDoctorForPatient;
