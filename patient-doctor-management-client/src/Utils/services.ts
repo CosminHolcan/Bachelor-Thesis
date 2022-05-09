@@ -82,6 +82,12 @@ export namespace DoctorsService {
     }
 }
 
+export namespace PatientsService {
+    export const GetAllPatients = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Patients/all`, dto);
+    }
+}
+
 export namespace AppointmentsService {
     export const AddAppointment = (addAppointmentDTO: IAddAppointmentDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Appointments/add`, addAppointmentDTO);
@@ -93,5 +99,11 @@ export namespace AppointmentsService {
 
     export const GetAppointmentByDoctor = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Appointments/getByDoctor`, dto);
+    }
+}
+
+export namespace MessagesService {
+    export const GetMessagesForUser = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Messages/forUser`, dto);
     }
 }

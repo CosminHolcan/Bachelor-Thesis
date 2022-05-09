@@ -1,4 +1,5 @@
-﻿using DataAbstractionLayer.Models;
+﻿using BusinessLogicLayer.Models;
+using DataAbstractionLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,18 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer
 {
-    public class PatientsBLL: BaseBLL
+    public class PatientsBLL : BaseBLL
     {
-        public PatientsBLL(BLLContext bllContext): base(bllContext) { }
+        public PatientsBLL(BLLContext bllContext) : base(bllContext) { }
+
+        public List<PersonDescription> GetAllPatients()
+        {
+            return this._bllContext.DALContext.Patients.GetAllPatients().Select((Patient patient) => new PersonDescription()
+            {
+                Id = patient.Id,
+                Name = patient.FirstName + " " + patient.LastName
+            }).ToList();
+        }
 
         public Patient GetPatientByEmail(string email)
         {

@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer;
-using DataAbstractionLayer.Models;
+using BusinessLogicLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using PatientDoctorManagementApp.DTO;
 using System;

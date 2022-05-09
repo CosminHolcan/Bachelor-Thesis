@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AppointmentSlotPatientView } from "../../Components/AppointmentSlotPatientView/appointmentSlotPatientView";
 import { CustomCalendar } from "../../Components/CustomCalendar/customCalendar";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
-import { IDoctorDTO } from "../../DTO/DoctorDTO";
+import { IPersonDescription } from "../../Models/PersonDescription";
 import { IGetAppointmentByDoctorForPatientDTO } from "../../DTO/GetAppointmentByDoctorForPatientDTO";
 import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, NONE, WAITING_MILLISECONDS } from "../../globalConstants";
@@ -55,8 +55,8 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
-    const [doctorsToShow, setDoctorsToShow] = useState<IDoctorDTO[]>([]);
-    const [selectedDoctor, setSelectedDoctor] = useState<IDoctorDTO>();
+    const [doctorsToShow, setDoctorsToShow] = useState<IPersonDescription[]>([]);
+    const [selectedDoctor, setSelectedDoctor] = useState<IPersonDescription>();
     const [appointments, setAppointments] = useState<IAppointmentsByDoctorForPatient>();
     const [startingWeekDate, setStartingWeekDate] = useState<Date>(getFirstStartingWeekDate());
     const [loadingData, setLoadingData] = useState<boolean>(false);

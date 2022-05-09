@@ -15,6 +15,7 @@ namespace DataAbstractionLayer
         private Lazy<DiseasesDAL> _diseasesDAL;
         private Lazy<DoctorsDAL> _doctorsDAL;
         private Lazy<MedicinesDAL> _medicinesDAL;
+        private Lazy<MessagesDAL> _messagesDAL;
         private Lazy<PatientsDAL> _patientsDAL;
         private Lazy<SpecializationsDAL> _specializationsDAL;
         private Lazy<TreatmentsDAL> _treatmentsDAL;
@@ -27,6 +28,7 @@ namespace DataAbstractionLayer
         public DiseasesDAL Diseases => _diseasesDAL.Value;
         public DoctorsDAL Doctors => _doctorsDAL.Value;
         public MedicinesDAL Medicines => _medicinesDAL.Value;
+        public MessagesDAL Messages => _messagesDAL.Value;
         public PatientsDAL Patients => _patientsDAL.Value;
         public SpecializationsDAL Specializations => _specializationsDAL.Value;
         public TreatmentsDAL Treatments => _treatmentsDAL.Value;
@@ -41,6 +43,7 @@ namespace DataAbstractionLayer
             _diseasesDAL = new Lazy<DiseasesDAL>(() => new DiseasesDAL(this));
             _doctorsDAL = new Lazy<DoctorsDAL>(() => new DoctorsDAL(this));
             _medicinesDAL = new Lazy<MedicinesDAL>(() => new MedicinesDAL(this));
+            _messagesDAL = new Lazy<MessagesDAL>(() => new MessagesDAL(this));
             _patientsDAL = new Lazy<PatientsDAL>(() => new PatientsDAL(this));
             _specializationsDAL = new Lazy<SpecializationsDAL>(() => new SpecializationsDAL(this));
             _treatmentsDAL = new Lazy<TreatmentsDAL>(() => new TreatmentsDAL(this));
@@ -75,6 +78,9 @@ namespace DataAbstractionLayer
 
                 if (_medicinesDAL.IsValueCreated)
                     _medicinesDAL = null;
+
+                if (_messagesDAL.IsValueCreated)
+                    _messagesDAL = null;
 
                 if (_patientsDAL.IsValueCreated)
                     _patientsDAL = null;

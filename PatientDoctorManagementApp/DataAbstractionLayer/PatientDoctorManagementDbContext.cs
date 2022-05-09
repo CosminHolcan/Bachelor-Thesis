@@ -22,6 +22,8 @@ namespace DataAbstractionLayer
 
         public DbSet<Medicine> Medicines { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
         public DbSet<Specialization> Specializations { get; set; }
 
         public DbSet<Treatment> Treatments { get; set; }
@@ -39,6 +41,7 @@ namespace DataAbstractionLayer
         {
             modelBuilder.Entity<Treatment>().HasKey(treatment => new { treatment.PatientId, treatment.DiseaseId, treatment.DoctorId, treatment.StartingDate });
             modelBuilder.Entity<Appointment>().HasKey(appointment => new { appointment.DoctorId, appointment.PatientId, appointment.StartTime });
+            modelBuilder.Entity<Message>().HasKey(message => new { message.SenderId, message.ReceiverId, message.TimeStamp });
         }
     }
 }

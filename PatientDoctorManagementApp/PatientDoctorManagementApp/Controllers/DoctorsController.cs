@@ -30,12 +30,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             return Ok(new
             {
-                doctors = this._bllContext.Doctors.GetAllDoctors().Select((Doctor doctor) => new DoctorDTO
-                {
-                    Id = doctor.Id,
-                    Specialization = doctor.Specialization.Name,
-                    Name = doctor.FirstName + " "+ doctor.LastName
-                })
+                doctors = this._bllContext.Doctors.GetAllDoctors()
             });
         }
 

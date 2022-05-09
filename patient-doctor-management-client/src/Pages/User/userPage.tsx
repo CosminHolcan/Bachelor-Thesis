@@ -2,28 +2,37 @@ import { Pivot, PivotItem, Stack, StackItem } from "@fluentui/react"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
-import { IDoctorDTO } from "../../DTO/DoctorDTO";
+import { IPersonDescription } from "../../Models/PersonDescription";
 import { MenuItem } from "../../Enums/menuItem";
 import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 import { convertDateStringFromServerToLocal, delay } from "../../Utils/functions";
-import { AppointmentsService, AuthorizationService, DoctorsService } from "../../Utils/services";
+import { AppointmentsService, AuthorizationService, DoctorsService, MessagesService, PatientsService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { CalendarPage } from "../Calendar/calendarPage";
+import { ChatPage } from "../Chat/chatPage";
 import { styleContentArea, styleStack } from "./userPage.style";
+import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
+import { IMessage } from "../../Models/Message";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
 const CALENDAR_PAGE_ICON: string = "Calendar";
 const LOGOUT_ICON: string = "Leave";
+const CHAT_ICON: string = "CannedChat";
 
 export const UserPage = (): JSX.Element => {
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState<string>(MenuItem.MyAccount);
-    const [doctors, setDoctors] = useState<IDoctorDTO[]>([]);
+    const [doctors, setDoctors] = useState<IPersonDescription[]>([]);
+    const [patients, setPatients] = useState<IPersonDescription[]>([]);
     const [appointmentsForDoctor, setAppointmentsForDoctor] = useState<IAppointmentForDoctor[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(false);
+    const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
+
+    var userTypeString = localStorage.getItem("userType");
+    const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
     const refreshToken = (): void => {
         var token = localStorage.getItem("jwt");
@@ -40,13 +49,21 @@ export const UserPage = (): JSX.Element => {
 
     setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
 
+    const getMessagesFromDataResponse = (dataResponse: any): ICustomKeyValuePair<string, IMessage[]>[] => {
+        for (var i=0; i<dataResponse.length; i++)
+        {
+            for (var j=0; j<dataResponse[i].value.length; j++)
+                dataResponse[i].value[j].timeStamp = new Date(convertDateStringFromServerToLocal(dataResponse[i].value[j].timeStamp));
+        }
+        return dataResponse;
+    }
+
     const handleCalendarPatientClicked = (): void => {
         DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
             .then((function (response) {
                 setDoctors(response.data.doctors);
             }))
             .catch((function (error) {
-                console.log(error);
             }));
     }
 
@@ -71,6 +88,56 @@ export const UserPage = (): JSX.Element => {
             }))
     }
 
+    const handleChatClicked = (): void => {
+        setLoadingData(true);
+
+        if (isLoggedInDoctor) {
+            PatientsService.GetAllPatients(({ jwt: localStorage.getItem("jwt") ?? '' }))
+                .then((async function (response) {
+                    setPatients(response.data.patients);
+                    MessagesService.GetMessagesForUser(({ jwt: localStorage.getItem("jwt") ?? '' }))
+                        .then((async function (messagesResponse) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+
+                            setMessages(getMessagesFromDataResponse(messagesResponse.data.messages));
+                        }))
+                        .catch((async function (error) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+                        }))
+                }))
+                .catch((async function (error) {
+                    await delay(WAITING_MILLISECONDS);
+                    setLoadingData(false);
+                }))
+        }
+        else {
+            setLoadingData(true);
+
+            DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
+                .then((async function (response) {
+                    setDoctors(response.data.doctors);
+
+                    MessagesService.GetMessagesForUser(({ jwt: localStorage.getItem("jwt") ?? '' }))
+                        .then((async function (messagesResponse) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+
+                            setMessages(getMessagesFromDataResponse(messagesResponse.data.messages));
+                        }))
+                        .catch((async function (error) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+                        }))
+                }))
+                .catch((async function (error) {
+                    await delay(WAITING_MILLISECONDS);
+                    setLoadingData(false);
+                }))
+        }
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("userType");
         localStorage.removeItem("jwt");
@@ -79,6 +146,9 @@ export const UserPage = (): JSX.Element => {
 
     const onPivotItemClicked = (item: PivotItem | undefined): void => {
         if (item === undefined)
+            return;
+
+        if (selectedTab === item.props.itemKey)
             return;
 
         if (item.props.itemKey === MenuItem.Logout) {
@@ -94,8 +164,9 @@ export const UserPage = (): JSX.Element => {
             handleCalendarDoctorClicked();
         }
 
-        if (selectedTab === item.props.itemKey)
-            return;
+        if (item.props.itemKey === MenuItem.Chat) {
+            handleChatClicked();
+        }
 
         item.props.itemKey && setSelectedTab(item.props.itemKey);
     };
@@ -113,10 +184,10 @@ export const UserPage = (): JSX.Element => {
                 result.push(MenuItem.Admin);
                 break;
             case UserType.Doctor:
-                result = result.concat([MenuItem.CalendarDoctor]);
+                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat]);
                 break;
             case UserType.Patient:
-                result = result.concat([MenuItem.CalendarPatient, MenuItem.SeeMyRecipes]);
+                result = result.concat([MenuItem.CalendarPatient, MenuItem.SeeMyRecipes, MenuItem.Chat]);
                 break;
         }
 
@@ -159,6 +230,20 @@ export const UserPage = (): JSX.Element => {
                                 wrapStackStyle={{ height: "80vh" }}
                             />}
 
+                    </PivotItem>
+                )
+            case MenuItem.Chat:
+                return (
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                        {!loadingData ?
+                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} />
+                            :
+                            <LoadingSpinner
+                                height={300}
+                                width={300}
+                                labelStyle={{ fontSize: 40 }}
+                                wrapStackStyle={{ height: "80vh" }}
+                            />}
                     </PivotItem>
                 )
             case MenuItem.Logout:

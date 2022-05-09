@@ -1,7 +1,7 @@
-import { IDoctorDTO } from "../../DTO/DoctorDTO";
+import { IPersonDescription } from "../../Models/PersonDescription";
 import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 
 export interface ICalendarPageProps {
-    doctors: IDoctorDTO[];
+    doctors: IPersonDescription[];
     appointments?: IAppointmentForDoctor[];
 }

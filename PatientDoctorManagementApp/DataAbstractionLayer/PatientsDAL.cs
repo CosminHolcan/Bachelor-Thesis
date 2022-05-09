@@ -12,6 +12,11 @@ namespace DataAbstractionLayer
     {
         public PatientsDAL(DALContext dalContext) : base(dalContext) { }
 
+        public List<Patient> GetAllPatients()
+        {
+            return this._dalContext.DbContext.Patients.ToList();
+        }
+
         public Patient GetPatientByEmail(string email)
         {
             return this._dalContext.DbContext.Patients.FirstOrDefault((Patient patient) => patient.Email == email);
