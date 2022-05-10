@@ -16,6 +16,7 @@
     "multiselect-react-dropdown": "^2.0.21",
     "office-ui-fabric-react": "^7.185.3",
     "react": "^18.0.0",
+    "react-avatar": "^4.1.0",
     "react-chat-elements": "^11.0.1",
     "react-chat-elements-typescript": "^11.0.0",
     "react-dom": "^18.0.0",

@@ -5,4 +5,5 @@ import { IPersonDescription } from "../../Models/PersonDescription";
 export interface IChatPageProps {
     people: IPersonDescription[];
     messages: ICustomKeyValuePair<string, IMessage[]>[];
+    connection: signalR.HubConnection;
 }

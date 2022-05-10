@@ -7,7 +7,7 @@ namespace PatientDoctorManagementApp
 {
     public class ConnectionMapping
     {
-        private readonly Dictionary<Guid, HashSet<string>> _connections = new Dictionary<Guid, HashSet<string>>();
+        private readonly Dictionary<Guid, string> _connections = new Dictionary<Guid, string>();
 
         public int Count
         {
@@ -21,51 +21,38 @@ namespace PatientDoctorManagementApp
         {
             lock(_connections)
             {
-                HashSet<string> connections;
-                if (!_connections.TryGetValue(key, out connections))
-                {
-                    connections = new HashSet<string>();
-                    _connections.Add(key, connections);
-                }
-
-                lock (connections)
-                {
-                    connections.Add(connectionId);
-                }
+                _connections[key] = connectionId;
             }
         }
 
-        public IEnumerable<string> GetConnections(Guid key)
+        public string GetConnection(Guid key)
         {
-            HashSet<string> connections;
-            if (_connections.TryGetValue(key, out connections))
-            {
-                return connections;
-            }
+            string connection;
+            _connections.TryGetValue(key, out connection);
 
-            return Enumerable.Empty<string>();
+            return connection;
         }
 
-        public void Remove(Guid key, string connectionId)
-        {
-            lock (_connections)
-            {
-                HashSet<string> connections;
-                if (!_connections.TryGetValue(key, out connections))
-                {
-                    return;
-                }
+        //public void Remove(Guid key, string connectionId)
+        //{
+        //    lock (_connections)
+        //    {
+        //        HashSet<string> connections;
+        //        if (!_connections.TryGetValue(key, out connections))
+        //        {
+        //            return;
+        //        }
 
-                lock (connections)
-                {
-                    connections.Remove(connectionId);
+        //        lock (connections)
+        //        {
+        //            connections.Remove(connectionId);
 
-                    if (connections.Count == 0)
-                    {
-                        _connections.Remove(key);
-                    }
-                }
-            }
-        }
+        //            if (connections.Count == 0)
+        //            {
+        //                _connections.Remove(key);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

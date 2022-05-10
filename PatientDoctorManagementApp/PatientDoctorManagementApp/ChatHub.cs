@@ -39,7 +39,7 @@ namespace PatientDoctorManagementApp
 
                 this._bllContext.Messages.AddMessage(senderId: senderId, receiverId: receiverId, timeStamp: dto.TimeStamp, text: dto.Text);
 
-                return Clients.Group(receiverId.ToString()).SendAsync("ReceiveMessage", senderId.ToString(), dto.Text);
+                return Clients.Group(receiverId.ToString()).SendAsync("ReceiveMessage", senderId.ToString(), receiverId.ToString(), dto.Text, dto.TimeStamp);
             }
             catch (Exception e)
             {

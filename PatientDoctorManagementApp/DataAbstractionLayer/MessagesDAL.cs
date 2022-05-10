@@ -27,7 +27,7 @@ namespace DataAbstractionLayer
 
         public List<Message> GetMessagesByUserId(Guid id)
         {
-            return this._dalContext.DbContext.Messages.Where((Message message) => message.ReceiverId == id || message.SenderId == id).ToList();
+            return this._dalContext.DbContext.Messages.Where((Message message) => message.ReceiverId == id || message.SenderId == id).OrderBy(message => message.TimeStamp).ToList();
         }
     }
 }

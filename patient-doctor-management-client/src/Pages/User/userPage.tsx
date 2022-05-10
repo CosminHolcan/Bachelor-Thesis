@@ -1,5 +1,5 @@
 import { Pivot, PivotItem, Stack, StackItem } from "@fluentui/react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { IPersonDescription } from "../../Models/PersonDescription";
@@ -15,6 +15,7 @@ import { ChatPage } from "../Chat/chatPage";
 import { styleContentArea, styleStack } from "./userPage.style";
 import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
 import { IMessage } from "../../Models/Message";
+import * as signalR from "@microsoft/signalr";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
@@ -30,6 +31,8 @@ export const UserPage = (): JSX.Element => {
     const [appointmentsForDoctor, setAppointmentsForDoctor] = useState<IAppointmentForDoctor[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(false);
     const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
+    const [connection, setConnection] = useState<signalR.HubConnection>();
+
 
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
@@ -47,12 +50,26 @@ export const UserPage = (): JSX.Element => {
             });
     }
 
+    useEffect(() => {
+        if (connection !== undefined)
+            return;
+
+        var newConnection = new signalR.HubConnectionBuilder().withUrl("https://localhost:44368/chatHub").build();
+        newConnection.start().then(function () {
+            newConnection.invoke("ConnectToHub", { jwt: localStorage.getItem("jwt") })
+                .then(function (response) {
+                        setConnection(newConnection);
+                })
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }, [connection])
+
     setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
 
     const getMessagesFromDataResponse = (dataResponse: any): ICustomKeyValuePair<string, IMessage[]>[] => {
-        for (var i=0; i<dataResponse.length; i++)
-        {
-            for (var j=0; j<dataResponse[i].value.length; j++)
+        for (var i = 0; i < dataResponse.length; i++) {
+            for (var j = 0; j < dataResponse[i].value.length; j++)
                 dataResponse[i].value[j].timeStamp = new Date(convertDateStringFromServerToLocal(dataResponse[i].value[j].timeStamp));
         }
         return dataResponse;
@@ -235,8 +252,8 @@ export const UserPage = (): JSX.Element => {
             case MenuItem.Chat:
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
-                        {!loadingData ?
-                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} />
+                        {!loadingData && connection !== undefined ?
+                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} />
                             :
                             <LoadingSpinner
                                 height={300}
