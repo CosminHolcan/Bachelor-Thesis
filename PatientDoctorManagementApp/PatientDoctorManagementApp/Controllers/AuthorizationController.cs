@@ -80,6 +80,7 @@ namespace PatientDoctorManagementApp.Controllers
 
                 return Ok(new
                 {
+                    userId = userId,
                     jwt = newToken
                 });
             }

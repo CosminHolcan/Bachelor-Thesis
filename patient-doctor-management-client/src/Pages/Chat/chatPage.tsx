@@ -12,6 +12,7 @@ import { convertDateStringFromServerToLocal } from "../../Utils/functions";
 import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
 import { MessageList } from "../../Components/MessageList/messageList";
 import { ChatInfo } from "../../Components/ChatInfo/chatInfo";
+import { cloneDeep } from 'lodash';
 
 export const ChatPage = (props: IChatPageProps) => {
     const [textMessage, setTextMessage] = useState<string>('');
@@ -21,10 +22,8 @@ export const ChatPage = (props: IChatPageProps) => {
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
-    props.connection.on("ReceiveMessage", function async(sender, receiver, messageText, timeStamp) {
+    props.connection.on("ReceiveMessage", function (sender, receiver, messageText, timeStamp) {
         const index: number = realTimeMessages.findIndex((group) => group.key === sender);
-        // if (realTimeMessages[index].value[currentLength - 1].text == messageText)
-        //     return;
 
         const newMessage: IMessage = {
             senderId: sender,
@@ -32,7 +31,9 @@ export const ChatPage = (props: IChatPageProps) => {
             text: messageText,
             timeStamp: new Date(convertDateStringFromServerToLocal(timeStamp))
         }
-        const newMessages = { ...realTimeMessages };
+
+        const newMessages = cloneDeep(realTimeMessages);
+
         newMessages[index].value.push(newMessage);
         var currentLength: number = realTimeMessages[index].value.length;
 
@@ -53,20 +54,63 @@ export const ChatPage = (props: IChatPageProps) => {
         if (props.connection === undefined)
             return;
 
+        const timeStamp : Date = new Date();
+
         props.connection.invoke("SendMessage", {
             jwt: localStorage.getItem("jwt"),
             receiver: selectedPerson?.id ?? '',
             text: textMessage,
             timeStamp: new Date()
         })
+            .then(function (response) {
+                const index: number = realTimeMessages.findIndex((group) => group.key == selectedPerson?.id ?? '');
+
+                const newMessage: IMessage = {
+                    senderId: props.currentUserId,
+                    receiverId: selectedPerson?.id ?? '',
+                    text: textMessage,
+                    timeStamp: timeStamp
+                }
+        
+                const newMessages = cloneDeep(realTimeMessages);
+        
+                newMessages[index].value.push(newMessage);
+                setRealTimeMessages(newMessages);
+
+            })
             .catch(function (err) {
                 return console.error(err.toString());
             });
     }
 
+    const getChatInfos = (): JSX.Element => {
+        return (
+            <>
+                {realTimeMessages.map((group) => {
+                    const userName: string = props.people.find((person) => person.id === group.key)?.name ?? '';
+
+                    if (userName == '')
+                        return;
+
+                    const userId: string = props.people.find((person) => person.id === group.key)?.id ?? '';
+                    const length: number = group.value.length;
+                    return (
+                        <ChatInfo
+                            key={userId}
+                            userName={userName}
+                            userId={userId}
+                            lastMessage={group.value[length - 1].text}
+                            lastMessageSentByCurrentUser={group.value[length - 1].senderId == props.currentUserId}
+                            timeStamp={group.value[length - 1].timeStamp} />
+                    )
+                })}
+            </>
+        )
+    }
+
     return (
         <Stack horizontal style={{ marginTop: "10vh" }}>
-            <Stack style={{ textAlign: "center", width: "40vw", height: "80vh" }}>
+            <Stack style={{ width: "40vw", height: "80vh" }}>
                 <StackItem style={{ height: "10vh" }}>
                     <Multiselect
                         singleSelect={true}
@@ -77,15 +121,7 @@ export const ChatPage = (props: IChatPageProps) => {
                     />
                 </StackItem>
                 <StackItem style={{ height: "70vh", overflowY: "scroll", overflowX: "hidden" }}>
-                    <ChatInfo />
-                    <ChatInfo />
-
-                    <ChatInfo />
-                    <ChatInfo />
-                    <ChatInfo />
-                    <ChatInfo />
-
-
+                    {getChatInfos()}
                 </StackItem>
             </Stack>
             <Stack style={{ textAlign: "center", width: "60vw", height: "60vh" }}>

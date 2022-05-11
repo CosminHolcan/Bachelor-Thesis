@@ -32,6 +32,7 @@ export const UserPage = (): JSX.Element => {
     const [loadingData, setLoadingData] = useState<boolean>(false);
     const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
     const [connection, setConnection] = useState<signalR.HubConnection>();
+    const [currentUserId, setCurrentUserId] = useState<string>('');
 
 
     var userTypeString = localStorage.getItem("userType");
@@ -41,6 +42,7 @@ export const UserPage = (): JSX.Element => {
         var token = localStorage.getItem("jwt");
         token && AuthorizationService.RefreshToken({ jwt: token })
             .then((response) => {
+                setCurrentUserId(response.data.userId);
                 localStorage.setItem("jwt", response.data.jwt);
             })
             .catch(function (error) {
@@ -253,7 +255,7 @@ export const UserPage = (): JSX.Element => {
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                         {!loadingData && connection !== undefined ?
-                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} />
+                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} currentUserId={currentUserId}/>
                             :
                             <LoadingSpinner
                                 height={300}
