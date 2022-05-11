@@ -6,7 +6,7 @@ import * as signalR from "@microsoft/signalr";
 import Multiselect from "multiselect-react-dropdown";
 import { UserType } from "../../Enums/userTypes";
 import { IPersonDescription } from "../../Models/PersonDescription";
-import { values } from "office-ui-fabric-react";
+import { Icon, values } from "office-ui-fabric-react";
 import { IMessage } from "../../Models/Message";
 import { convertDateStringFromServerToLocal } from "../../Utils/functions";
 import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
@@ -14,10 +14,24 @@ import { MessageList } from "../../Components/MessageList/messageList";
 import { ChatInfo } from "../../Components/ChatInfo/chatInfo";
 import { cloneDeep } from 'lodash';
 
+const SEND_ICON: string = "Send";
+
 export const ChatPage = (props: IChatPageProps) => {
+    const [shownPeople, setShownPeople] = useState<IPersonDescription[]>(props.people);
     const [textMessage, setTextMessage] = useState<string>('');
-    const [selectedPerson, setSelectedPerson] = useState<IPersonDescription>();
+    const [selectedPersonId, setSelectedPersonId] = useState<string>('');
     const [realTimeMessages, setRealTimeMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>(props.messages);
+    const [selectedPerson, setSelectedPerson] = useState<IPersonDescription>();
+
+    useEffect(() => {
+        if (selectedPersonId === undefined)
+            return;
+
+        if (selectedPerson === undefined || selectedPerson.id !== selectedPersonId) {
+            const newSelectedPerson = props.people.find((person) => person.id === selectedPersonId);
+            setSelectedPerson(newSelectedPerson);
+        }
+    }, [selectedPersonId])
 
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
@@ -50,30 +64,30 @@ export const ChatPage = (props: IChatPageProps) => {
         setRealTimeMessages(newMessages);
     });
 
-    const onButtonClicked = () => {
-        if (props.connection === undefined)
+    const onSendMessageClicked = () => {
+        if (props.connection === undefined || selectedPersonId === '')
             return;
 
-        const timeStamp : Date = new Date();
+        const timeStamp: Date = new Date();
 
         props.connection.invoke("SendMessage", {
             jwt: localStorage.getItem("jwt"),
-            receiver: selectedPerson?.id ?? '',
+            receiver: selectedPersonId ?? '',
             text: textMessage,
             timeStamp: new Date()
         })
             .then(function (response) {
-                const index: number = realTimeMessages.findIndex((group) => group.key == selectedPerson?.id ?? '');
+                const index: number = realTimeMessages.findIndex((group) => group.key == selectedPersonId);
 
                 const newMessage: IMessage = {
                     senderId: props.currentUserId,
-                    receiverId: selectedPerson?.id ?? '',
+                    receiverId: selectedPersonId,
                     text: textMessage,
                     timeStamp: timeStamp
                 }
-        
+
                 const newMessages = cloneDeep(realTimeMessages);
-        
+
                 newMessages[index].value.push(newMessage);
                 setRealTimeMessages(newMessages);
 
@@ -96,6 +110,7 @@ export const ChatPage = (props: IChatPageProps) => {
                     const length: number = group.value.length;
                     return (
                         <ChatInfo
+                            onClick={(userId: string) => { setSelectedPersonId(userId) }}
                             key={userId}
                             userName={userName}
                             userId={userId}
@@ -108,32 +123,52 @@ export const ChatPage = (props: IChatPageProps) => {
         )
     }
 
+    const getSelectedPersonMessages = (): IMessage[] => {
+        if (selectedPersonId === '')
+            return [];
+
+        const index: number = realTimeMessages.findIndex((group) => group.key == selectedPersonId);
+
+        return realTimeMessages[index].value;
+    }
+
     return (
         <Stack horizontal style={{ marginTop: "10vh" }}>
             <Stack style={{ width: "40vw", height: "80vh" }}>
-                <StackItem style={{ height: "10vh" }}>
+                <StackItem>
                     <Multiselect
                         singleSelect={true}
-                        options={props.people}
+                        options={shownPeople}
+                        selectedValues={selectedPerson !== undefined && [selectedPerson]}
                         groupBy={isLoggedInDoctor ? undefined : "specialization"}
-                        onSelect={(selectedList, selectedItem) => { setSelectedPerson(selectedItem) }}
+                        onSelect={(selectedList, selectedItem) => { setSelectedPersonId(selectedItem.id) }}
                         displayValue="name"
                     />
                 </StackItem>
-                <StackItem style={{ height: "70vh", overflowY: "scroll", overflowX: "hidden" }}>
+                <StackItem style={{ height: "80vh", overflowY: "scroll", overflowX: "hidden" }}>
                     {getChatInfos()}
                 </StackItem>
             </Stack>
-            <Stack style={{ textAlign: "center", width: "60vw", height: "60vh" }}>
-                <StackItem >
-                    <MessageList messages={realTimeMessages[0].value} />
+            <Stack style={{ textAlign: "center", width: "60vw", height: "80vh", borderTop: '1px solid black', borderLeft: '1px solid black' }}>
+                <StackItem style={{ height: "70.3vh" }}>
+                    <MessageList messages={getSelectedPersonMessages()} />
                 </StackItem>
-                <StackItem>
-                    <TextField
-                        onChange={(e, newValue) => newValue && setTextMessage(newValue)}
-                    />
-                    <button onClick={onButtonClicked}>Press here</button>
-                </StackItem>
+                <Stack style={{ width: "100%", height: "8.7vh", marginTop: "1vh" }} horizontal>
+                    <StackItem style={{ width: "90%" }}>
+                        <TextField
+                            rows={2}
+                            multiline={true}
+                            onChange={(e, newValue) => newValue && setTextMessage(newValue)}
+                        />
+                    </StackItem>
+                    <Stack style={{ width: "10%", height: "100%", border: '1px solid black' }} verticalAlign="center" horizontalAlign="center">
+                        <Icon
+                            style={{ fontSize: 40 }}
+                            iconName={SEND_ICON}
+                            onClick={onSendMessageClicked}
+                        />
+                    </Stack>
+                </Stack>
             </Stack>
         </Stack>
     )

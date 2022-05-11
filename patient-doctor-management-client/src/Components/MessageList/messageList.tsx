@@ -5,7 +5,7 @@ import { IMessageListProps } from "./messageList.types"
 
 export const MessageList = (props: IMessageListProps): JSX.Element => {
     return (
-        <ul style={{ overflowY: "scroll", overflowX: "hidden", height: "60vh" }}>
+        <ul style={{ overflowY: "scroll", overflowX: "hidden", height: "95%" }}>
             {props.messages.map(message => {
                 return (
                     <li key={message.timeStamp.getTime()}>

@@ -4,4 +4,5 @@ export interface IChatInfoProps {
     lastMessage: string;
     timeStamp: Date;
     lastMessageSentByCurrentUser: boolean;
+    onClick : (userId: string) => void;
 }

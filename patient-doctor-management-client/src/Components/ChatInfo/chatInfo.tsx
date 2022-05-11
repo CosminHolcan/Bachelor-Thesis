@@ -5,7 +5,7 @@ import { IChatInfoProps } from "./chatInfo.types";
 
 export const ChatInfo = (props: IChatInfoProps): JSX.Element => {
     return (
-        <Stack horizontal style={{ width: "40vw", marginBottom: "2vh" }}>
+        <Stack horizontal style={{ width: "40vw", marginTop: "1vh", marginBottom: "1vh" }} onClick={() => props.onClick(props.userId)}>
             <Avatar round={true} name={props.userName} />
             <Stack style={{ marginLeft: "2vw" }}>
                 <StackItem>

@@ -137,7 +137,6 @@ export const UserPage = (): JSX.Element => {
             DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
                 .then((async function (response) {
                     setDoctors(response.data.doctors);
-
                     MessagesService.GetMessagesForUser(({ jwt: localStorage.getItem("jwt") ?? '' }))
                         .then((async function (messagesResponse) {
                             await delay(WAITING_MILLISECONDS);
@@ -267,7 +266,7 @@ export const UserPage = (): JSX.Element => {
                 )
             case MenuItem.Logout:
                 return (
-                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: "62vw", fontSize: 20 } }} />
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: "58vw", fontSize: 20 } }} />
                 )
         }
     };
