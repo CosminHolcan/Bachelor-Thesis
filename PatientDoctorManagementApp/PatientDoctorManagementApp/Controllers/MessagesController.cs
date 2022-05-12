@@ -23,7 +23,7 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpPost("forUser")]
-        public IActionResult UpdateMedicine(BaseDTO dto)
+        public IActionResult GetMessagesForUser(BaseDTO dto)
         {
             JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
             Guid userId = new Guid(token.Issuer);

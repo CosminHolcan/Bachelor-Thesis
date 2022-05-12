@@ -16,6 +16,7 @@ import { styleContentArea, styleStack } from "./userPage.style";
 import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
 import { IMessage } from "../../Models/Message";
 import * as signalR from "@microsoft/signalr";
+import { IUserPageProps } from "./userPage.types";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
@@ -23,7 +24,7 @@ const CALENDAR_PAGE_ICON: string = "Calendar";
 const LOGOUT_ICON: string = "Leave";
 const CHAT_ICON: string = "CannedChat";
 
-export const UserPage = (): JSX.Element => {
+export const UserPage = (props: IUserPageProps): JSX.Element => {
     const navigate = useNavigate();
     const [selectedTab, setSelectedTab] = useState<string>(MenuItem.MyAccount);
     const [doctors, setDoctors] = useState<IPersonDescription[]>([]);
@@ -33,6 +34,10 @@ export const UserPage = (): JSX.Element => {
     const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
     const [connection, setConnection] = useState<signalR.HubConnection>();
     const [currentUserId, setCurrentUserId] = useState<string>('');
+
+    useEffect(() => {
+        setCurrentUserId(props.currentUserId);
+    }, [props.currentUserId])
 
 
     var userTypeString = localStorage.getItem("userType");
@@ -60,7 +65,7 @@ export const UserPage = (): JSX.Element => {
         newConnection.start().then(function () {
             newConnection.invoke("ConnectToHub", { jwt: localStorage.getItem("jwt") })
                 .then(function (response) {
-                        setConnection(newConnection);
+                    setConnection(newConnection);
                 })
         }).catch(function (err) {
             return console.error(err.toString());
@@ -254,7 +259,7 @@ export const UserPage = (): JSX.Element => {
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                         {!loadingData && connection !== undefined ?
-                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} currentUserId={currentUserId}/>
+                            <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} currentUserId={currentUserId} />
                             :
                             <LoadingSpinner
                                 height={300}

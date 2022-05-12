@@ -14,6 +14,7 @@ import { delay } from './Utils/functions';
 import { LoadingSpinner } from './Components/LoadingSpinner/loadingSpinner';
 
 export const App = (): JSX.Element => {
+  const [currentUserId, setCurrentUserId] = useState<string>('');
   const isUserJWTTokenOnStorage = (): boolean => {
     return localStorage.getItem("jwt") != null;
   }
@@ -30,6 +31,7 @@ export const App = (): JSX.Element => {
   if (token != null) {
     AuthorizationService.RefreshToken({ jwt: token })
       .then(async (response) => {
+        setCurrentUserId(response.data.userId);
         localStorage.setItem("jwt", response.data.jwt);
         await delay(WAITING_MILLISECONDS);
         setShowLoadingSpinner(false);
@@ -55,10 +57,10 @@ export const App = (): JSX.Element => {
         :
         <Router>
           <Routes>
-            <Route path='/' element={isUserJWTTokenOnStorage() ? <UserPage /> : <LoginPage />} />
+            <Route path='/' element={isUserJWTTokenOnStorage() ? <UserPage currentUserId={currentUserId}/> : <LoginPage />} />
             <Route path='login' element={<LoginPage />} />
             <Route path='register' element={<RegisterPage />} />
-            <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage />} />} />
+            <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage currentUserId={currentUserId}/>} />} />
           </Routes>
         </Router>
       }

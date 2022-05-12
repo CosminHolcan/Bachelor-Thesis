@@ -17,7 +17,6 @@ import { cloneDeep } from 'lodash';
 const SEND_ICON: string = "Send";
 
 export const ChatPage = (props: IChatPageProps) => {
-    const [shownPeople, setShownPeople] = useState<IPersonDescription[]>(props.people);
     const [textMessage, setTextMessage] = useState<string>('');
     const [selectedPersonId, setSelectedPersonId] = useState<string>('');
     const [realTimeMessages, setRealTimeMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>(props.messages);
@@ -33,12 +32,19 @@ export const ChatPage = (props: IChatPageProps) => {
         }
     }, [selectedPersonId])
 
+    useEffect(() => {
+        var newMessages: ICustomKeyValuePair<string, IMessage[]>[] = cloneDeep(realTimeMessages);
+        newMessages = newMessages.sort((group1, group2) =>
+            Math.max(...group1.value.map(message => message.timeStamp.getTime())) < Math.max(...group2.value.map(message => message.timeStamp.getTime()))
+                ? 1 : -1);
+        setRealTimeMessages(newMessages);
+    }, [props.messages])
+
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
     props.connection.on("ReceiveMessage", function (sender, receiver, messageText, timeStamp) {
-        const index: number = realTimeMessages.findIndex((group) => group.key === sender);
-
+        var index: number = realTimeMessages.findIndex((group) => group.key === sender);
         const newMessage: IMessage = {
             senderId: sender,
             receiverId: receiver,
@@ -48,8 +54,18 @@ export const ChatPage = (props: IChatPageProps) => {
 
         const newMessages = cloneDeep(realTimeMessages);
 
-        newMessages[index].value.push(newMessage);
-        var currentLength: number = realTimeMessages[index].value.length;
+        if (index === -1) {
+            newMessages.push({
+                key: sender,
+                value: [newMessage]
+            });
+            index = newMessages.length-1;
+        }
+        else {
+            newMessages[index].value.push(newMessage);
+        }
+
+        var currentLength: number = newMessages[index].value.length;
 
         if (currentLength < 2) {
             setRealTimeMessages(newMessages);
@@ -87,12 +103,21 @@ export const ChatPage = (props: IChatPageProps) => {
                 }
 
                 const newMessages = cloneDeep(realTimeMessages);
+                if (index === -1) {
+                    newMessages.push({
+                        key: selectedPersonId,
+                        value: [newMessage]
+                    });
+                }
+                else {
+                    newMessages[index].value.push(newMessage);
+                }
 
-                newMessages[index].value.push(newMessage);
                 setRealTimeMessages(newMessages);
-
+                setTextMessage('');
             })
             .catch(function (err) {
+                setTextMessage('');
                 return console.error(err.toString());
             });
     }
@@ -128,6 +153,8 @@ export const ChatPage = (props: IChatPageProps) => {
             return [];
 
         const index: number = realTimeMessages.findIndex((group) => group.key == selectedPersonId);
+        if (index === -1)
+            return [];
 
         return realTimeMessages[index].value;
     }
@@ -138,7 +165,7 @@ export const ChatPage = (props: IChatPageProps) => {
                 <StackItem>
                     <Multiselect
                         singleSelect={true}
-                        options={shownPeople}
+                        options={props.people}
                         selectedValues={selectedPerson !== undefined && [selectedPerson]}
                         groupBy={isLoggedInDoctor ? undefined : "specialization"}
                         onSelect={(selectedList, selectedItem) => { setSelectedPersonId(selectedItem.id) }}
@@ -149,14 +176,15 @@ export const ChatPage = (props: IChatPageProps) => {
                     {getChatInfos()}
                 </StackItem>
             </Stack>
-            <Stack style={{ textAlign: "center", width: "60vw", height: "80vh", borderTop: '1px solid black', borderLeft: '1px solid black' }}>
+            <Stack style={{ width: "60vw", height: "80vh", borderTop: '1px solid black', borderLeft: '1px solid black' }}>
                 <StackItem style={{ height: "70.3vh" }}>
-                    <MessageList messages={getSelectedPersonMessages()} />
+                    <MessageList messages={getSelectedPersonMessages()} currentUserId={props.currentUserId} />
                 </StackItem>
                 <Stack style={{ width: "100%", height: "8.7vh", marginTop: "1vh" }} horizontal>
                     <StackItem style={{ width: "90%" }}>
                         <TextField
                             rows={2}
+                            value={textMessage}
                             multiline={true}
                             onChange={(e, newValue) => newValue && setTextMessage(newValue)}
                         />

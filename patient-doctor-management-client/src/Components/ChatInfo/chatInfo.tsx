@@ -22,7 +22,7 @@ export const ChatInfo = (props: IChatInfoProps): JSX.Element => {
                             }
                         </Label>
                     </StackItem>
-                    <StackItem style={{ marginLeft: "3vw", width: "5vw" }}>
+                    <StackItem style={{ marginLeft: twoDatesHaveTheSameDay(props.timeStamp, new Date()) ? "3vw" : "2vw", width: "5vw" }}>
                         <Label>
                             {twoDatesHaveTheSameDay(props.timeStamp, new Date())
                                 ? props.timeStamp.getHours() + ":" + props.timeStamp.getMinutes()
