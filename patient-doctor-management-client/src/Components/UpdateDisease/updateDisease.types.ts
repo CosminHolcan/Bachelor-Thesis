@@ -1,6 +1,6 @@
-import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
+import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 
 export interface IUpdateDiseaseProps extends IAdministrationFeatureProps {
-    diseases: IBaseModelNameAndDescription[];
+    diseases: IBaseModelWithDescription[];
 }

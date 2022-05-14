@@ -12,7 +12,7 @@ import { UpdateSpecialization } from "../../Components/UpdateSpecialization/upda
 import { AdminFeatures } from "../../Enums/adminFeatures";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
-import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
+import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { delay } from "../../Utils/functions";
 import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
 import { styleStack } from "./adminPage.styles"
@@ -21,8 +21,8 @@ export const AdminPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [specializations, setSpecializations] = useState<IBaseModel[]>([]);
-    const [diseases, setDiseases] = useState<IBaseModelNameAndDescription[]>([]);
-    const [medicines, setMedicines] = useState<IBaseModelNameAndDescription[]>([]);
+    const [diseases, setDiseases] = useState<IBaseModelWithDescription[]>([]);
+    const [medicines, setMedicines] = useState<IBaseModelWithDescription[]>([]);
     const [loadingData, setLoadingData] = useState<boolean>(false);
 
     const onSuccess = (): void => {

@@ -9,6 +9,9 @@ import { IAddDoctorDTO } from "../DTO/AddDoctor";
 import { IBaseDTO } from "../DTO/BaseDTO";
 import { IAddAppointmentDTO } from "../DTO/AddAppointmentDTO";
 import { IGetAppointmentByDoctorForPatientDTO } from "../DTO/GetAppointmentByDoctorForPatientDTO";
+import { IGetFeedbacksByDoctorDTO } from "../DTO/GetFeedbacksByDoctorDTO";
+import { IGetFeedbacksByPatientDTO } from "../DTO/GetFeedbacksByPatientDTO";
+import { IAddFeedbackDTO } from "../DTO/AddFeedbackDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -55,6 +58,10 @@ export namespace DiseasesService {
 
     export const GetAllDiseases = (): Promise<AxiosResponse<any, any>> => {
         return axios.get(`${BASE_URL}Diseases/all`);
+    }
+
+    export const GetAllDiseasesWithoutDescription = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Diseases/allWithoutDescription`, dto);
     }
 }
 
@@ -105,5 +112,19 @@ export namespace AppointmentsService {
 export namespace MessagesService {
     export const GetMessagesForUser = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Messages/forUser`, dto);
+    }
+}
+
+export namespace FeedbacksService {
+    export const GetFeedbacksByPatient = (dto: IGetFeedbacksByPatientDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Feedbacks/byPatient`, dto)
+    }
+
+    export const GetFeedbacksByDoctor = (dto: IGetFeedbacksByDoctorDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Feedbacks/byDoctor`, dto)
+    }
+
+    export const AddFeedback = (dto: IAddFeedbackDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Feedbacks/add`, dto)
     }
 }

@@ -57,9 +57,9 @@ export const App = (): JSX.Element => {
         :
         <Router>
           <Routes>
-            <Route path='/' element={isUserJWTTokenOnStorage() ? <UserPage currentUserId={currentUserId}/> : <LoginPage />} />
-            <Route path='login' element={<LoginPage />} />
-            <Route path='register' element={<RegisterPage />} />
+            <Route path='/' element={isUserJWTTokenOnStorage() ? <UserPage currentUserId={currentUserId}/> : <LoginPage  setCurrentUserId={setCurrentUserId}/>} />
+            <Route path='login' element={<LoginPage setCurrentUserId={setCurrentUserId}/>} />
+            <Route path='register' element={<RegisterPage setCurrentUserId={setCurrentUserId}/>} />
             <Route path='patientDoctorManagement' element={<PrivateRoute {...defaultProtectedRouteProps} outlet={<UserPage currentUserId={currentUserId}/>} />} />
           </Routes>
         </Router>

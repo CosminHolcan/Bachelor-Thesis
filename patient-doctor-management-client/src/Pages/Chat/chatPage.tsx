@@ -18,8 +18,8 @@ const SEND_ICON: string = "Send";
 
 export const ChatPage = (props: IChatPageProps) => {
     const [textMessage, setTextMessage] = useState<string>('');
-    const [selectedPersonId, setSelectedPersonId] = useState<string>('');
     const [realTimeMessages, setRealTimeMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>(props.messages);
+    const [selectedPersonId, setSelectedPersonId] = useState<string>('');
     const [selectedPerson, setSelectedPerson] = useState<IPersonDescription>();
 
     useEffect(() => {

@@ -3,8 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ILoginDTO } from "../../DTO/LoginDTO";
 import { AuthorizationService } from "../../Utils/services";
+import { ILoginPageProps } from "./loginPage.types";
 
-export const LoginPage = (): JSX.Element => {
+export const LoginPage = (props: ILoginPageProps): JSX.Element => {
     const navigate = useNavigate();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -20,6 +21,7 @@ export const LoginPage = (): JSX.Element => {
             .then(function (response) {
                 localStorage.setItem("jwt", response.data.jwt);
                 localStorage.setItem("userType", response.data.userType);
+                props.setCurrentUserId(response.data.userId);
                 navigate("/patientDoctorManagement");
             })
             .catch(function (error) {

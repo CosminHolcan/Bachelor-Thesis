@@ -1,5 +1,5 @@
 import { IBaseModel } from "./BaseModel";
 
-export interface IBaseModelNameAndDescription extends IBaseModel {
+export interface IBaseModelWithDescription extends IBaseModel {
     description: string;
 }

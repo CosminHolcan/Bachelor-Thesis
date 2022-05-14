@@ -8,7 +8,7 @@ import { IUpdateBaseDTO } from "../../DTO/UpdateBaseDTO";
 import { IUpdateSpecializationDTO } from "../../DTO/UpdateSpecializationDTO";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
-import { IBaseModelNameAndDescription } from "../../Models/BaseModelNameAndDescription";
+import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { DiseasesService, SpecializationService } from "../../Utils/services";
@@ -16,7 +16,7 @@ import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { IUpdateDiseaseProps } from "./updateDisease.types";
 
 export const UpdateDisease = (props: IUpdateDiseaseProps): JSX.Element => {
-    const [selectedDisease, setSelectedDisease] = useState<IBaseModelNameAndDescription>();
+    const [selectedDisease, setSelectedDisease] = useState<IBaseModelWithDescription>();
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [processingRequest, setProcessingRequest] = useState<boolean>(false);

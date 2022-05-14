@@ -24,6 +24,8 @@ namespace DataAbstractionLayer
 
         public DbSet<Message> Messages { get; set; }
 
+        public DbSet<Feedback> Feedbacks { get; set; }
+
         public DbSet<Specialization> Specializations { get; set; }
 
         public DbSet<Treatment> Treatments { get; set; }
@@ -40,6 +42,7 @@ namespace DataAbstractionLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Treatment>().HasKey(treatment => new { treatment.PatientId, treatment.DiseaseId, treatment.DoctorId, treatment.StartingDate });
+            modelBuilder.Entity<Feedback>().HasKey(feedback => new { feedback.PatientId, feedback.DiseaseId, feedback.DoctorId, feedback.GivenByPatient, feedback.TimeStamp });
             modelBuilder.Entity<Appointment>().HasKey(appointment => new { appointment.DoctorId, appointment.PatientId, appointment.StartTime });
             modelBuilder.Entity<Message>().HasKey(message => new { message.SenderId, message.ReceiverId, message.TimeStamp });
         }

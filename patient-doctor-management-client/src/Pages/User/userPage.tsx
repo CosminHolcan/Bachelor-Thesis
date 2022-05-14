@@ -1,6 +1,6 @@
 import { Pivot, PivotItem, Stack, StackItem } from "@fluentui/react"
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
 import { IPersonDescription } from "../../Models/PersonDescription";
 import { MenuItem } from "../../Enums/menuItem";
@@ -8,7 +8,7 @@ import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 import { convertDateStringFromServerToLocal, delay } from "../../Utils/functions";
-import { AppointmentsService, AuthorizationService, DoctorsService, MessagesService, PatientsService } from "../../Utils/services";
+import { AppointmentsService, AuthorizationService, DiseasesService, DoctorsService, MessagesService, PatientsService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { CalendarPage } from "../Calendar/calendarPage";
 import { ChatPage } from "../Chat/chatPage";
@@ -17,12 +17,17 @@ import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair";
 import { IMessage } from "../../Models/Message";
 import * as signalR from "@microsoft/signalr";
 import { IUserPageProps } from "./userPage.types";
+import { FeedbackPagePatientView } from "../Feedback/feedbackPagePatientView";
+import { IBaseModel } from "../../Models/BaseModel";
+import { FeedbackPageDoctorView } from "../Feedback/feedbackPageDoctorView";
+import { IBaseDTO } from "../../DTO/BaseDTO";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
 const CALENDAR_PAGE_ICON: string = "Calendar";
 const LOGOUT_ICON: string = "Leave";
 const CHAT_ICON: string = "CannedChat";
+const FEEDBACK_ICON: string = "Feedback";
 
 export const UserPage = (props: IUserPageProps): JSX.Element => {
     const navigate = useNavigate();
@@ -34,11 +39,11 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
     const [connection, setConnection] = useState<signalR.HubConnection>();
     const [currentUserId, setCurrentUserId] = useState<string>('');
+    const [diseases, setDiseases] = useState<IBaseModel[]>([]);
 
     useEffect(() => {
         setCurrentUserId(props.currentUserId);
     }, [props.currentUserId])
-
 
     var userTypeString = localStorage.getItem("userType");
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
@@ -161,6 +166,58 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
         }
     }
 
+    const handleFeedbackPatientViewClicked = (): void => {
+        const baseDTO: IBaseDTO = {
+            jwt: localStorage.getItem("jwt") ?? ''
+        };
+
+        DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
+                .then((async function (response) {
+                    setDoctors(response.data.doctors);
+                    DiseasesService.GetAllDiseasesWithoutDescription(baseDTO)
+                        .then((async function (diseasesResponse) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+
+                            setDiseases(diseasesResponse.data.diseases);
+                        }))
+                        .catch((async function (error) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+                        }))
+                }))
+                .catch((async function (error) {
+                    await delay(WAITING_MILLISECONDS);
+                    setLoadingData(false);
+                }))
+    }
+
+    const handleFeedbackDoctorViewClicked = (): void => {
+        const baseDTO: IBaseDTO = {
+            jwt: localStorage.getItem("jwt") ?? ''
+        };
+
+        PatientsService.GetAllPatients({ jwt: localStorage.getItem("jwt") ?? '' })
+                .then((async function (response) {
+                    setPatients(response.data.patients);
+                    DiseasesService.GetAllDiseasesWithoutDescription(baseDTO)
+                        .then((async function (diseasesResponse) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+
+                            setDiseases(diseasesResponse.data.diseases);
+                        }))
+                        .catch((async function (error) {
+                            await delay(WAITING_MILLISECONDS);
+                            setLoadingData(false);
+                        }))
+                }))
+                .catch((async function (error) {
+                    await delay(WAITING_MILLISECONDS);
+                    setLoadingData(false);
+                }))
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("userType");
         localStorage.removeItem("jwt");
@@ -191,6 +248,14 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             handleChatClicked();
         }
 
+        if (item.props.itemKey === MenuItem.Feedback && !isLoggedInDoctor) {
+            handleFeedbackPatientViewClicked();
+        }
+
+        if (item.props.itemKey === MenuItem.Feedback && isLoggedInDoctor) {
+            handleFeedbackDoctorViewClicked();
+        }
+
         item.props.itemKey && setSelectedTab(item.props.itemKey);
     };
 
@@ -207,10 +272,10 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                 result.push(MenuItem.Admin);
                 break;
             case UserType.Doctor:
-                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat]);
+                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat, MenuItem.Feedback]);
                 break;
             case UserType.Patient:
-                result = result.concat([MenuItem.CalendarPatient, MenuItem.SeeMyRecipes, MenuItem.Chat]);
+                result = result.concat([MenuItem.CalendarPatient, MenuItem.Chat, MenuItem.Feedback]);
                 break;
         }
 
@@ -269,9 +334,46 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                             />}
                     </PivotItem>
                 )
+            case MenuItem.Feedback:
+                if (!isLoggedInDoctor)
+                    return (
+                        <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                            {!loadingData ?
+                                <FeedbackPagePatientView
+                                    diseases={diseases}
+                                    doctors={doctors}
+                                    currentUserId={currentUserId}
+                                />
+                                :
+                                <LoadingSpinner
+                                    height={300}
+                                    width={300}
+                                    labelStyle={{ fontSize: 40 }}
+                                    wrapStackStyle={{ height: "80vh" }}
+                                />}
+                        </PivotItem>
+                    )
+                else
+                return (
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                            {!loadingData ?
+                                <FeedbackPageDoctorView
+                                    diseases={diseases}
+                                    patients={patients}
+                                    currentUserId={currentUserId}
+                                />
+                                :
+                                <LoadingSpinner
+                                    height={300}
+                                    width={300}
+                                    labelStyle={{ fontSize: 40 }}
+                                    wrapStackStyle={{ height: "80vh" }}
+                                />}
+                        </PivotItem>
+                )
             case MenuItem.Logout:
                 return (
-                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: "58vw", fontSize: 20 } }} />
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: "50vw", fontSize: 20 } }} />
                 )
         }
     };

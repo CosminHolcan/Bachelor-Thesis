@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer;
+using BusinessLogicLayer.Models;
 using DataAbstractionLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using PatientDoctorManagementApp.DTO;
@@ -12,7 +13,7 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class DiseasesController: ControllerBase
+    public class DiseasesController : ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
@@ -59,6 +60,18 @@ namespace PatientDoctorManagementApp.Controllers
         public List<Disease> GetAllDiseases()
         {
             return this._bllContext.Diseases.GetAllDiseases();
+        }
+
+        [HttpPost("allWithoutDescription")]
+        public IActionResult GetAllDiseasesWithoutDescription(BaseDTO dto)
+        {
+            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+            Guid userId = new Guid(token.Issuer);
+
+            return Ok(new
+            {
+                diseases = this._bllContext.Diseases.GetAllDiseasesWithoutDescription()
+            });
         }
 
         [HttpPost("update")]

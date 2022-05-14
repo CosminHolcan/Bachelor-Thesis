@@ -127,7 +127,8 @@ namespace PatientDoctorManagementApp.Controllers
             return Ok(new
             {
                 userType = user.UserType,
-                jwt = jwtString
+                jwt = jwtString,
+                userId = user.Id
             });
         }
 
