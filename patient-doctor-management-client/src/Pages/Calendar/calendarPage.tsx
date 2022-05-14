@@ -76,8 +76,8 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
         AppointmentsService.GetAppointmentsByDoctorForPatient(dto)
             .then(async (response) => {
                 await delay(WAITING_MILLISECONDS);
-                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(time));
-                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(time));
+                const patientAppointments: Date[] = response.data.appointments.patientAppointments.map((time: string) => new Date(convertDateStringFromServerToLocal(time)));
+                const otherAppointments: Date[] = response.data.appointments.otherAppointments.map((time: string) => new Date(convertDateStringFromServerToLocal(time)));
                 const newAppointments: IAppointmentsByDoctorForPatient = {
                     patientAppointments: patientAppointments,
                     otherAppointments: otherAppointments
