@@ -24,17 +24,13 @@ namespace BusinessLogicLayer
             this._bllContext.DALContext.Diseases.UpdateDisease(disease);
         }
 
-        public List<Disease> GetAllDiseases()
-        {
-            return this._bllContext.DALContext.Diseases.GetAllDiseases();
-        }
-
-        public List<BaseModel> GetAllDiseasesWithoutDescription()
+        public List<BaseModel> GetAllDiseases()
         {
             return this._bllContext.DALContext.Diseases.GetAllDiseases().Select(disease => new BaseModel()
             {
                 Id = disease.Id,
-                Name = disease.Name
+                Name = disease.Name,
+                Description = disease.Description
             }).ToList();
         }
 

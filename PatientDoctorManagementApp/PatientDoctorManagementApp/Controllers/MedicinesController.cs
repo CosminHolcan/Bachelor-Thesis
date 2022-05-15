@@ -55,10 +55,16 @@ namespace PatientDoctorManagementApp.Controllers
             }
         }
 
-        [HttpGet("all")]
-        public List<Medicine> GetAllMedicines()
+        [HttpPost("all")]
+        public IActionResult GetAllMedicines(BaseDTO dto)
         {
-            return this._bllContext.Medicines.GetAllMedicines();
+            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+            Guid userId = new Guid(token.Issuer);
+
+            return Ok(new
+            {
+                medicines = this._bllContext.Medicines.GetAllMedicines()
+            });
         }
 
         [HttpPost("update")]

@@ -22,5 +22,7 @@ namespace DataAbstractionLayer.Models
         public virtual ICollection<Medicine> Medicines { get; set; }
 
         public DateTime StartingDate { get; set; }
+
+        public string Observations { get; set; }
     }
 }

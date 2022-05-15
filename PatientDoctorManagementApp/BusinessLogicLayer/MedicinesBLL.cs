@@ -1,4 +1,5 @@
-﻿using DataAbstractionLayer.Models;
+﻿using BusinessLogicLayer.Models;
+using DataAbstractionLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,14 @@ namespace BusinessLogicLayer
             this._bllContext.DALContext.Medicines.UpdateMedicine(medicine);
         }
 
-        public List<Medicine> GetAllMedicines()
+        public List<BaseModel> GetAllMedicines()
         {
-            return this._bllContext.DALContext.Medicines.GetAllMedicines();
+            return this._bllContext.DALContext.Medicines.GetAllMedicines().Select(medicine => new BaseModel()
+            {
+                Id = medicine.Id,
+                Name = medicine.Name,
+                Description = medicine.Description
+            }).ToList();
         }
 
         private void CheckUniqueNameAdd(string name)

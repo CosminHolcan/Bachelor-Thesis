@@ -20,6 +20,7 @@ namespace BusinessLogicLayer
         private Lazy<MedicinesBLL> _medicinesBLL;
         private Lazy<MessagesBLL> _messagesBLL;
         private Lazy<SpecializationsBLL> _specializationsBLL;
+        private Lazy<TreatmentsBLL> _treatmentsBLL;
         #endregion
 
         #region Properties
@@ -33,6 +34,7 @@ namespace BusinessLogicLayer
         public MedicinesBLL Medicines => _medicinesBLL.Value;
         public MessagesBLL Messages => _messagesBLL.Value;
         public SpecializationsBLL Specializations => _specializationsBLL.Value;
+        public TreatmentsBLL Treatments => _treatmentsBLL.Value;
         #endregion
 
         #region Constructors
@@ -48,6 +50,7 @@ namespace BusinessLogicLayer
             _medicinesBLL = new Lazy<MedicinesBLL>(() => new MedicinesBLL(this));
             _messagesBLL = new Lazy<MessagesBLL>(() => new MessagesBLL(this));
             _specializationsBLL = new Lazy<SpecializationsBLL>(() => new SpecializationsBLL(this));
+            _treatmentsBLL = new Lazy<TreatmentsBLL>(() => new TreatmentsBLL(this));
         }
         #endregion
 
@@ -91,6 +94,9 @@ namespace BusinessLogicLayer
 
                 if (_specializationsBLL.IsValueCreated)
                     _specializationsBLL = null;
+
+                if (_treatmentsBLL.IsValueCreated)
+                    _treatmentsBLL = null;
             }
         }
 

@@ -56,21 +56,15 @@ namespace PatientDoctorManagementApp.Controllers
             }
         }
 
-        [HttpGet("all")]
-        public List<Disease> GetAllDiseases()
-        {
-            return this._bllContext.Diseases.GetAllDiseases();
-        }
-
-        [HttpPost("allWithoutDescription")]
-        public IActionResult GetAllDiseasesWithoutDescription(BaseDTO dto)
+        [HttpPost("all")]
+        public IActionResult GetAllDiseases(BaseDTO dto)
         {
             JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
             Guid userId = new Guid(token.Issuer);
 
             return Ok(new
             {
-                diseases = this._bllContext.Diseases.GetAllDiseasesWithoutDescription()
+                diseases = this._bllContext.Diseases.GetAllDiseases()
             });
         }
 

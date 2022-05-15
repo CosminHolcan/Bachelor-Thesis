@@ -12,6 +12,7 @@ import { IGetAppointmentByDoctorForPatientDTO } from "../DTO/GetAppointmentByDoc
 import { IGetFeedbacksByDoctorDTO } from "../DTO/GetFeedbacksByDoctorDTO";
 import { IGetFeedbacksByPatientDTO } from "../DTO/GetFeedbacksByPatientDTO";
 import { IAddFeedbackDTO } from "../DTO/AddFeedbackDTO";
+import { IAddTreatmentDTO } from "../DTO/AddTreatmentDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -56,12 +57,8 @@ export namespace DiseasesService {
         return axios.post(`${BASE_URL}Diseases/update`, updateDiseaseDTO);
     }
 
-    export const GetAllDiseases = (): Promise<AxiosResponse<any, any>> => {
-        return axios.get(`${BASE_URL}Diseases/all`);
-    }
-
-    export const GetAllDiseasesWithoutDescription = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
-        return axios.post(`${BASE_URL}Diseases/allWithoutDescription`, dto);
+    export const GetAllDiseases = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Diseases/all`, dto);
     }
 }
 
@@ -74,8 +71,8 @@ export namespace MedicinesService {
         return axios.post(`${BASE_URL}Medicines/update`, updateMedicineDTO);
     }
 
-    export const GetAllMedicines = (): Promise<AxiosResponse<any, any>> => {
-        return axios.get(`${BASE_URL}Medicines/all`);
+    export const GetAllMedicines = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Medicines/all`, dto);
     }
 }
 
@@ -126,5 +123,19 @@ export namespace FeedbacksService {
 
     export const AddFeedback = (dto: IAddFeedbackDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Feedbacks/add`, dto)
+    }
+}
+
+export namespace TreatmentsService {
+    export const GetTreatmentsByPatient = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Treatments/getByPatient`, dto)
+    }
+
+    export const GetTreatmentsByDoctor = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Treatments/getByDoctor`, dto)
+    }
+
+    export const AddTreatment = (dto: IAddTreatmentDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Treatments/add`, dto)
     }
 }

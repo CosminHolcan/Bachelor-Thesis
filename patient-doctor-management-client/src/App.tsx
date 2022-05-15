@@ -12,6 +12,7 @@ import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from './globalConstan
 import { TailSpin } from 'react-loader-spinner';
 import { delay } from './Utils/functions';
 import { LoadingSpinner } from './Components/LoadingSpinner/loadingSpinner';
+import { getIcon, registerIcons } from '@fluentui/react/lib/Styling';
 
 export const App = (): JSX.Element => {
   const [currentUserId, setCurrentUserId] = useState<string>('');

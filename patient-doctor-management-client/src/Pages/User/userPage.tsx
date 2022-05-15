@@ -8,7 +8,7 @@ import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 import { convertDateStringFromServerToLocal, delay } from "../../Utils/functions";
-import { AppointmentsService, AuthorizationService, DiseasesService, DoctorsService, MessagesService, PatientsService } from "../../Utils/services";
+import { AppointmentsService, AuthorizationService, DiseasesService, DoctorsService, MedicinesService, MessagesService, PatientsService, TreatmentsService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { CalendarPage } from "../Calendar/calendarPage";
 import { ChatPage } from "../Chat/chatPage";
@@ -21,13 +21,17 @@ import { FeedbackPagePatientView } from "../Feedback/feedbackPagePatientView";
 import { IBaseModel } from "../../Models/BaseModel";
 import { FeedbackPageDoctorView } from "../Feedback/feedbackPageDoctorView";
 import { IBaseDTO } from "../../DTO/BaseDTO";
+import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
+import { RecipesPages } from "../Recipes/recipesPage";
+import { ITreatment } from "../../Models/Treatment";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
 const CALENDAR_PAGE_ICON: string = "Calendar";
 const LOGOUT_ICON: string = "Leave";
-const CHAT_ICON: string = "CannedChat";
-const FEEDBACK_ICON: string = "Feedback";
+const CHAT_PAGE_ICON: string = "CannedChat";
+const FEEDBACK_PAGE_ICON: string = "Feedback";
+const RECEIPES_PAGE_ICON: string = "ClipboardList";
 
 export const UserPage = (props: IUserPageProps): JSX.Element => {
     const navigate = useNavigate();
@@ -39,7 +43,9 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     const [messages, setMessages] = useState<ICustomKeyValuePair<string, IMessage[]>[]>([]);
     const [connection, setConnection] = useState<signalR.HubConnection>();
     const [currentUserId, setCurrentUserId] = useState<string>('');
-    const [diseases, setDiseases] = useState<IBaseModel[]>([]);
+    const [diseases, setDiseases] = useState<IBaseModelWithDescription[]>([]);
+    const [medicines, setMedicines] = useState<IBaseModelWithDescription[]>([]);
+    const [treatments, setTreatments] = useState<ITreatment[]>([]);
 
     useEffect(() => {
         setCurrentUserId(props.currentUserId);
@@ -167,55 +173,130 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleFeedbackPatientViewClicked = (): void => {
+        setLoadingData(true);
+
         const baseDTO: IBaseDTO = {
             jwt: localStorage.getItem("jwt") ?? ''
         };
 
         DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
-                .then((async function (response) {
-                    setDoctors(response.data.doctors);
-                    DiseasesService.GetAllDiseasesWithoutDescription(baseDTO)
-                        .then((async function (diseasesResponse) {
-                            await delay(WAITING_MILLISECONDS);
-                            setLoadingData(false);
+            .then((async function (response) {
+                setDoctors(response.data.doctors);
+                DiseasesService.GetAllDiseases(baseDTO)
+                    .then((async function (diseasesResponse) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
 
-                            setDiseases(diseasesResponse.data.diseases);
-                        }))
-                        .catch((async function (error) {
-                            await delay(WAITING_MILLISECONDS);
-                            setLoadingData(false);
-                        }))
-                }))
-                .catch((async function (error) {
-                    await delay(WAITING_MILLISECONDS);
-                    setLoadingData(false);
-                }))
+                        setDiseases(diseasesResponse.data.diseases);
+                    }))
+                    .catch((async function (error) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
+                    }))
+            }))
+            .catch((async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            }))
     }
 
     const handleFeedbackDoctorViewClicked = (): void => {
+        setLoadingData(true);
+
         const baseDTO: IBaseDTO = {
             jwt: localStorage.getItem("jwt") ?? ''
         };
 
         PatientsService.GetAllPatients({ jwt: localStorage.getItem("jwt") ?? '' })
-                .then((async function (response) {
-                    setPatients(response.data.patients);
-                    DiseasesService.GetAllDiseasesWithoutDescription(baseDTO)
-                        .then((async function (diseasesResponse) {
-                            await delay(WAITING_MILLISECONDS);
-                            setLoadingData(false);
+            .then((async function (response) {
+                setPatients(response.data.patients);
+                DiseasesService.GetAllDiseases(baseDTO)
+                    .then((async function (diseasesResponse) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
 
-                            setDiseases(diseasesResponse.data.diseases);
-                        }))
-                        .catch((async function (error) {
-                            await delay(WAITING_MILLISECONDS);
-                            setLoadingData(false);
-                        }))
+                        setDiseases(diseasesResponse.data.diseases);
+                    }))
+                    .catch((async function (error) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
+                    }))
+            }))
+            .catch((async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            }))
+    }
+
+    const handleReceipesClicked = (): void => {
+        setLoadingData(true);
+
+        if (!isLoggedInDoctor) {
+            TreatmentsService.GetTreatmentsByPatient({ jwt: localStorage.getItem("jwt") ?? '' })
+                .then((async function (response) {
+                    await delay(WAITING_MILLISECONDS);
+                    setLoadingData(false);
+
+                    setTreatments(response.data.treatments.map((treatment: any) => {
+                        return {
+                            patient: treatment.patient,
+                            doctor: treatment.doctor,
+                            disease: treatment.disease,
+                            medicines: treatment.medicines,
+                            startingDate: new Date(convertDateStringFromServerToLocal(treatment.startingDate)),
+                            observations: treatment.observations,
+                        }
+                    }));
                 }))
                 .catch((async function (error) {
                     await delay(WAITING_MILLISECONDS);
                     setLoadingData(false);
                 }))
+
+            return;
+        }
+
+        TreatmentsService.GetTreatmentsByDoctor({ jwt: localStorage.getItem("jwt") ?? '' })
+            .then((async function (treatmentsResponse) {
+                setTreatments(treatmentsResponse.data.treatments.map((treatment: any) => {
+                    return {
+                        patient: treatment.patient,
+                        doctor: treatment.doctor,
+                        disease: treatment.disease,
+                        medicines: treatment.medicines,
+                        startingDate: new Date(convertDateStringFromServerToLocal(treatment.startingDate)),
+                        observations: treatment.observations,
+                    }
+                }));
+                PatientsService.GetAllPatients({ jwt: localStorage.getItem("jwt") ?? '' })
+                    .then((async function (patientsResponse) {
+                        setPatients(patientsResponse.data.patients);
+                        DiseasesService.GetAllDiseases({ jwt: localStorage.getItem("jwt") ?? '' })
+                            .then((async function (diseasesResponse) {
+                                setDiseases(diseasesResponse.data.diseases);
+                                MedicinesService.GetAllMedicines({ jwt: localStorage.getItem("jwt") ?? '' })
+                                    .then((async function (medicinesResponse) {
+                                        await delay(WAITING_MILLISECONDS);
+                                        setLoadingData(false);
+
+                                        setMedicines(medicinesResponse.data.medicines);
+                                    }))
+                                    .catch((async function (error) {
+                                        await delay(WAITING_MILLISECONDS);
+                                        setLoadingData(false);
+                                    }))
+                            }))
+                            .catch((async function (error) {
+                                await delay(WAITING_MILLISECONDS);
+                                setLoadingData(false);
+                            }))
+                    }))
+                    .catch((async function (error) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
+                    }))
+            }))
+
     }
 
     const handleLogout = () => {
@@ -256,6 +337,10 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             handleFeedbackDoctorViewClicked();
         }
 
+        if (item.props.itemKey === MenuItem.Recipes) {
+            handleReceipesClicked();
+        }
+
         item.props.itemKey && setSelectedTab(item.props.itemKey);
     };
 
@@ -272,10 +357,10 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                 result.push(MenuItem.Admin);
                 break;
             case UserType.Doctor:
-                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat, MenuItem.Feedback]);
+                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes]);
                 break;
             case UserType.Patient:
-                result = result.concat([MenuItem.CalendarPatient, MenuItem.Chat, MenuItem.Feedback]);
+                result = result.concat([MenuItem.CalendarPatient, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes]);
                 break;
         }
 
@@ -322,7 +407,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                 )
             case MenuItem.Chat:
                 return (
-                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CHAT_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                         {!loadingData && connection !== undefined ?
                             <ChatPage people={isLoggedInDoctor ? patients : doctors} messages={messages} connection={connection} currentUserId={currentUserId} />
                             :
@@ -337,7 +422,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             case MenuItem.Feedback:
                 if (!isLoggedInDoctor)
                     return (
-                        <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                        <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                             {!loadingData ?
                                 <FeedbackPagePatientView
                                     diseases={diseases}
@@ -354,8 +439,8 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                         </PivotItem>
                     )
                 else
-                return (
-                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                    return (
+                        <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={FEEDBACK_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                             {!loadingData ?
                                 <FeedbackPageDoctorView
                                     diseases={diseases}
@@ -370,6 +455,26 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                                     wrapStackStyle={{ height: "80vh" }}
                                 />}
                         </PivotItem>
+                    )
+            case MenuItem.Recipes:
+                return (
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={RECEIPES_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                        {!loadingData ?
+                            <RecipesPages
+                                isLoggedInDoctor={isLoggedInDoctor}
+                                patients={patients}
+                                diseases={diseases}
+                                medicines={medicines}
+                                treatments={treatments}
+                            />
+                            :
+                            <LoadingSpinner
+                                height={300}
+                                width={300}
+                                labelStyle={{ fontSize: 40 }}
+                                wrapStackStyle={{ height: "80vh" }}
+                            />}
+                    </PivotItem>
                 )
             case MenuItem.Logout:
                 return (

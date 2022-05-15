@@ -74,11 +74,11 @@ export const AdminPage = (): JSX.Element => {
         }
 
         setLoadingData(true);
-        DiseasesService.GetAllDiseases()
+        DiseasesService.GetAllDiseases({jwt: localStorage.getItem("jwt") ?? ''})
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
-                setDiseases(response.data);
+                setDiseases(response.data.diseases);
                 handleOptionChanged(AdminFeatures.UpdateDisease);
             })
             .catch(async function (error) {
@@ -96,11 +96,11 @@ export const AdminPage = (): JSX.Element => {
         }
 
         setLoadingData(true);
-        MedicinesService.GetAllMedicines()
+        MedicinesService.GetAllMedicines({jwt: localStorage.getItem("jwt") ?? ''})
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
-                setMedicines(response.data);
+                setMedicines(response.data.medicines);
                 handleOptionChanged(AdminFeatures.UpdateMedicine);
             })
             .catch(async function (error) {
