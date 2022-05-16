@@ -8,5 +8,6 @@ export enum MenuItem {
     CalendarDoctor = "See my appointments",
     Chat = "Chat",
     Feedback = "Feedback",
-    Recipes = "Recipes"
+    Recipes = "Recipes",
+    Information = "Information"
 }

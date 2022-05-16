@@ -27,5 +27,18 @@ namespace DataAbstractionLayer
         {
             return this._dalContext.DbContext.Administrators.FirstOrDefault((Administrator administrator) => administrator.Id == id);
         }
+
+        public void UpdateAdministrator(Guid userId, string email, string password)
+        {
+            Administrator existingAdministrator = this.GetAdministratorById(userId);
+            if (existingAdministrator == null)
+                throw new Exception("There is no user with this id.");
+
+            existingAdministrator.Email = email;
+            if (password != "")
+                existingAdministrator.Password = password;
+
+            this._dalContext.DbContext.SaveChanges();
+        }
     }
 }

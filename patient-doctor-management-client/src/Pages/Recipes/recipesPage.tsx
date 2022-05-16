@@ -45,7 +45,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
             return;
 
         const currentDay: Date = new Date();
-        currentDay.setHours(24, 0, 0, 0);
+        currentDay.setHours(0, 0, 0, 0);
 
         const dto: IAddTreatmentDTO = {
             jwt: localStorage.getItem("jwt") ?? '',
@@ -70,6 +70,10 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                     observations: response.data.treatment.observations
                 });
                 setTreatments(newTreatments);
+                setSelectedPatient(undefined);
+                setSelectedDisease(undefined);
+                setSelectedMedicines([]);
+                setObservations('');
             }))
             .catch((function (error) {
                 setError(error.response.data.message)
@@ -157,12 +161,14 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                             options={props.patients}
                             onSelect={(selectedList, selectedItem) => { setSelectedPatient(selectedItem) }}
                             displayValue="name"
+                            selectedValues={selectedPatient && [selectedPatient]}
                         />
                     </StackItem>
                     <StackItem>
                         <Multiselect
                             singleSelect={true}
                             options={props.diseases}
+                            selectedValues={selectedDisease && [selectedDisease]}
                             onSelect={(selectedList, selectedItem) => { setSelectedDisease(selectedItem) }}
                             displayValue="name"
                         />
@@ -173,6 +179,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                             onSelect={(selectedList, selectedItem) => { addMedicine(selectedItem) }}
                             onRemove={(selectedList, selectedItem) => { removeMedicine(selectedItem) }}
                             displayValue="name"
+                            selectedValues={selectedMedicines.length > 0 && selectedMedicines}
                         />
                     </StackItem>
                     <StackItem>

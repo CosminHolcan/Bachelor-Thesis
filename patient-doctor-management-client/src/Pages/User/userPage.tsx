@@ -24,6 +24,9 @@ import { IBaseDTO } from "../../DTO/BaseDTO";
 import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { RecipesPages } from "../Recipes/recipesPage";
 import { ITreatment } from "../../Models/Treatment";
+import { InformationPage } from "../Information/informationPage";
+import { MyAccountPage } from "../MyAccount/myAccountPage";
+import { IUserInformation } from "../../Models/UserInformation";
 
 const MY_ACCOUNT_PAGE_ICON: string = "Home";
 const ADMIN_PAGE_ICCON: string = "Admin";
@@ -32,6 +35,7 @@ const LOGOUT_ICON: string = "Leave";
 const CHAT_PAGE_ICON: string = "CannedChat";
 const FEEDBACK_PAGE_ICON: string = "Feedback";
 const RECEIPES_PAGE_ICON: string = "ClipboardList";
+const INFORMATION_PAGE_ICON: string = "Articles";
 
 export const UserPage = (props: IUserPageProps): JSX.Element => {
     const navigate = useNavigate();
@@ -46,12 +50,14 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     const [diseases, setDiseases] = useState<IBaseModelWithDescription[]>([]);
     const [medicines, setMedicines] = useState<IBaseModelWithDescription[]>([]);
     const [treatments, setTreatments] = useState<ITreatment[]>([]);
+    const [currentUser, setCurrentUser] = useState<IUserInformation>();
 
     useEffect(() => {
         setCurrentUserId(props.currentUserId);
     }, [props.currentUserId])
 
     var userTypeString = localStorage.getItem("userType");
+    const isLoggedInAdmin = userTypeString == null ? false : +userTypeString == UserType.Administrator ? true : false;
     const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
     const refreshToken = (): void => {
@@ -83,6 +89,45 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
         });
     }, [connection])
 
+    useEffect(() => {
+        if (selectedTab === MenuItem.Logout) {
+            handleLogout();
+            return;
+        }
+
+        if (selectedTab === MenuItem.MyAccount) {
+            handleMyAccountClicked();
+        }
+
+        if (selectedTab === MenuItem.CalendarPatient) {
+            handleCalendarPatientClicked();
+        }
+
+        if (selectedTab === MenuItem.CalendarDoctor) {
+            handleCalendarDoctorClicked();
+        }
+
+        if (selectedTab === MenuItem.Chat) {
+            handleChatClicked();
+        }
+
+        if (selectedTab === MenuItem.Feedback && !isLoggedInDoctor) {
+            handleFeedbackPatientViewClicked();
+        }
+
+        if (selectedTab === MenuItem.Feedback && isLoggedInDoctor) {
+            handleFeedbackDoctorViewClicked();
+        }
+
+        if (selectedTab === MenuItem.Recipes) {
+            handleReceipesClicked();
+        }
+
+        if (selectedTab === MenuItem.Information) {
+            handleInformationClicked();
+        }
+    }, [selectedTab])
+
     setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
 
     const getMessagesFromDataResponse = (dataResponse: any): ICustomKeyValuePair<string, IMessage[]>[] => {
@@ -91,6 +136,22 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                 dataResponse[i].value[j].timeStamp = new Date(convertDateStringFromServerToLocal(dataResponse[i].value[j].timeStamp));
         }
         return dataResponse;
+    }
+
+    const handleMyAccountClicked = (): void => {
+        setLoadingData(true);
+
+        AuthorizationService.GetUser({ jwt: localStorage.getItem("jwt") ?? '' })
+            .then(async function (response) {
+                setCurrentUser(response.data.userInformation);
+
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            })
+            .catch(async function (error) {
+                await delay(WAITING_MILLISECONDS / 5);
+                setLoadingData(false);
+            })
     }
 
     const handleCalendarPatientClicked = (): void => {
@@ -299,6 +360,30 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
 
     }
 
+    const handleInformationClicked = (): void => {
+        setLoadingData(true);
+
+        DiseasesService.GetAllDiseases({ jwt: localStorage.getItem("jwt") ?? '' })
+            .then((async function (diseasesResponse) {
+                setDiseases(diseasesResponse.data.diseases);
+                MedicinesService.GetAllMedicines({ jwt: localStorage.getItem("jwt") ?? '' })
+                    .then((async function (medicinesResponse) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
+
+                        setMedicines(medicinesResponse.data.medicines);
+                    }))
+                    .catch((async function (error) {
+                        await delay(WAITING_MILLISECONDS);
+                        setLoadingData(false);
+                    }))
+            }))
+            .catch((async function (error) {
+                await delay(WAITING_MILLISECONDS);
+                setLoadingData(false);
+            }))
+    }
+
     const handleLogout = () => {
         localStorage.removeItem("userType");
         localStorage.removeItem("jwt");
@@ -311,35 +396,6 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
 
         if (selectedTab === item.props.itemKey)
             return;
-
-        if (item.props.itemKey === MenuItem.Logout) {
-            handleLogout();
-            return;
-        }
-
-        if (item.props.itemKey === MenuItem.CalendarPatient) {
-            handleCalendarPatientClicked();
-        }
-
-        if (item.props.itemKey === MenuItem.CalendarDoctor) {
-            handleCalendarDoctorClicked();
-        }
-
-        if (item.props.itemKey === MenuItem.Chat) {
-            handleChatClicked();
-        }
-
-        if (item.props.itemKey === MenuItem.Feedback && !isLoggedInDoctor) {
-            handleFeedbackPatientViewClicked();
-        }
-
-        if (item.props.itemKey === MenuItem.Feedback && isLoggedInDoctor) {
-            handleFeedbackDoctorViewClicked();
-        }
-
-        if (item.props.itemKey === MenuItem.Recipes) {
-            handleReceipesClicked();
-        }
 
         item.props.itemKey && setSelectedTab(item.props.itemKey);
     };
@@ -357,10 +413,10 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                 result.push(MenuItem.Admin);
                 break;
             case UserType.Doctor:
-                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes]);
+                result = result.concat([MenuItem.CalendarDoctor, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes, MenuItem.Information]);
                 break;
             case UserType.Patient:
-                result = result.concat([MenuItem.CalendarPatient, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes]);
+                result = result.concat([MenuItem.CalendarPatient, MenuItem.Chat, MenuItem.Feedback, MenuItem.Recipes, MenuItem.Information]);
                 break;
         }
 
@@ -373,9 +429,14 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             case MenuItem.MyAccount:
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={MY_ACCOUNT_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
-                        <div>
-                            My Account Page
-                        </div>
+                        {!loadingData && currentUser !== undefined ?
+                            <MyAccountPage isLoggedInDoctor={isLoggedInDoctor} currentUser={currentUser} />
+                            : <LoadingSpinner
+                                height={300}
+                                width={300}
+                                labelStyle={{ fontSize: 40 }}
+                                wrapStackStyle={{ height: "80vh" }}
+                            />}
                     </PivotItem>
                 );
             case MenuItem.Admin:
@@ -476,9 +537,26 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
                             />}
                     </PivotItem>
                 )
+            case MenuItem.Information:
+                return (
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={INFORMATION_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
+                        {!loadingData ?
+                            <InformationPage
+                                diseases={diseases}
+                                medicines={medicines}
+                            />
+                            :
+                            <LoadingSpinner
+                                height={300}
+                                width={300}
+                                labelStyle={{ fontSize: 40 }}
+                                wrapStackStyle={{ height: "80vh" }}
+                            />}
+                    </PivotItem>
+                )
             case MenuItem.Logout:
                 return (
-                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: "50vw", fontSize: 20 } }} />
+                    <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={LOGOUT_ICON} headerButtonProps={{ style: { marginLeft: isLoggedInAdmin ? "73.5vw" : "30vw", fontSize: 20 } }} />
                 )
         }
     };

@@ -33,7 +33,7 @@ namespace BusinessLogicLayer
 
         public Patient AddPatient(string firstName, string lastName, string email, string password)
         {
-            this.CheckUniqueEmail(email);
+            this._bllContext.Users.CheckUniqueEmail(email);
             return this._bllContext.DALContext.Patients.AddPatient(firstName, lastName, email, password);
         }
     }

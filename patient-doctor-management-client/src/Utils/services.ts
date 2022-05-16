@@ -13,6 +13,7 @@ import { IGetFeedbacksByDoctorDTO } from "../DTO/GetFeedbacksByDoctorDTO";
 import { IGetFeedbacksByPatientDTO } from "../DTO/GetFeedbacksByPatientDTO";
 import { IAddFeedbackDTO } from "../DTO/AddFeedbackDTO";
 import { IAddTreatmentDTO } from "../DTO/AddTreatmentDTO";
+import { IUpdateUserDTO } from "../DTO/UpdateUserDTO";
 
 const BASE_URL = "https://localhost:44368/api/";
 
@@ -29,8 +30,16 @@ export namespace AuthorizationService {
         return axios.post(`${BASE_URL}Authorization/logout`);
     }
 
-    export const RefreshToken = (jwt: IBaseDTO): Promise<AxiosResponse<any, any>> => {
-        return axios.post(`${BASE_URL}Authorization/refreshToken`, jwt);
+    export const RefreshToken = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Authorization/refreshToken`, dto);
+    }
+
+    export const GetUser = (dto: IBaseDTO): Promise<AxiosResponse< any, any>> => {
+        return axios.post(`${BASE_URL}Authorization/user`, dto);
+    }
+
+    export const UpdateUser = (dto: IUpdateUserDTO): Promise<AxiosResponse<any, any>> => {
+        return axios.post(`${BASE_URL}Authorization/updateUser`, dto);
     }
 }
 

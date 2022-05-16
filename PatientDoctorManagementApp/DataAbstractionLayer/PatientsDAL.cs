@@ -44,5 +44,18 @@ namespace DataAbstractionLayer
 
             return patient;
         }
+
+        public void UpdatePatient(Guid userId, string email, string password)
+        {
+            Patient existingPatient = this.GetPatientById(userId);
+            if (existingPatient == null)
+                throw new Exception("There is no user with this id.");
+
+            existingPatient.Email = email;
+            if (password != "")
+                existingPatient.Password = password;
+
+            this._dalContext.DbContext.SaveChanges();
+        }
     }
 }

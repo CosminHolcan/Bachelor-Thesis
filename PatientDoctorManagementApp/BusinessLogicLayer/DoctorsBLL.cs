@@ -29,7 +29,7 @@ namespace BusinessLogicLayer
 
         public void AddDoctor(string firstName, string lastName, string email, string password, Guid specializationId)
         {
-            this.CheckUniqueEmail(email);
+            this._bllContext.Users.CheckUniqueEmail(email);
             this._bllContext.DALContext.Doctors.AddDoctor(firstName, lastName, email, password, specializationId);
         }
     }

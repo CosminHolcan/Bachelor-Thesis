@@ -81,7 +81,7 @@ namespace PatientDoctorManagementApp.Controllers
                 return Ok(new
                 {
                     userId = userId,
-                    jwt = newToken
+                    jwt = newToken,
                 });
             }
             catch (Exception exception)
@@ -93,15 +93,53 @@ namespace PatientDoctorManagementApp.Controllers
             }
         }
 
-        [HttpGet("user")]
-        public IActionResult GetUser()
+        [HttpPost("user")]
+        public IActionResult GetUser(BaseDTO dto)
         {
-            string jwtString = Request.Cookies["jwt"];
-            JwtSecurityToken token = _jwtService.Verify(jwtString);
-            Guid userId = new Guid(token.Issuer);
-            Patient patient = this._bllContext.Patients.GetPatientById(userId);
+            try
+            {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
 
-            return Ok(patient);
+                return Ok(new
+                {
+                    userInformation = this._bllContext.Users.GetUserInformationById(userId)
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
+        }
+
+        [HttpPost("updateUser")]
+        public IActionResult UpdateUser(UpdateUserDTO dto)
+        {
+            try
+            {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                string password = dto.Password;
+                if (password != "")
+                    password = EncryptionDecryption.Encrypt(password);
+
+                this._bllContext.Users.UpdateUser(userId, dto.Email, password);
+
+                return Ok(new
+                {
+                    message = "success"
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
 
         [HttpPost("logout")]
