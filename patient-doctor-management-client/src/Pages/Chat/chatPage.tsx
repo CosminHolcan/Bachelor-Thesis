@@ -186,7 +186,7 @@ export const ChatPage = (props: IChatPageProps) => {
                             rows={2}
                             value={textMessage}
                             multiline={true}
-                            onChange={(e, newValue) => newValue && setTextMessage(newValue)}
+                            onChange={(e, newValue) => newValue !== undefined && setTextMessage(newValue)}
                         />
                     </StackItem>
                     <Stack style={{ width: "10%", height: "100%", border: '1px solid black' }} verticalAlign="center" horizontalAlign="center">
