@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAbstractionLayer.Models
+namespace DataAbstractionLayer.Entities
 {
-    public class Feedback
+    public class Treatment
     {
         public Guid PatientId { get; set; }
         public Patient Patient { get; set; }
@@ -17,10 +19,10 @@ namespace DataAbstractionLayer.Models
         public Guid DoctorId { get; set; }
         public Doctor Doctor { get; set; }
 
-        public bool GivenByPatient { get; set; }
+        public virtual ICollection<Medicine> Medicines { get; set; }
 
-        public string Text { get; set; }
+        public DateTime StartingDate { get; set; }
 
-        public DateTime TimeStamp { get; set; }
+        public string Observations { get; set; }
     }
 }

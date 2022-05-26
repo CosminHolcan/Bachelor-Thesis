@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer.Models;
-using DataAbstractionLayer.Models;
+using DataAbstractionLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

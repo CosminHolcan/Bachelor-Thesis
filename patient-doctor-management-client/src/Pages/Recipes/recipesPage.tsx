@@ -81,24 +81,25 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
     }
 
     const getColumns = (): IColumn[] => {
-        const minWidth: number = 75;
-        const maxWidth: number = 210;
-        return [
-            {
+        const minWidth: number = 120;
+        const maxWidth: number = 250;
+        var columns: IColumn[] = props.isLoggedInDoctor
+            ? [{
                 key: "Patient",
                 name: "Patient",
                 fieldName: "Patient",
                 minWidth: minWidth,
                 maxWidth: maxWidth,
                 isSorted: true
-            },
-            {
+            }]
+            : [{
                 key: "Doctor",
                 name: "Doctor",
                 fieldName: "Doctor",
                 minWidth: minWidth,
                 maxWidth: maxWidth
-            },
+            }];
+        columns = columns.concat([
             {
                 key: "Disease",
                 name: "Disease",
@@ -118,8 +119,8 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 key: "Observations",
                 name: "Observations",
                 fieldName: "Observations",
-                minWidth: 150,
-                maxWidth: 350,
+                minWidth: 180,
+                maxWidth: 400,
                 isMultiline: true
             },
             {
@@ -130,7 +131,9 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 maxWidth: maxWidth,
                 isSorted: true
             }
-        ]
+        ]);
+
+        return columns;
     }
 
     return (

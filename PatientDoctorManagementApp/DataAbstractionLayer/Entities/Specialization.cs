@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAbstractionLayer.Models
+namespace DataAbstractionLayer.Entities
 {
-    public class Medicine
+    public class Specialization
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public virtual ICollection<Treatment> Treatments { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using DataAbstractionLayer.Enums;
-using DataAbstractionLayer.Models;
+using DataAbstractionLayer.Entities;
 using System;
 using System.Collections.Generic;
 
-namespace DataAbstractionLayer.Models
+namespace DataAbstractionLayer.Entities
 {
     public class User
     {

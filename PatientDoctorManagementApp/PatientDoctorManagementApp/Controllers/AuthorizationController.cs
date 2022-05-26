@@ -1,5 +1,5 @@
 ﻿using BusinessLogicLayer;
-using DataAbstractionLayer.Models;
+using DataAbstractionLayer.Entities;
 using DataAbstractionLayer.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
