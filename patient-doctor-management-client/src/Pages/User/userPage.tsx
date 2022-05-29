@@ -74,6 +74,8 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             });
     }
 
+    setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
+
     useEffect(() => {
         if (connection !== undefined)
             return;
@@ -127,8 +129,6 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             handleInformationClicked();
         }
     }, [selectedTab])
-
-    setInterval(refreshToken, MILLISECONDS_IN_HALF_HOUR);
 
     const getMessagesFromDataResponse = (dataResponse: any): ICustomKeyValuePair<string, IMessage[]>[] => {
         for (var i = 0; i < dataResponse.length; i++) {
