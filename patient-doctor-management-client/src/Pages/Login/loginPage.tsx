@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ILoginDTO } from "../../DTO/LoginDTO";
 import { AuthorizationService } from "../../Utils/services";
+import { ButtonLoginStyle, ButtonSignupStyle, EmailContainerStyle, LabelStyle, LoginContainerStyle, LoginFormContainerStyle, PasswordContainerStyle } from "./loginPage.styles";
 import { ILoginPageProps } from "./loginPage.types";
 
 export const LoginPage = (props: ILoginPageProps): JSX.Element => {
@@ -39,34 +40,36 @@ export const LoginPage = (props: ILoginPageProps): JSX.Element => {
     }
 
     return (
-        <Stack>
-            <StackItem>
-                <Label>
-                    Email
-                </Label>
-                <TextField
-                    rows={1}
-                    value={email}
-                    onChange={(event: any) => { setEmail(event.target.value); handleChangedEmailOrPassword(); }}
-                />
-            </StackItem>
-            <StackItem>
-                <Label>
-                    Password
-                </Label>
-                <TextField
-                    type="password"
-                    rows={1}
-                    value={password}
-                    onChange={(event: any) => { setPassword(event.target.value); handleChangedEmailOrPassword(); }}
-                />
-            </StackItem>
-            <button onClick={handleSubmit}>Log in</button>
-            <button onClick={redirectCreateNewAccount}>Create a new account</button>
-            {
-                errorMessage && 
-                    <p>{errorMessage}</p>
-            }
+        <Stack style={LoginContainerStyle} horizontalAlign="center" verticalAlign="center">
+            <Stack style={LoginFormContainerStyle}>
+                <StackItem style={EmailContainerStyle}>
+                    <Label style={LabelStyle}>
+                        Email
+                    </Label>
+                    <TextField
+                        rows={1}
+                        value={email}
+                        onChange={(event: any) => { setEmail(event.target.value); handleChangedEmailOrPassword(); }}
+                    />
+                </StackItem>
+                <StackItem style={PasswordContainerStyle}>
+                    <Label style={LabelStyle}>
+                        Password
+                    </Label>
+                    <TextField
+                        type="password"
+                        canRevealPassword={true}
+                        rows={1}
+                        value={password}
+                        onChange={(event: any) => { setPassword(event.target.value); handleChangedEmailOrPassword(); }}
+                    />
+                </StackItem>
+                <Stack horizontalAlign="center" horizontal>
+                    <button style={ButtonLoginStyle} onClick={handleSubmit}>Log in</button>
+                    <button style={ButtonSignupStyle} onClick={redirectCreateNewAccount}>Create a new account</button>
+                </Stack>
+                <p>{errorMessage}</p>
+            </Stack>
         </Stack>
     )
 }
