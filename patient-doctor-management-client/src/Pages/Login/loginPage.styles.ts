@@ -34,7 +34,7 @@ export const PasswordContainerStyle: React.CSSProperties = {
     marginBottom: "12vh"
 }
 
-export const ButtonSignupStyle: React.CSSProperties = {
+export const ButtonRegisterStyle: React.CSSProperties = {
     borderRadius: "20px",
     borderWidth: 0,
     width: "10vw",
@@ -46,6 +46,14 @@ export const ButtonSignupStyle: React.CSSProperties = {
 }
 
 export const ButtonLoginStyle: React.CSSProperties = {
-    ...ButtonSignupStyle,
+    ...ButtonRegisterStyle,
     marginRight: "2vw"
+}
+
+export const ErrorMessageStyle: React.CSSProperties = {
+    fontFamily: "Grotesco",
+    fontSize: 17,
+    color: "red",
+    marginLeft: "5vw",
+    marginTop: "5vh"
 }

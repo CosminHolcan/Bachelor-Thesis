@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ILoginDTO } from "../../DTO/LoginDTO";
 import { AuthorizationService } from "../../Utils/services";
-import { ButtonLoginStyle, ButtonSignupStyle, EmailContainerStyle, LabelStyle, LoginContainerStyle, LoginFormContainerStyle, PasswordContainerStyle } from "./loginPage.styles";
+import { ButtonLoginStyle, ButtonRegisterStyle, EmailContainerStyle, ErrorMessageStyle, LabelStyle, LoginContainerStyle, LoginFormContainerStyle, PasswordContainerStyle } from "./loginPage.styles";
 import { ILoginPageProps } from "./loginPage.types";
 
 export const LoginPage = (props: ILoginPageProps): JSX.Element => {
@@ -66,9 +66,11 @@ export const LoginPage = (props: ILoginPageProps): JSX.Element => {
                 </StackItem>
                 <Stack horizontalAlign="center" horizontal>
                     <button style={ButtonLoginStyle} onClick={handleSubmit}>Log in</button>
-                    <button style={ButtonSignupStyle} onClick={redirectCreateNewAccount}>Create a new account</button>
+                    <button style={ButtonRegisterStyle} onClick={redirectCreateNewAccount}>Create a new account</button>
                 </Stack>
-                <p>{errorMessage}</p>
+                <Label style={ErrorMessageStyle}>
+                    {errorMessage}
+                </Label>
             </Stack>
         </Stack>
     )
