@@ -1,12 +1,13 @@
-import { Label, Stack, StackItem, TextField } from "@fluentui/react";
-import { useEffect, useState } from "react"
-import { TailSpin } from "react-loader-spinner";
+import { Label, Stack, TextField } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import { IAddSpecializationDTO } from "../../DTO/AddSpecializationDTO";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { SpecializationService } from "../../Utils/services";
+import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
+import { AddSpecializationContainerStyle } from "./addSpecialization.styles";
 
 export const AddSpecialization = (props: IAdministrationFeatureProps): JSX.Element => {
     const [name, setName] = useState<string>('');
@@ -54,27 +55,16 @@ export const AddSpecialization = (props: IAdministrationFeatureProps): JSX.Eleme
                     wrapStackStyle={{ marginTop: "10vh" }}
                 />
                 :
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Add a new specialization
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={name}
-                            onChange={(event: any) => setName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={handleOnButtonClicked}>Save</button>
-                    </StackItem>
+                <Stack style={AddSpecializationContainerStyle}>
+                    <Label>
+                        Name
+                    </Label>
+                    <TextField
+                        rows={1}
+                        value={name}
+                        onChange={(event: any) => setName(event.target.value)}
+                    />
+                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

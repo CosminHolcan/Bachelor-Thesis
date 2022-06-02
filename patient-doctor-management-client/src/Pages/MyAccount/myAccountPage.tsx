@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Avatar from "react-avatar"
 import { IUpdateUserDTO } from "../../DTO/UpdateUserDTO"
 import { AuthorizationService } from "../../Utils/services"
+import { ButtonCancelStyle, ButtonModifyStyle, ButtonSaveStyle, InfoContainerStyle, LabelFieldContainerStyle, LabelStyle, MiddleFieldContainerStyle, MyAccountPageContainerStyle, TextFieldStyle, UpdateButtonsContainerStyle } from "./myAccountPage.styles"
 import { IMyAccountPageProps } from "./myAccountPage.types"
 
 export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
@@ -55,65 +56,65 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
     }
 
     return (
-        <Stack horizontal style={{ marginTop: "5vh", marginLeft: "5vw" }}>
+        <Stack horizontal style={MyAccountPageContainerStyle}>
             <Stack>
                 <Avatar name={props.currentUser.firstName + " " + props.currentUser.lastName} round={true} size="20vh" />
             </Stack>
-            <Stack style={{ marginLeft: "5vw" }}>
+            <Stack style={InfoContainerStyle}>
                 <Stack horizontal >
-                    <StackItem style={{ width: "8vw" }}>
-                        <Label>
+                    <StackItem style={LabelFieldContainerStyle}>
+                        <Label style={LabelStyle}>
                             First name
                         </Label>
                     </StackItem>
-                    <StackItem style={{ width: "20vw" }}>
+                    <StackItem style={TextFieldStyle}>
                         <TextField
                             rows={1}
-                            disabled={true}
+                            readOnly={true}
                             value={props.currentUser?.firstName}
                         />
                     </StackItem>
                 </Stack>
-                <Stack horizontal style={{ marginTop: "2vh" }}>
-                    <StackItem style={{ width: "8vw" }}>
-                        <Label>
+                <Stack horizontal style={MiddleFieldContainerStyle}>
+                    <StackItem style={LabelFieldContainerStyle}>
+                        <Label style={LabelStyle}>
                             Last name
                         </Label>
                     </StackItem>
-                    <StackItem style={{ width: "20vw" }}>
+                    <StackItem style={TextFieldStyle}>
                         <TextField
                             rows={1}
-                            disabled={true}
+                            readOnly={true}
                             value={props.currentUser?.lastName}
                         />
                     </StackItem>
                 </Stack>
                 {props.isLoggedInDoctor &&
-                    <Stack horizontal style={{ marginTop: "2vh" }}>
-                        <StackItem style={{ width: "8vw" }}>
-                            <Label>
+                    <Stack horizontal style={MiddleFieldContainerStyle}>
+                        <StackItem style={LabelFieldContainerStyle}>
+                            <Label style={LabelStyle}>
                                 Specialization
                             </Label>
                         </StackItem>
-                        <StackItem style={{ width: "20vw" }}>
+                        <StackItem style={TextFieldStyle}>
                             <TextField
                                 rows={1}
-                                disabled={true}
+                                readOnly={true}
                                 value={props.currentUser?.specialization}
                             />
                         </StackItem>
                     </Stack>
                 }
-                <Stack horizontal style={{ marginTop: "2vh" }}>
-                    <StackItem style={{ width: "8vw" }}>
-                        <Label>
+                <Stack horizontal style={MiddleFieldContainerStyle}>
+                    <StackItem style={LabelFieldContainerStyle}>
+                        <Label style={LabelStyle}>
                             Email
                         </Label>
                     </StackItem>
-                    <StackItem style={{ width: "20vw" }}>
+                    <StackItem style={TextFieldStyle}>
                         <TextField
                             rows={1}
-                            disabled={!updateMode}
+                            readOnly={!updateMode}
                             value={email}
                             onChange={(e, newVaue) => newVaue != undefined && setEmail(newVaue)}
                         />
@@ -121,13 +122,13 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
                 </Stack>
                 {updateMode ?
                     <Stack>
-                        <Stack horizontal style={{ marginTop: "2vh" }}>
-                            <StackItem style={{ width: "8vw" }}>
-                                <Label>
+                        <Stack horizontal style={MiddleFieldContainerStyle}>
+                            <StackItem style={LabelFieldContainerStyle}>
+                                <Label style={LabelStyle}>
                                     New password
                                 </Label>
                             </StackItem>
-                            <StackItem style={{ width: "20vw" }}>
+                            <StackItem style={TextFieldStyle}>
                                 <TextField
                                     rows={1}
                                     value={password}
@@ -136,13 +137,13 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
                                 />
                             </StackItem>
                         </Stack>
-                        <Stack horizontal style={{ marginTop: "2vh" }}>
-                            <StackItem style={{ width: "8vw" }}>
-                                <Label>
+                        <Stack horizontal style={MiddleFieldContainerStyle}>
+                            <StackItem style={LabelFieldContainerStyle}>
+                                <Label style={LabelStyle}>
                                     Repeat password
                                 </Label>
                             </StackItem>
-                            <StackItem style={{ width: "20vw" }}>
+                            <StackItem style={TextFieldStyle}>
                                 <TextField
                                     rows={1}
                                     value={repeatPassword}
@@ -151,22 +152,18 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
                                 />
                             </StackItem>
                         </Stack>
-                        <Stack horizontal style={{ marginTop: "5vh" }}>
-                            <button onClick={handleSaveClicked} style={{ width: "10vw", marginRight: "8vw" }}>Save</button>
-                            <button onClick={handleCancelClicked} style={{ width: "10vw" }}>Cancel</button>
+                        <Stack horizontal style={UpdateButtonsContainerStyle}>
+                            <button style={ButtonSaveStyle} onClick={handleSaveClicked}>Save</button>
+                            <button style={ButtonCancelStyle} onClick={handleCancelClicked}>Cancel</button>
                         </Stack>
                         {error != '' &&
-                            <Stack style={{ marginTop: "5vh" }}>
-                                <Label>
-                                    {error}
-                                </Label>
-                            </Stack>
+                            <Label style={{ marginTop: "5vh" }}>
+                                {error}
+                            </Label>
                         }
                     </Stack>
                     :
-                    <Stack style={{ marginTop: "2vh" }}>
-                        <button onClick={handleModifyClicked}>Modify</button>
-                    </Stack>
+                    <button style={ButtonModifyStyle} onClick={handleModifyClicked}>Modify</button>
                 }
             </Stack>
         </Stack>

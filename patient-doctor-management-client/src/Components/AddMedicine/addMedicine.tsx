@@ -1,12 +1,13 @@
-import { Label, Stack, StackItem, TextField } from "@fluentui/react";
-import { useEffect, useState } from "react"
-import { TailSpin } from "react-loader-spinner";
+import { Label, Stack, TextField } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import { IAddBaseDTO } from "../../DTO/AddBaseDTO";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
-import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
+import { MedicinesService } from "../../Utils/services";
+import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
+import { AddMedicineContainerStyle, LabelDescriptionStyle } from "./addMedicine.styles";
 
 export const AddMedicine = (props: IAdministrationFeatureProps): JSX.Element => {
     const [name, setName] = useState<string>('');
@@ -58,40 +59,25 @@ export const AddMedicine = (props: IAdministrationFeatureProps): JSX.Element => 
                     wrapStackStyle={{ marginTop: "10vh" }}
                 />
                 :
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Add a new medicine
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={name}
-                            onChange={(event: any) => setName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Description
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            multiline={true}
-                            rows={5}
-                            value={description}
-                            onChange={(event: any) => setDescription(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={handleOnButtonClicked}>Save</button>
-                    </StackItem>
+                <Stack style={AddMedicineContainerStyle}>
+                    <Label>
+                        Name
+                    </Label>
+                    <TextField
+                        rows={1}
+                        value={name}
+                        onChange={(event: any) => setName(event.target.value)}
+                    />
+                    <Label style={LabelDescriptionStyle}>
+                        Description
+                    </Label>
+                    <TextField
+                        multiline={true}
+                        rows={5}
+                        value={description}
+                        onChange={(event: any) => setDescription(event.target.value)}
+                    />
+                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

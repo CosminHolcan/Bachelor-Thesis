@@ -1,15 +1,14 @@
 import { Label, Stack, StackItem, TextField } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
-import { useEffect, useState } from "react"
-import { TailSpin } from "react-loader-spinner";
-import { IAddBaseDTO } from "../../DTO/AddBaseDTO";
+import { useEffect, useState } from "react";
 import { IAddDoctorDTO } from "../../DTO/AddDoctor";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
-import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { DoctorsService } from "../../Utils/services";
+import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
+import { AddDoctorContainerStyle, LabelMiddleFieldStyle, SpecializationContainerStyle, TextFieldsContainerStyle } from "./addDoctor.styles";
 import { IAddDoctorProps } from "./addDoctor.types";
 
 export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
@@ -82,83 +81,63 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
                     wrapStackStyle={{ marginTop: "10vh" }}
                 />
                 :
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Add a new doctor
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            First Name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={firstName}
-                            onChange={(event: any) => setFirstName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Last Name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={lastName}
-                            onChange={(event: any) => setLastName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Email
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={email}
-                            onChange={(event: any) => setEmail(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Password
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            type="password"
-                            rows={1}
-                            value={password}
-                            onChange={(event: any) => setPassword(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Repeat Password
-                        </Label>
-                        <TextField
-                            type="password"
-                            rows={1}
-                            value={repeatPassword}
-                            onChange={(event: any) => setRepeatPassword(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={props.specializations}
-                            onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
-                            displayValue="name"
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={handleOnButtonClicked}>Save</button>
-                    </StackItem>
+                <Stack style={AddDoctorContainerStyle}>
+                    <Stack horizontal >
+                        <StackItem style={TextFieldsContainerStyle}>
+                            <Label>
+                                First Name
+                            </Label>
+                            <TextField
+                                rows={1}
+                                value={firstName}
+                                onChange={(event: any) => setFirstName(event.target.value)}
+                            />
+                            <Label style={LabelMiddleFieldStyle}>
+                                Last Name
+                            </Label>
+                            <TextField
+                                rows={1}
+                                value={lastName}
+                                onChange={(event: any) => setLastName(event.target.value)}
+                            />
+                            <Label style={LabelMiddleFieldStyle}>
+                                Email
+                            </Label>
+                            <TextField
+                                rows={1}
+                                value={email}
+                                onChange={(event: any) => setEmail(event.target.value)}
+                            />
+                            <Label style={LabelMiddleFieldStyle}>
+                                Password
+                            </Label>
+                            <TextField
+                                type="password"
+                                rows={1}
+                                value={password}
+                                onChange={(event: any) => setPassword(event.target.value)}
+                            />
+                            <Label style={LabelMiddleFieldStyle}>
+                                Repeat Password
+                            </Label>
+                            <TextField
+                                type="password"
+                                rows={1}
+                                value={repeatPassword}
+                                onChange={(event: any) => setRepeatPassword(event.target.value)}
+                            />
+                        </StackItem>
+                        <StackItem style={SpecializationContainerStyle}>
+                            <Multiselect
+                                placeholder="Select a specialization"
+                                singleSelect={true}
+                                options={props.specializations}
+                                onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
+                                displayValue="name"
+                            />
+                        </StackItem>
+                    </Stack>
+                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

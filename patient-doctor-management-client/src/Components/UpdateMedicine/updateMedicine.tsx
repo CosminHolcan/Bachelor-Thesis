@@ -1,18 +1,14 @@
-import { Label, Stack, StackItem, TextField } from "@fluentui/react";
+import { Label, Stack, TextField } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
-import { useEffect, useState } from "react"
-import { TailSpin } from "react-loader-spinner";
-import { text } from "stream/consumers";
-import { IAddSpecializationDTO } from "../../DTO/AddSpecializationDTO";
+import { useEffect, useState } from "react";
 import { IUpdateBaseDTO } from "../../DTO/UpdateBaseDTO";
-import { IUpdateSpecializationDTO } from "../../DTO/UpdateSpecializationDTO";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
-import { IBaseModel } from "../../Models/BaseModel";
 import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
-import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
-import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
+import { MedicinesService } from "../../Utils/services";
+import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
+import { LabelNewFieldStyle, UpdateMedicineContainerStyle } from "./updateMedicine.styles";
 import { IUpdateMedicineProps } from "./updateMedicine.types";
 
 export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
@@ -39,8 +35,8 @@ export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
             newErrorMessage += "You must select an option. "
 
 
-        if (name.trim() === "" || description.trim() === "") {
-            newErrorMessage += "New name and description can not be empty."
+        else if (name.trim() === "" || description.trim() === "") {
+            newErrorMessage += "New name and description can't be empty."
         }
 
         if (newErrorMessage !== '') {
@@ -83,48 +79,32 @@ export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
                     wrapStackStyle={{ marginTop: "10vh" }}
                 />
                 :
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Update a disease
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={props.medicines}
-                            onSelect={(selectedList, selectedItem) => { setSelectedMedicine(selectedItem) }}
-                            displayValue="name"
-                        />
-                    </StackItem>
-                    <StackItem style={{ marginTop: "5vh" }}>
-                        <Label>
-                            New name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={name}
-                            onChange={(event: any) => setName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem >
-                        <Label>
-                            New description
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            multiline={true}
-                            rows={5}
-                            value={description}
-                            onChange={(event: any) => setDescription(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={handleOnButtonClicked}>Save</button>
-                    </StackItem>
+                <Stack style={UpdateMedicineContainerStyle}>
+                    <Multiselect
+                        placeholder="Select an existing medicine"
+                        singleSelect={true}
+                        options={props.medicines}
+                        onSelect={(selectedList, selectedItem) => { setSelectedMedicine(selectedItem) }}
+                        displayValue="name"
+                    />
+                    <Label style={LabelNewFieldStyle}>
+                        New name
+                    </Label>
+                    <TextField
+                        rows={1}
+                        value={name}
+                        onChange={(event: any) => setName(event.target.value)}
+                    />
+                    <Label style={LabelNewFieldStyle}>
+                        New description
+                    </Label>
+                    <TextField
+                        multiline={true}
+                        rows={5}
+                        value={description}
+                        onChange={(event: any) => setDescription(event.target.value)}
+                    />
+                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

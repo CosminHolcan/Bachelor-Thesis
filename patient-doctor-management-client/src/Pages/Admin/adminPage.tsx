@@ -15,7 +15,10 @@ import { IBaseModel } from "../../Models/BaseModel";
 import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { delay } from "../../Utils/functions";
 import { DiseasesService, MedicinesService, SpecializationService } from "../../Utils/services";
-import { styleStack } from "./adminPage.styles"
+import { ErrorLabelStyle, LabelCategoryStyle, LabelOptionStyle, styleStack } from "./adminPage.styles"
+
+const SELECTED_OPTION_COLOR: string = "#0EBFE9";
+const NONSELECTED_OPTION_COLOR: string = "gray";
 
 export const AdminPage = (): JSX.Element => {
     const [selectedOption, setSelectedOption] = useState<string>('');
@@ -34,20 +37,21 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleOptionChanged = (value: string): void => {
+        setErrorMessage('');
+
         if (selectedOption === value) {
             setSelectedOption('');
-            setErrorMessage('');
             return;
         }
 
         setSelectedOption(value);
-        setErrorMessage('');
     }
 
     const handleUpdateSpecializationSelected = (): void => {
+        setErrorMessage('');
+
         if (selectedOption === AdminFeatures.UpdateSpecialization) {
             setSelectedOption('');
-            setErrorMessage('');
             return;
         }
 
@@ -67,14 +71,15 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleUpdateDiseaseSelected = (): void => {
+        setErrorMessage('');
+
         if (selectedOption === AdminFeatures.UpdateDisease) {
             setSelectedOption('');
-            setErrorMessage('');
             return;
         }
 
         setLoadingData(true);
-        DiseasesService.GetAllDiseases({jwt: localStorage.getItem("jwt") ?? ''})
+        DiseasesService.GetAllDiseases({ jwt: localStorage.getItem("jwt") ?? '' })
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
@@ -89,14 +94,15 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleUpdateMedicineSelected = (): void => {
+        setErrorMessage('');
+
         if (selectedOption === AdminFeatures.UpdateMedicine) {
             setSelectedOption('');
-            setErrorMessage('');
             return;
         }
 
         setLoadingData(true);
-        MedicinesService.GetAllMedicines({jwt: localStorage.getItem("jwt") ?? ''})
+        MedicinesService.GetAllMedicines({ jwt: localStorage.getItem("jwt") ?? '' })
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
@@ -111,9 +117,10 @@ export const AdminPage = (): JSX.Element => {
     }
 
     const handleAddDoctorSelected = (): void => {
+        setErrorMessage('');
+
         if (selectedOption === AdminFeatures.AddDoctor) {
             setSelectedOption('');
-            setErrorMessage('');
             return;
         }
 
@@ -195,71 +202,77 @@ export const AdminPage = (): JSX.Element => {
                     />
                 );
         }
-        return (<div></div>)
+        return (<div />)
     }
 
     return (
         <Stack style={{ marginTop: "5vh" }} >
             <Stack horizontal style={{ marginTop: "5vh" }} horizontalAlign="center" tokens={styleStack}>
                 <Stack>
-                    <StackItem style={{ marginBottom: "2vh" }}>
-                        <Label>
-                            Accounts
-                        </Label>
-                    </StackItem>
+                    <Label style={LabelCategoryStyle}>
+                        Accounts
+                    </Label>
                     <StackItem>
-                        <Label onClick={() => { handleAddDoctorSelected(); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.AddDoctor || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleAddDoctorSelected(); }}>
                             Add a doctor account
                         </Label>
                     </StackItem>
                 </Stack>
                 <Stack>
-                    <StackItem style={{ marginBottom: "2vh" }}>
-                        <Label>
-                            Medicines
-                        </Label>
-                    </StackItem>
+                    <Label style={LabelCategoryStyle}>
+                        Medicines
+                    </Label>
                     <StackItem>
-                        <Label onClick={() => { handleOptionChanged(AdminFeatures.AddMedicine); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.AddMedicine || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleOptionChanged(AdminFeatures.AddMedicine); }}>
                             Add a new medicine
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label onClick={() => { handleUpdateMedicineSelected(); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.UpdateMedicine || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleUpdateMedicineSelected(); }}>
                             Update an existing medicine
                         </Label>
                     </StackItem>
                 </Stack>
                 <Stack>
-                    <StackItem style={{ marginBottom: "2vh" }}>
-                        <Label>
-                            Diseases
-                        </Label>
-                    </StackItem>
+                    <Label style={LabelCategoryStyle}>
+                        Diseases
+                    </Label>
                     <StackItem>
-                        <Label onClick={() => { handleOptionChanged(AdminFeatures.AddDisease); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.AddDisease || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleOptionChanged(AdminFeatures.AddDisease); }}>
                             Add a new disease
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label onClick={() => { handleUpdateDiseaseSelected(); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.UpdateDisease || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleUpdateDiseaseSelected(); }}>
                             Update an existing disease
                         </Label>
                     </StackItem>
                 </Stack>
                 <Stack>
-                    <StackItem style={{ marginBottom: "2vh" }}>
-                        <Label>
-                            Specializations
-                        </Label>
-                    </StackItem>
+                    <Label style={LabelCategoryStyle}>
+                        Specializations
+                    </Label>
                     <StackItem>
-                        <Label onClick={() => { handleOptionChanged(AdminFeatures.AddSpecialization); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.AddSpecialization || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleOptionChanged(AdminFeatures.AddSpecialization); }}>
                             Add a new specialization
                         </Label>
                     </StackItem>
                     <StackItem>
-                        <Label onClick={() => { handleUpdateSpecializationSelected(); }}>
+                        <Label
+                            style={LabelOptionStyle(selectedOption == AdminFeatures.UpdateSpecialization || selectedOption == "" ? SELECTED_OPTION_COLOR : NONSELECTED_OPTION_COLOR)}
+                            onClick={() => { handleUpdateSpecializationSelected(); }}>
                             Update an existing specialization
                         </Label>
                     </StackItem>
@@ -276,11 +289,9 @@ export const AdminPage = (): JSX.Element => {
                 :
                 selectedOption !== '' && getSelectedOption()}
             {errorMessage !== '' &&
-                <StackItem>
-                    <Label style={{ color: "red", marginTop: "5vh" }}>
-                        Error: {errorMessage}
-                    </Label>
-                </StackItem>}
+                <Label style={ErrorLabelStyle}>
+                    {errorMessage}
+                </Label>}
         </Stack>
     )
 }

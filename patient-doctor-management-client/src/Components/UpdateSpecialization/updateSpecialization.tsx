@@ -1,16 +1,14 @@
-import { Label, Stack, StackItem, TextField } from "@fluentui/react";
+import { Label, Stack, TextField } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
-import { useEffect, useState } from "react"
-import { TailSpin } from "react-loader-spinner";
-import { text } from "stream/consumers";
-import { IAddSpecializationDTO } from "../../DTO/AddSpecializationDTO";
+import { useEffect, useState } from "react";
 import { IUpdateSpecializationDTO } from "../../DTO/UpdateSpecializationDTO";
 import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
-import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { SpecializationService } from "../../Utils/services";
+import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
+import { LabelNewNameStyle, UpdateSpecializationContainerStyle } from "./updateSpecialization.styles";
 import { IUpdateSpecializationProps } from "./updateSpecialization.types";
 
 export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Element => {
@@ -74,35 +72,23 @@ export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Ele
                     wrapStackStyle={{ marginTop: "10vh" }}
                 />
                 :
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Update a specialization
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={props.specializations}
-                            onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
-                            displayValue="name"
-                        />
-                    </StackItem>
-                    <StackItem style={{ marginTop: "5vh" }}>
-                        <Label>
-                            New name
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <TextField
-                            rows={1}
-                            value={name}
-                            onChange={(event: any) => setName(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={handleOnButtonClicked}>Save</button>
-                    </StackItem>
+                <Stack style={UpdateSpecializationContainerStyle}>
+                    <Multiselect
+                        placeholder="Select an existing specialization"
+                        singleSelect={true}
+                        options={props.specializations}
+                        onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}
+                        displayValue="name"
+                    />
+                    <Label style={LabelNewNameStyle}>
+                        New name
+                    </Label>
+                    <TextField
+                        rows={1}
+                        value={name}
+                        onChange={(event: any) => setName(event.target.value)}
+                    />
+                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>
