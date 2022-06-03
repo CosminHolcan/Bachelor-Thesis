@@ -34,7 +34,7 @@ export const convertNumberMonthToString = (month: number): string => {
 }
 
 export const convertDateStringFromServerToLocal = (date: string): string => {
-    if (date[date.length-1] !== 'Z')
+    if (date[date.length - 1] !== 'Z')
         date = date.concat("Z");
 
     return date;
@@ -42,4 +42,8 @@ export const convertDateStringFromServerToLocal = (date: string): string => {
 
 export const twoDatesHaveTheSameDay = (date1: Date, date2: Date): boolean => {
     return (date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear());
+}
+
+export const getMessageFormatStringDate = (date: Date): string => {
+    return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "  " + date.getHours() + ":" + date.getMinutes();
 }

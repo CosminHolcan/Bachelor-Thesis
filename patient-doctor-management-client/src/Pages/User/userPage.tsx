@@ -448,14 +448,14 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
             case MenuItem.CalendarPatient:
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CALENDAR_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
-                        <CalendarPage doctors={doctors} />
+                        <CalendarPage isLoggedInDoctor={isLoggedInDoctor} doctors={doctors} />
                     </PivotItem>
                 )
             case MenuItem.CalendarDoctor:
                 return (
                     <PivotItem key={tabName} itemKey={tabName} headerText={tabName} itemIcon={CALENDAR_PAGE_ICON} headerButtonProps={{ style: { fontSize: 20 } }}>
                         {!loadingData ?
-                            <CalendarPage doctors={[]} appointments={appointmentsForDoctor} />
+                            <CalendarPage isLoggedInDoctor={isLoggedInDoctor} doctors={[]} appointments={appointmentsForDoctor} />
                             :
                             <LoadingSpinner
                                 height={300}

@@ -2,22 +2,20 @@ import { Stack } from "@fluentui/react";
 import Multiselect from "multiselect-react-dropdown";
 import { Icon, Label, StackItem } from "office-ui-fabric-react";
 import { useEffect, useState } from "react";
-import { AppointmentSlotPatientView } from "../../Components/AppointmentSlotPatientView/appointmentSlotPatientView";
 import { CustomCalendar } from "../../Components/CustomCalendar/customCalendar";
 import { LoadingSpinner } from "../../Components/LoadingSpinner/loadingSpinner";
-import { IPersonDescription } from "../../Models/PersonDescription";
 import { IGetAppointmentByDoctorForPatientDTO } from "../../DTO/GetAppointmentByDoctorForPatientDTO";
 import { UserType } from "../../Enums/userTypes";
-import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, NONE, WAITING_MILLISECONDS } from "../../globalConstants";
-import { IAppointment } from "../../Models/Appointment";
+import { MILLISECONDS_IN_DAY, MILLISECONDS_IN_WEEK, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointmentsByDoctorForPatient } from "../../Models/AppointmentsByDoctorForPatient";
-import { IBaseModel } from "../../Models/BaseModel";
+import { IPersonDescription } from "../../Models/PersonDescription";
 import { convertDateStringFromServerToLocal, convertNumberMonthToString, delay } from "../../Utils/functions";
-import { AppointmentsService, DoctorsService } from "../../Utils/services";
+import { AppointmentsService } from "../../Utils/services";
+import { ControlStartWeekDayStyle, DoctorDropdownContainerStyle, LabelStartWeekDayStyle, LeftArrowStyle, RightArrowStyle } from "./calendarPage.styles";
 import { ICalendarPageProps } from "./calendarPage.types";
 
-const ICON_LEFT: string = "CaretSolidLeft";
-const ICON_RIGHT: string = "CaretSolidRight";
+const ICON_LEFT_Arrow: string = "CaretSolidLeft";
+const ICON_RIGHT_ARROW: string = "CaretSolidRight";
 
 export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
     const getFirstStartingWeekDate = (): Date => {
@@ -40,7 +38,10 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
                 startingWeekDate.setTime(currentDay.getTime() - 3 * MILLISECONDS_IN_DAY);
                 break;
             case 5:
-                startingWeekDate.setTime(currentDay.getTime() - 4 * MILLISECONDS_IN_DAY);
+                if (props.isLoggedInDoctor && currentDay.getHours() < 17)
+                    startingWeekDate.setTime(currentDay.getTime() - 4 * MILLISECONDS_IN_DAY);
+                else
+                    startingWeekDate.setTime(currentDay.getTime() + 3 * MILLISECONDS_IN_DAY);
                 break;
             case 6:
                 startingWeekDate.setTime(currentDay.getTime() + 2 * MILLISECONDS_IN_DAY);
@@ -51,9 +52,6 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
         startingWeekDate.setHours(9, 0, 0, 0);
         return startingWeekDate;
     }
-
-    var userTypeString = localStorage.getItem("userType");
-    const isLoggedInDoctor = userTypeString == null ? false : +userTypeString == UserType.Doctor ? true : false;
 
     const [doctorsToShow, setDoctorsToShow] = useState<IPersonDescription[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<IPersonDescription>();
@@ -137,7 +135,7 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
     }
 
     const showContent = (): boolean => {
-        if (isLoggedInDoctor)
+        if (props.isLoggedInDoctor)
             return true;
 
         return selectedDoctor !== undefined && !loadingData;
@@ -157,51 +155,48 @@ export const CalendarPage = (props: ICalendarPageProps): JSX.Element => {
 
     return (
         <Stack>
-            {!isLoggedInDoctor && doctorsToShow.length > 0 &&
-                <Stack>
-                    <StackItem>
-                        <Label>
-                            Doctor
-                        </Label>
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={doctorsToShow}
-                            groupBy="specialization"
-                            onSelect={(selectedList, selectedItem) => { setSelectedDoctor(selectedItem) }}
-                            displayValue="name"
-                        />
-                    </StackItem>
+            {!props.isLoggedInDoctor && doctorsToShow.length > 0 &&
+                <Stack style={DoctorDropdownContainerStyle}>
+                    <Label>
+                        Doctor
+                    </Label>
+                    <Multiselect
+                        placeholder="Select a doctor"
+                        singleSelect={true}
+                        options={doctorsToShow}
+                        groupBy="specialization"
+                        onSelect={(selectedList, selectedItem) => { setSelectedDoctor(selectedItem) }}
+                        displayValue="name"
+                    />
                 </Stack>
             }
             {showContent() &&
                 <Stack>
-                    <Stack horizontal horizontalAlign="center" style={{ marginTop: "2vh" }}>
+                    <Stack horizontal horizontalAlign="center" style={ControlStartWeekDayStyle}>
                         {showLeftArrow() &&
                             <StackItem onClick={() => { handleLeftArrowClicked(); }}>
                                 <Icon
-                                    iconName={ICON_LEFT}
-                                    style={{ fontSize: "4vh", marginRight: "3vw" }}
+                                    iconName={ICON_LEFT_Arrow}
+                                    style={LeftArrowStyle}
                                 />
                             </StackItem>
                         }
                         <StackItem>
-                            <Label style={{ fontSize: 20 }}>
+                            <Label style={LabelStartWeekDayStyle}>
                                 {convertNumberMonthToString(startingWeekDate.getMonth()) + ", " + startingWeekDate.getDate()}
                             </Label>
                         </StackItem>
                         <StackItem onClick={() => { handleRightArrowClicked(); }}>
                             <Icon
-                                iconName={ICON_RIGHT}
-                                style={{ fontSize: "4vh", marginLeft: "3vw" }}
+                                iconName={ICON_RIGHT_ARROW}
+                                style={RightArrowStyle}
                             />
                         </StackItem>
                     </Stack>
 
                     <CustomCalendar
-                        appointmentsPatientView={isLoggedInDoctor ? undefined : appointments}
-                        appointmentsDoctorView={isLoggedInDoctor ? props.appointments : undefined}
+                        appointmentsPatientView={props.isLoggedInDoctor ? undefined : appointments}
+                        appointmentsDoctorView={props.isLoggedInDoctor ? props.appointments : undefined}
                         startingWeekDate={startingWeekDate}
                         selectedDoctor={selectedDoctor}
                         setRefreshData={setRefreshData}

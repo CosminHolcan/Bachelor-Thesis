@@ -4,4 +4,5 @@ import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 export interface ICalendarPageProps {
     doctors: IPersonDescription[];
     appointments?: IAppointmentForDoctor[];
+    isLoggedInDoctor: boolean;
 }

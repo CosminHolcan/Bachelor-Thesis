@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { ICustomKeyValuePair } from "../../Models/CustomKeyValuePair"
 import { IMessage } from "../../Models/Message";
+import { getMessageFormatStringDate } from "../../Utils/functions";
 import { IMessageListProps } from "./messageList.types"
 
 export const MessageList = (props: IMessageListProps): JSX.Element => {
@@ -29,7 +30,7 @@ export const MessageList = (props: IMessageListProps): JSX.Element => {
                 color: "black",
                 marginBottom: "2vh",
                 padding: "10px",
-                backgroundColor: "gray",
+                backgroundColor: "lightGray",
                 width: "50%",
                 borderRadius: "20px",
                 minHeight: "5vh",
@@ -44,11 +45,11 @@ export const MessageList = (props: IMessageListProps): JSX.Element => {
                 return (
                     <li key={message.timeStamp.getTime()} style={{ marginBottom: "3vh" }}>
                         <div style={getMessageStyle(message.senderId)}>
-                            <div>
+                            <div style={{fontFamily: "Grotesco", fontSize: "17px"}}>
                                 {message.text}
                             </div>
                             <div style={{ float: "right" }}>
-                                {message.timeStamp.toLocaleTimeString()}
+                                {getMessageFormatStringDate(message.timeStamp)}
                             </div>
                         </div>
                     </li>
