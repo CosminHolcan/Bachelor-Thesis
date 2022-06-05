@@ -6,7 +6,7 @@ import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
 import { delay } from "../../Utils/functions";
 import { SpecializationService } from "../../Utils/services";
-import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
+import { ButtonSaveOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { LabelNewNameStyle, UpdateSpecializationContainerStyle } from "./updateSpecialization.styles";
 import { IUpdateSpecializationProps } from "./updateSpecialization.types";
@@ -88,7 +88,7 @@ export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Ele
                         value={name}
                         onChange={(event: any) => setName(event.target.value)}
                     />
-                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
+                    <button style={ButtonSaveOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

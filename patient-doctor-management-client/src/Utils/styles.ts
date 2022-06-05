@@ -1,4 +1,4 @@
-export const ButtonSaveAdminOperationStyle: React.CSSProperties = {
+export const ButtonSaveOperationStyle: React.CSSProperties = {
     width: "10vw",
     marginTop: "4vh",
     borderRadius: "20px",

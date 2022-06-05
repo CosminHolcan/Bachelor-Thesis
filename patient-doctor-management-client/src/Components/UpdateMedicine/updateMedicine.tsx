@@ -6,7 +6,7 @@ import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription";
 import { delay } from "../../Utils/functions";
 import { MedicinesService } from "../../Utils/services";
-import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
+import { ButtonSaveOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { LabelNewFieldStyle, UpdateMedicineContainerStyle } from "./updateMedicine.styles";
 import { IUpdateMedicineProps } from "./updateMedicine.types";
@@ -104,7 +104,7 @@ export const UpdateMedicine = (props: IUpdateMedicineProps): JSX.Element => {
                         value={description}
                         onChange={(event: any) => setDescription(event.target.value)}
                     />
-                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
+                    <button style={ButtonSaveOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

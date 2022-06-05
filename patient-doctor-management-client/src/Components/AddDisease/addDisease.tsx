@@ -5,7 +5,7 @@ import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { DiseasesService } from "../../Utils/services";
-import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
+import { ButtonSaveOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { AddDiseaseContainerStyle, LabelDescriptionStyle } from "./addDisease.styles";
 
@@ -77,7 +77,7 @@ export const AddDisease = (props: IAdministrationFeatureProps): JSX.Element => {
                         value={description}
                         onChange={(event: any) => setDescription(event.target.value)}
                     />
-                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
+                    <button style={ButtonSaveOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

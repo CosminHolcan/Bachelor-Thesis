@@ -1,16 +1,20 @@
-import { DetailsList, DetailsListLayoutMode, IColumn, Label, Stack, StackItem, TextField } from "@fluentui/react"
+import { DetailsList, DetailsListLayoutMode, IColumn, Icon, Label, Stack, StackItem, TextField } from "@fluentui/react"
 import { cloneDeep } from "lodash"
-import Pagination from "material-ui-pagination"
 import Multiselect from "multiselect-react-dropdown"
 import { useEffect, useState } from "react"
-import ReactPaginate from "react-paginate"
 import { IAddTreatmentDTO } from "../../DTO/AddTreatmentDTO"
 import { IBaseModelWithDescription } from "../../Models/BaseModelNameWithDescription"
 import { IPersonDescription } from "../../Models/PersonDescription"
 import { ITreatment } from "../../Models/Treatment"
 import { convertDateStringFromServerToLocal } from "../../Utils/functions"
 import { TreatmentsService } from "../../Utils/services"
+import { ButtonSaveOperationStyle } from "../../Utils/styles"
+import { DoctorControllerStyle, DropdownDiseaseContainerStyle, DropdownsContainerStyle, LabelStyle, LeftArrowStyle, ObservationsAndSaveContainerStyle, RecipesTableContainerStyle, RightArrowStyle, TreatmentsPageStyle } from "./recipesPage.styles"
 import { IRecipesPageProps } from "./recipesPage.types"
+
+const TREATMENTS_PER_PAGE: number = 5;
+const ICON_LEFT_Arrow: string = "CaretSolidLeft";
+const ICON_RIGHT_ARROW: string = "CaretSolidRight";
 
 export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
     const [treatments, setTreatments] = useState<ITreatment[]>(props.treatments);
@@ -19,6 +23,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
     const [selectedMedicines, setSelectedMedicines] = useState<IBaseModelWithDescription[]>([]);
     const [observations, setObservations] = useState<string>('');
     const [error, setError] = useState<string>('');
+    const [treatmentsPage, setTreatmentsPage] = useState<number>(1);
 
     useEffect(() => {
         setError('');
@@ -80,6 +85,18 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
             }))
     }
 
+    const getTreatmentsToDisplay = (): ITreatment[] => {
+        return treatments.slice((treatmentsPage - 1) * TREATMENTS_PER_PAGE, Math.min(treatmentsPage * TREATMENTS_PER_PAGE, treatments.length));
+    }
+
+    const showLeftArrow = (): boolean => {
+        return treatmentsPage > 1;
+    }
+
+    const showRightArrow = (): boolean => {
+        return treatments.length / TREATMENTS_PER_PAGE > treatmentsPage;
+    }
+
     const getColumns = (): IColumn[] => {
         const minWidth: number = 120;
         const maxWidth: number = 250;
@@ -138,11 +155,11 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
 
     return (
         <Stack>
-            <StackItem style={{ height: "50vh" }}>
+            <StackItem style={RecipesTableContainerStyle}>
                 <DetailsList
                     layoutMode={DetailsListLayoutMode.justified}
                     columns={getColumns()}
-                    items={treatments.map((treatment) => {
+                    items={getTreatmentsToDisplay().map((treatment) => {
                         var medicinesString: string = '';
                         treatment.medicines.forEach((medicine) => medicinesString = medicinesString + "\n" + medicine);
                         return {
@@ -156,48 +173,88 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                     })}
                 />
             </StackItem>
+            <Stack horizontal horizontalAlign="center" verticalAlign="center">
+                {showLeftArrow() &&
+                    <StackItem onClick={() => { setTreatmentsPage(treatmentsPage - 1); }}>
+                        <Icon
+                            iconName={ICON_LEFT_Arrow}
+                            style={LeftArrowStyle}
+                        />
+                    </StackItem>
+                }
+                <StackItem>
+                    <Label style={TreatmentsPageStyle}>
+                        {treatmentsPage}
+                    </Label>
+                </StackItem>
+                {showRightArrow() &&
+                    <StackItem onClick={() => { setTreatmentsPage(treatmentsPage + 1); }}>
+                        <Icon
+                            iconName={ICON_RIGHT_ARROW}
+                            style={RightArrowStyle}
+                        />
+                    </StackItem>
+                }
+            </Stack>
             {props.isLoggedInDoctor &&
-                <Stack>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={props.patients}
-                            onSelect={(selectedList, selectedItem) => { setSelectedPatient(selectedItem) }}
-                            displayValue="name"
-                            selectedValues={selectedPatient && [selectedPatient]}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            singleSelect={true}
-                            options={props.diseases}
-                            selectedValues={selectedDisease && [selectedDisease]}
-                            onSelect={(selectedList, selectedItem) => { setSelectedDisease(selectedItem) }}
-                            displayValue="name"
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Multiselect
-                            options={props.medicines}
-                            onSelect={(selectedList, selectedItem) => { addMedicine(selectedItem) }}
-                            onRemove={(selectedList, selectedItem) => { removeMedicine(selectedItem) }}
-                            displayValue="name"
-                            selectedValues={selectedMedicines.length > 0 && selectedMedicines}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <Label>
-                            Observations
-                        </Label>
-                        <TextField
-                            multiline={true}
-                            rows={3}
-                            onChange={(event: any) => setObservations(event.target.value)}
-                        />
-                    </StackItem>
-                    <StackItem>
-                        <button onClick={onSaveClicked}>Save</button>
-                    </StackItem>
+                <Stack style={DoctorControllerStyle}>
+                    <Stack horizontal>
+                        <StackItem style={DropdownsContainerStyle}>
+                            <StackItem>
+                                <Label style={LabelStyle}>
+                                    Patient
+                                </Label>
+                                <Multiselect
+                                    placeholder="Select a patient"
+                                    singleSelect={true}
+                                    options={props.patients}
+                                    onSelect={(selectedList, selectedItem) => { setSelectedPatient(selectedItem) }}
+                                    displayValue="name"
+                                    selectedValues={selectedPatient && [selectedPatient]}
+                                />
+                            </StackItem>
+                            <StackItem style={DropdownDiseaseContainerStyle}>
+                                <Label style={LabelStyle}>
+                                    Disease
+                                </Label>
+                                <Multiselect
+                                    placeholder="Select a disease"
+                                    singleSelect={true}
+                                    options={props.diseases}
+                                    selectedValues={selectedDisease && [selectedDisease]}
+                                    onSelect={(selectedList, selectedItem) => { setSelectedDisease(selectedItem) }}
+                                    displayValue="name"
+                                />
+                            </StackItem>
+                            <StackItem>
+                                <Label style={LabelStyle}>
+                                    Medicines
+                                </Label>
+                                <Multiselect
+                                    placeholder="Select medicines"
+                                    options={props.medicines}
+                                    onSelect={(selectedList, selectedItem) => { addMedicine(selectedItem) }}
+                                    onRemove={(selectedList, selectedItem) => { removeMedicine(selectedItem) }}
+                                    displayValue="name"
+                                    selectedValues={selectedMedicines.length > 0 && selectedMedicines}
+                                />
+                            </StackItem>
+                        </StackItem>
+                        <StackItem style={ObservationsAndSaveContainerStyle}>
+                            <StackItem>
+                                <Label style={LabelStyle}>
+                                    Observations
+                                </Label>
+                                <TextField
+                                    multiline={true}
+                                    rows={4}
+                                    value={observations}
+                                    onChange={(event: any) => setObservations(event.target.value)}
+                                />
+                            </StackItem>
+                            <button style={ButtonSaveOperationStyle} onClick={onSaveClicked}>Save</button>
+                        </StackItem>
+                    </Stack>
                     {error &&
                         <StackItem>
                             <Label>

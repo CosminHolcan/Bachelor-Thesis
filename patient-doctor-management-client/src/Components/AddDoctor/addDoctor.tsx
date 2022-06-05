@@ -6,7 +6,7 @@ import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IBaseModel } from "../../Models/BaseModel";
 import { delay } from "../../Utils/functions";
 import { DoctorsService } from "../../Utils/services";
-import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
+import { ButtonSaveOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { AddDoctorContainerStyle, LabelMiddleFieldStyle, SpecializationContainerStyle, TextFieldsContainerStyle } from "./addDoctor.styles";
 import { IAddDoctorProps } from "./addDoctor.types";
@@ -137,7 +137,7 @@ export const AddDoctor = (props: IAddDoctorProps): JSX.Element => {
                             />
                         </StackItem>
                     </Stack>
-                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
+                    <button style={ButtonSaveOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>

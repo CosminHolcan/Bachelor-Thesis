@@ -5,7 +5,7 @@ import { WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAdministrationFeatureProps } from "../../Pages/Admin/adminPage.types";
 import { delay } from "../../Utils/functions";
 import { SpecializationService } from "../../Utils/services";
-import { ButtonSaveAdminOperationStyle } from "../../Utils/styles";
+import { ButtonSaveOperationStyle } from "../../Utils/styles";
 import { LoadingSpinner } from "../LoadingSpinner/loadingSpinner";
 import { AddSpecializationContainerStyle } from "./addSpecialization.styles";
 
@@ -64,7 +64,7 @@ export const AddSpecialization = (props: IAdministrationFeatureProps): JSX.Eleme
                         value={name}
                         onChange={(event: any) => setName(event.target.value)}
                     />
-                    <button style={ButtonSaveAdminOperationStyle} onClick={handleOnButtonClicked}>Save</button>
+                    <button style={ButtonSaveOperationStyle} onClick={handleOnButtonClicked}>Save</button>
                 </Stack>
             }
         </>
