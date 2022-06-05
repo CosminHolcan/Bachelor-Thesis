@@ -4,7 +4,7 @@ export const DropdownsContainerStyle: React.CSSProperties = {
     marginTop: "5vh"
 }
 
-export const DropdownPatientsStyle: React.CSSProperties = {
+export const DropdownPatientsOrDoctorsStyle: React.CSSProperties = {
     marginLeft: "5vw",
     width: "20vw",
     marginRight: "10vw"

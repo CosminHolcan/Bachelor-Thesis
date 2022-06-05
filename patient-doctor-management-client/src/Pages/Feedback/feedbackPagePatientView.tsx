@@ -10,8 +10,7 @@ import { IFeedback } from "../../Models/Feedback"
 import { IPersonDescription } from "../../Models/PersonDescription"
 import { convertDateStringFromServerToLocal, getMessageFormatStringDate } from "../../Utils/functions"
 import { FeedbacksService } from "../../Utils/services"
-import { AddNewObservationContainerStyle, DateStyle, DropdownDiseasesStyle, DropdownsContainerStyle, FeedbackPatientStyle, FeedbacksContainerStyle, IconContainerStyle, TextFieldNewObservationStyle } from "./feedbackPageDoctorView.styles"
-import { DropdownDoctorsStyle } from "./feedbackPagePatientView.styles"
+import { AddNewObservationContainerStyle, DateStyle, DropdownDiseasesStyle, DropdownPatientsOrDoctorsStyle, DropdownsContainerStyle, FeedbackPatientStyle, FeedbacksContainerStyle, IconContainerStyle, TextFieldNewObservationStyle } from "./feedbackPageDoctor.styles"
 import { IFeedbackPagePatientViewProps } from "./feedbackPagePatientView.types"
 
 const ADD_ICON: string = "Add";
@@ -90,7 +89,7 @@ export const FeedbackPagePatientView = (props: IFeedbackPagePatientViewProps): J
     return (
         <Stack>
             <Stack horizontal style={DropdownsContainerStyle}>
-                <StackItem style={DropdownDoctorsStyle}>
+                <StackItem style={DropdownPatientsOrDoctorsStyle}>
                     <Multiselect
                         singleSelect={true}
                         options={props.doctors}

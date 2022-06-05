@@ -11,7 +11,7 @@ import { IFeedback } from "../../Models/Feedback"
 import { IPersonDescription } from "../../Models/PersonDescription"
 import { convertDateStringFromServerToLocal, getMessageFormatStringDate } from "../../Utils/functions"
 import { FeedbacksService } from "../../Utils/services"
-import { AddNewObservationContainerStyle, DateStyle, DropdownDiseasesStyle, DropdownPatientsStyle, DropdownsContainerStyle, FeedbackDoctorStyle, FeedbackPatientStyle, FeedbacksContainerStyle, FeedbacksStackStyle, IconContainerStyle, LabelStyle, TextFieldNewObservationStyle } from "./feedbackPageDoctorView.styles"
+import { AddNewObservationContainerStyle, DateStyle, DropdownDiseasesStyle, DropdownPatientsOrDoctorsStyle, DropdownsContainerStyle, FeedbackDoctorStyle, FeedbackPatientStyle, FeedbacksContainerStyle, FeedbacksStackStyle, IconContainerStyle, LabelStyle, TextFieldNewObservationStyle } from "./feedbackPageDoctor.styles"
 import { IFeedbackPageDoctorViewProps } from "./feedbackPageDoctorView.types"
 
 const ADD_ICON: string = "Add";
@@ -120,7 +120,7 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
     return (
         <Stack >
             <Stack horizontal style={DropdownsContainerStyle}>
-                <StackItem style={DropdownPatientsStyle}>
+                <StackItem style={DropdownPatientsOrDoctorsStyle}>
                     <Multiselect
                         placeholder="Select a patient"
                         singleSelect={true}
