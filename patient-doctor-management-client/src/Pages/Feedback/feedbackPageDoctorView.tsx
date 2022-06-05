@@ -1,4 +1,4 @@
-import { Stack } from "@fluentui/react"
+import { Label, Stack } from "@fluentui/react"
 import { cloneDeep } from "lodash"
 import Multiselect from "multiselect-react-dropdown"
 import { Icon, StackItem, TextField } from "office-ui-fabric-react"
@@ -9,8 +9,9 @@ import { IGetFeedbacksByPatientDTO } from "../../DTO/GetFeedbacksByPatientDTO"
 import { IBaseModel } from "../../Models/BaseModel"
 import { IFeedback } from "../../Models/Feedback"
 import { IPersonDescription } from "../../Models/PersonDescription"
-import { convertDateStringFromServerToLocal } from "../../Utils/functions"
+import { convertDateStringFromServerToLocal, getMessageFormatStringDate } from "../../Utils/functions"
 import { FeedbacksService } from "../../Utils/services"
+import { AddNewObservationContainerStyle, DateStyle, DropdownDiseasesStyle, DropdownPatientsStyle, DropdownsContainerStyle, FeedbackDoctorStyle, FeedbackPatientStyle, FeedbacksContainerStyle, FeedbacksStackStyle, IconContainerStyle, LabelStyle, TextFieldNewObservationStyle } from "./feedbackPageDoctorView.styles"
 import { IFeedbackPageDoctorViewProps } from "./feedbackPageDoctorView.types"
 
 const ADD_ICON: string = "Add";
@@ -73,6 +74,18 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
         }
     }, [selectedPatient, selectedDisease])
 
+    setTimeout(() => {
+        var objDiv = document.getElementById("feedbackDoctorListId");
+        if (objDiv)
+            objDiv.scrollTop = objDiv.scrollHeight;
+    }, 0)
+
+    setTimeout(() => {
+        var objDiv = document.getElementById("feedbackPatientListId");
+        if (objDiv)
+            objDiv.scrollTop = objDiv.scrollHeight;
+    }, 0)
+
     const onAddFeedbackClicked = (): void => {
         if (selectedDisease === undefined || selectedPatient === undefined)
             return;
@@ -105,18 +118,20 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
     }
 
     return (
-        <Stack>
-            <Stack horizontal>
-                <StackItem>
+        <Stack >
+            <Stack horizontal style={DropdownsContainerStyle}>
+                <StackItem style={DropdownPatientsStyle}>
                     <Multiselect
+                        placeholder="Select a patient"
                         singleSelect={true}
                         options={props.patients}
                         onSelect={(selectedList, selectedItem) => { setSelectedPatient(selectedItem) }}
                         displayValue="name"
                     />
                 </StackItem>
-                <StackItem>
+                <StackItem style={DropdownDiseasesStyle}>
                     <Multiselect
+                        placeholder="Select a disease"
                         singleSelect={true}
                         options={props.diseases}
                         onSelect={(selectedList, selectedItem) => { setSelectedDisease(selectedItem) }}
@@ -124,27 +139,23 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
                     />
                 </StackItem>
             </Stack>
-            <Stack horizontal>
-                <StackItem>
-                    <ul style={{ overflowY: "scroll", overflowX: "hidden", height: "95%", listStyle: "none" }}>
+            <Stack horizontal style={FeedbacksContainerStyle}>
+                <StackItem style={FeedbacksStackStyle}>
+                    {selectedPatient && selectedDisease &&
+                        <Label style={LabelStyle}>
+                            Your observations
+                        </Label>
+                    }
+                    <ul id="feedbackDoctorListId" style={{ overflowY: "scroll", overflowX: "hidden", height: "95%", listStyle: "none" }}>
                         {feedbacksByDoctor.map((feedback, index) => {
                             return (
                                 <li key={feedback.timeStamp.getTime()} style={{ marginBottom: "3vh" }}>
-                                    <div style={{
-                                        color: "white",
-                                        marginBottom: "2vh",
-                                        padding: "10px",
-                                        backgroundColor: "blue",
-                                        width: "50%",
-                                        borderRadius: "20px",
-                                        minHeight: "5vh",
-                                        float: "right"
-                                    }}>
+                                    <div style={FeedbackDoctorStyle}>
                                         <div>
                                             {feedback.text}
                                         </div>
-                                        <div style={{ float: "right" }}>
-                                            {feedback.timeStamp.toLocaleTimeString()}
+                                        <div style={DateStyle}>
+                                            {getMessageFormatStringDate(feedback.timeStamp)}
                                         </div>
                                     </div>
                                 </li>
@@ -152,26 +163,22 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
                         })}
                     </ul>
                 </StackItem>
-                <StackItem>
-                    <ul style={{ overflowY: "scroll", overflowX: "hidden", height: "95%", listStyle: "none" }}>
+                <StackItem style={FeedbacksStackStyle}>
+                    {selectedPatient && selectedDisease &&
+                        <Label style={LabelStyle}>
+                            Patient's feedback
+                        </Label>
+                    }
+                    <ul id="feedbackPatientListId" style={{ overflowY: "scroll", overflowX: "hidden", height: "95%", listStyle: "none" }}>
                         {feedbacksByPatient.map((feedback, index) => {
                             return (
                                 <li key={feedback.timeStamp.getTime()} style={{ marginBottom: "3vh" }}>
-                                    <div style={{
-                                        color: "white",
-                                        marginBottom: "2vh",
-                                        padding: "10px",
-                                        backgroundColor: "blue",
-                                        width: "50%",
-                                        borderRadius: "20px",
-                                        minHeight: "5vh",
-                                        float: "right"
-                                    }}>
+                                    <div style={FeedbackPatientStyle}>
                                         <div>
                                             {feedback.text}
                                         </div>
-                                        <div style={{ float: "right" }}>
-                                            {feedback.timeStamp.toLocaleTimeString()}
+                                        <div style={DateStyle}>
+                                            {getMessageFormatStringDate(feedback.timeStamp)}
                                         </div>
                                     </div>
                                 </li>
@@ -180,16 +187,16 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
                     </ul>
                 </StackItem>
             </Stack>
-            <Stack style={{ width: "100%", height: "8.7vh", marginTop: "1vh" }} horizontal>
-                <StackItem style={{ width: "90%" }}>
+            <Stack style={AddNewObservationContainerStyle} horizontal>
+                <StackItem style={TextFieldNewObservationStyle}>
                     <TextField
                         rows={2}
                         value={feedbackText}
                         multiline={true}
-                        onChange={(e, newValue) => newValue && setFeedbackTex(newValue)}
+                        onChange={(e, newValue) => newValue !== undefined && setFeedbackTex(newValue)}
                     />
                 </StackItem>
-                <Stack style={{ width: "10%", height: "100%", border: '1px solid black' }} verticalAlign="center" horizontalAlign="center">
+                <Stack style={IconContainerStyle} verticalAlign="center" horizontalAlign="center">
                     <Icon
                         style={{ fontSize: 40 }}
                         iconName={ADD_ICON}

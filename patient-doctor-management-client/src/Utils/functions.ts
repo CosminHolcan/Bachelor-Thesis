@@ -45,5 +45,6 @@ export const twoDatesHaveTheSameDay = (date1: Date, date2: Date): boolean => {
 }
 
 export const getMessageFormatStringDate = (date: Date): string => {
-    return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "  " + date.getHours() + ":" + date.getMinutes();
+    var minutes: string = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+    return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + "  " + date.getHours() + ":" + minutes;
 }
