@@ -3,7 +3,7 @@ import { Label, StackItem, TextField } from "office-ui-fabric-react"
 import { useEffect, useState } from "react"
 import Avatar from "react-avatar"
 import { IUpdateUserDTO } from "../../DTO/UpdateUserDTO"
-import { AuthorizationService } from "../../Utils/services"
+import { AuthorizationService, UsersService } from "../../Utils/services"
 import { ButtonCancelStyle, ButtonModifyStyle, ButtonSaveStyle, InfoContainerStyle, LabelFieldContainerStyle, LabelStyle, MiddleFieldContainerStyle, MyAccountPageContainerStyle, TextFieldStyle, UpdateButtonsContainerStyle } from "./myAccountPage.styles"
 import { IMyAccountPageProps } from "./myAccountPage.types"
 
@@ -39,7 +39,7 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
             password: password
         }
 
-        AuthorizationService.UpdateUser(dto)
+        UsersService.UpdateUser(dto)
             .then(function (response) {
                 setUpdateMode(false);
             })

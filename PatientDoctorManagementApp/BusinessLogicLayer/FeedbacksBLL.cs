@@ -1,4 +1,5 @@
-﻿using DataAbstractionLayer.Entities;
+﻿using BusinessLogicLayer.Models;
+using DataAbstractionLayer.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,31 @@ namespace BusinessLogicLayer
     {
         public FeedbacksBLL(BLLContext bllContext): base(bllContext) { }
 
-        public List<Feedback> GetFeedbacksByPatientForDoctorAndDisease(Guid patientId, Guid doctorId, Guid diseaseId)
+        public List<FeedbackInfo> GetFeedbacksByPatientForDoctorAndDisease(Guid patientId, Guid doctorId, Guid diseaseId)
         {
-            return this._bllContext.DALContext.Feedbacks.GetFeedbacksByPatientForDoctorAndDisease(patientId, doctorId, diseaseId);
+            return this._bllContext.DALContext.Feedbacks.GetFeedbacksByPatientForDoctorAndDisease(patientId, doctorId, diseaseId).Select(f => 
+            new FeedbackInfo() { 
+                PatientId = f.PatientId,
+                DoctorId = f.DoctorId,
+                DiseaseId = f.DiseaseId,
+                TimeStamp = f.TimeStamp,
+                Text = f.Text,
+                GivenByPatient = f.GivenByPatient
+            }).ToList();
         }
 
-        public List<Feedback> GetFeedbacksByDoctorForPatientAndDisease(Guid patientId, Guid doctorId, Guid diseaseId)
+        public List<FeedbackInfo> GetFeedbacksByDoctorForPatientAndDisease(Guid patientId, Guid doctorId, Guid diseaseId)
         {
-            return this._bllContext.DALContext.Feedbacks.GetFeedbacksByDoctorForPatientAndDisease(patientId, doctorId, diseaseId);
+            return this._bllContext.DALContext.Feedbacks.GetFeedbacksByDoctorForPatientAndDisease(patientId, doctorId, diseaseId).Select(f =>
+            new FeedbackInfo()
+            {
+                PatientId = f.PatientId,
+                DoctorId = f.DoctorId,
+                DiseaseId = f.DiseaseId,
+                TimeStamp = f.TimeStamp,
+                Text = f.Text,
+                GivenByPatient = f.GivenByPatient
+            }).ToList();
         }
 
         public void AddFeedback(Guid patientId, Guid doctorId, Guid diseaseId, DateTime timeStamp, string text, bool givenByPatient)

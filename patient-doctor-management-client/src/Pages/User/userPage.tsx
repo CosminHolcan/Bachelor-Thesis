@@ -8,7 +8,7 @@ import { UserType } from "../../Enums/userTypes";
 import { MILLISECONDS_IN_HALF_HOUR, WAITING_MILLISECONDS } from "../../globalConstants";
 import { IAppointmentForDoctor } from "../../Models/AppointmentForDoctor";
 import { convertDateStringFromServerToLocal, delay } from "../../Utils/functions";
-import { AppointmentsService, AuthorizationService, DiseasesService, DoctorsService, MedicinesService, MessagesService, PatientsService, TreatmentsService } from "../../Utils/services";
+import { AppointmentsService, AuthorizationService, DiseasesService, DoctorsService, MedicinesService, MessagesService, PatientsService, TreatmentsService, UsersService } from "../../Utils/services";
 import { AdminPage } from "../Admin/adminPage";
 import { CalendarPage } from "../Calendar/calendarPage";
 import { ChatPage } from "../Chat/chatPage";
@@ -130,6 +130,16 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
         }
     }, [selectedTab])
 
+    const reinitializeStates = (): void => {
+        setDoctors([]);
+        setPatients([]);
+        setAppointmentsForDoctor([]);
+        setMessages([]);
+        setDiseases([]);
+        setMedicines([]);
+        setTreatments([]);
+    }
+
     const getMessagesFromDataResponse = (dataResponse: any): ICustomKeyValuePair<string, IMessage[]>[] => {
         for (var i = 0; i < dataResponse.length; i++) {
             for (var j = 0; j < dataResponse[i].value.length; j++)
@@ -139,9 +149,10 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleMyAccountClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
-        AuthorizationService.GetUser({ jwt: localStorage.getItem("jwt") ?? '' })
+        UsersService.GetUser({ jwt: localStorage.getItem("jwt") ?? '' })
             .then(async function (response) {
                 setCurrentUser(response.data.userInformation);
 
@@ -155,6 +166,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleCalendarPatientClicked = (): void => {
+        reinitializeStates();
         DoctorsService.GetAllDoctors({ jwt: localStorage.getItem("jwt") ?? '' })
             .then((function (response) {
                 setDoctors(response.data.doctors);
@@ -164,6 +176,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleCalendarDoctorClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         AppointmentsService.GetAppointmentByDoctor({ jwt: localStorage.getItem("jwt") ?? '' })
@@ -185,6 +198,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleChatClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         if (isLoggedInDoctor) {
@@ -234,6 +248,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleFeedbackPatientViewClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         const baseDTO: IBaseDTO = {
@@ -262,6 +277,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleFeedbackDoctorViewClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         const baseDTO: IBaseDTO = {
@@ -290,6 +306,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleReceipesClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         if (!isLoggedInDoctor) {
@@ -361,6 +378,7 @@ export const UserPage = (props: IUserPageProps): JSX.Element => {
     }
 
     const handleInformationClicked = (): void => {
+        reinitializeStates();
         setLoadingData(true);
 
         DiseasesService.GetAllDiseases({ jwt: localStorage.getItem("jwt") ?? '' })

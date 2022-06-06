@@ -93,66 +93,6 @@ namespace PatientDoctorManagementApp.Controllers
             }
         }
 
-        [HttpPost("user")]
-        public IActionResult GetUser(BaseDTO dto)
-        {
-            try
-            {
-                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-                Guid userId = new Guid(token.Issuer);
-
-                return Ok(new
-                {
-                    userInformation = this._bllContext.Users.GetUserInformationById(userId)
-                });
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new
-                {
-                    message = exception.Message
-                });
-            }
-        }
-
-        [HttpPost("updateUser")]
-        public IActionResult UpdateUser(UpdateUserDTO dto)
-        {
-            try
-            {
-                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-                Guid userId = new Guid(token.Issuer);
-                string password = dto.Password;
-                if (password != "")
-                    password = EncryptionDecryption.Encrypt(password);
-
-                this._bllContext.Users.UpdateUser(userId, dto.Email, password);
-
-                return Ok(new
-                {
-                    message = "success"
-                });
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new
-                {
-                    message = exception.Message
-                });
-            }
-        }
-
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            Response.Cookies.Delete("jwt");
-
-            return Ok(new
-            {
-                message = "success"
-            });
-        }
-
         private IActionResult HandleFoundAccountByEmail(User user, LoginDTO loginDTO)
         {
             if (user.Password != EncryptionDecryption.Encrypt(loginDTO.Password))

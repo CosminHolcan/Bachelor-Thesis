@@ -187,23 +187,25 @@ export const FeedbackPageDoctorView = (props: IFeedbackPageDoctorViewProps): JSX
                     </ul>
                 </StackItem>
             </Stack>
-            <Stack style={AddNewObservationContainerStyle} horizontal>
-                <StackItem style={TextFieldNewObservationStyle}>
-                    <TextField
-                        rows={2}
-                        value={feedbackText}
-                        multiline={true}
-                        onChange={(e, newValue) => newValue !== undefined && setFeedbackTex(newValue)}
-                    />
-                </StackItem>
-                <Stack style={IconContainerStyle} verticalAlign="center" horizontalAlign="center">
-                    <Icon
-                        style={{ fontSize: 40 }}
-                        iconName={ADD_ICON}
-                        onClick={onAddFeedbackClicked}
-                    />
+            {selectedPatient && selectedDisease &&
+                <Stack style={AddNewObservationContainerStyle} horizontal>
+                    <StackItem style={TextFieldNewObservationStyle}>
+                        <TextField
+                            rows={2}
+                            value={feedbackText}
+                            multiline={true}
+                            onChange={(e, newValue) => newValue !== undefined && setFeedbackTex(newValue)}
+                        />
+                    </StackItem>
+                    <Stack style={IconContainerStyle} verticalAlign="center" horizontalAlign="center">
+                        <Icon
+                            style={{ fontSize: 40 }}
+                            iconName={ADD_ICON}
+                            onClick={onAddFeedbackClicked}
+                        />
+                    </Stack>
                 </Stack>
-            </Stack>
+            }
         </Stack>
     )
 }

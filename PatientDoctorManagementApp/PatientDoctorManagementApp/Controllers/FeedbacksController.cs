@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer;
+using BusinessLogicLayer.Models;
 using DataAbstractionLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 using PatientDoctorManagementApp.DTO;
@@ -31,7 +32,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             try
             {
-                List<Feedback> feedbacks = this._bllContext.Feedbacks.GetFeedbacksByPatientForDoctorAndDisease(patientId: new Guid(dto.PatientId), doctorId: new Guid(dto.DoctorId), diseaseId: new Guid(dto.DiseaseId));
+                List<FeedbackInfo> feedbacks = this._bllContext.Feedbacks.GetFeedbacksByPatientForDoctorAndDisease(patientId: new Guid(dto.PatientId), doctorId: new Guid(dto.DoctorId), diseaseId: new Guid(dto.DiseaseId));
                 return Ok(new
                 {
                     feedbacks = feedbacks
@@ -54,7 +55,7 @@ namespace PatientDoctorManagementApp.Controllers
 
             try
             {
-                List<Feedback> feedbacks = this._bllContext.Feedbacks.GetFeedbacksByDoctorForPatientAndDisease(patientId: new Guid(dto.PatientId), doctorId: doctorId, diseaseId: new Guid(dto.DiseaseId));
+                List<FeedbackInfo> feedbacks = this._bllContext.Feedbacks.GetFeedbacksByDoctorForPatientAndDisease(patientId: new Guid(dto.PatientId), doctorId: doctorId, diseaseId: new Guid(dto.DiseaseId));
                 return Ok(new
                 {
                     feedbacks = feedbacks

@@ -114,7 +114,8 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 name: "Doctor",
                 fieldName: "Doctor",
                 minWidth: minWidth,
-                maxWidth: maxWidth
+                maxWidth: maxWidth,
+                isSorted: true
             }];
         columns = columns.concat([
             {

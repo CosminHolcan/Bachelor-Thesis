@@ -33,13 +33,15 @@ export namespace AuthorizationService {
     export const RefreshToken = (dto: IBaseDTO): Promise<AxiosResponse<any, any>> => {
         return axios.post(`${BASE_URL}Authorization/refreshToken`, dto);
     }
+}
 
+export namespace UsersService {
     export const GetUser = (dto: IBaseDTO): Promise<AxiosResponse< any, any>> => {
-        return axios.post(`${BASE_URL}Authorization/user`, dto);
+        return axios.post(`${BASE_URL}Users/user`, dto);
     }
 
     export const UpdateUser = (dto: IUpdateUserDTO): Promise<AxiosResponse<any, any>> => {
-        return axios.post(`${BASE_URL}Authorization/updateUser`, dto);
+        return axios.post(`${BASE_URL}Users/updateUser`, dto);
     }
 }
 
