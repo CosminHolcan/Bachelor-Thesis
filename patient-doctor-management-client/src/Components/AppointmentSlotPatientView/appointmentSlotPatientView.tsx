@@ -12,7 +12,10 @@ export const AppointmentSlotPatientView = (props: IAppointmentSlotPatientViewPro
             return StatusAppointmentSlot.RESERVED_TO_CURRENT_PATIENT;
 
         const currentTime: number = new Date().getTime();
-        if (props.startTime.getTime() < currentTime - currentTime % MILLISECONDS_IN_HALF_HOUR + MILLISECONDS_IN_DAY / 2)
+        const tommorowDate: Date = new Date();
+        tommorowDate.setTime(currentTime + MILLISECONDS_IN_DAY);
+        tommorowDate.setHours(0, 0, 0, 0);
+        if (props.startTime.getTime() < tommorowDate.getTime())
             return StatusAppointmentSlot.PAST_DATE;
 
         if (props.appointments.otherAppointments.findIndex((time: Date) => time.getTime() === props.startTime.getTime()) !== -1)
