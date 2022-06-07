@@ -24,6 +24,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
     const [observations, setObservations] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [treatmentsPage, setTreatmentsPage] = useState<number>(1);
+    const [addedElements, setAddedElements] = useState<number>(0);
 
     useEffect(() => {
         setError('');
@@ -79,6 +80,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 setSelectedDisease(undefined);
                 setSelectedMedicines([]);
                 setObservations('');
+                setAddedElements(addedElements + 1);
             }))
             .catch((function (error) {
                 setError(error.response.data.message)
@@ -156,47 +158,51 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
 
     return (
         <Stack>
-            <StackItem style={RecipesTableContainerStyle}>
-                <DetailsList
-                    layoutMode={DetailsListLayoutMode.justified}
-                    columns={getColumns()}
-                    items={getTreatmentsToDisplay().map((treatment) => {
-                        var medicinesString: string = '';
-                        treatment.medicines.forEach((medicine) => medicinesString = medicinesString + "\n" + medicine);
-                        return {
-                            Patient: treatment.patient,
-                            Doctor: treatment.doctor,
-                            Disease: treatment.disease,
-                            Medicines: medicinesString,
-                            Observations: treatment.observations,
-                            Date: treatment.startingDate.getDate() + "/" + treatment.startingDate.getMonth() + "/" + treatment.startingDate.getFullYear()
+            {treatments.length > 0 &&
+                <Stack>
+                    <StackItem style={RecipesTableContainerStyle}>
+                        <DetailsList
+                            layoutMode={DetailsListLayoutMode.justified}
+                            columns={getColumns()}
+                            items={getTreatmentsToDisplay().map((treatment) => {
+                                var medicinesString: string = '';
+                                treatment.medicines.forEach((medicine) => medicinesString = medicinesString + "\n" + medicine);
+                                return {
+                                    Patient: treatment.patient,
+                                    Doctor: treatment.doctor,
+                                    Disease: treatment.disease,
+                                    Medicines: medicinesString,
+                                    Observations: treatment.observations,
+                                    Date: treatment.startingDate.getDate() + "/" + treatment.startingDate.getMonth() + "/" + treatment.startingDate.getFullYear()
+                                }
+                            })}
+                        />
+                    </StackItem>
+                    <Stack horizontal horizontalAlign="center" verticalAlign="center">
+                        {showLeftArrow() &&
+                            <StackItem onClick={() => { setTreatmentsPage(treatmentsPage - 1); }}>
+                                <Icon
+                                    iconName={ICON_LEFT_Arrow}
+                                    style={LeftArrowStyle}
+                                />
+                            </StackItem>
                         }
-                    })}
-                />
-            </StackItem>
-            <Stack horizontal horizontalAlign="center" verticalAlign="center">
-                {showLeftArrow() &&
-                    <StackItem onClick={() => { setTreatmentsPage(treatmentsPage - 1); }}>
-                        <Icon
-                            iconName={ICON_LEFT_Arrow}
-                            style={LeftArrowStyle}
-                        />
-                    </StackItem>
-                }
-                <StackItem>
-                    <Label style={TreatmentsPageStyle}>
-                        {treatmentsPage}
-                    </Label>
-                </StackItem>
-                {showRightArrow() &&
-                    <StackItem onClick={() => { setTreatmentsPage(treatmentsPage + 1); }}>
-                        <Icon
-                            iconName={ICON_RIGHT_ARROW}
-                            style={RightArrowStyle}
-                        />
-                    </StackItem>
-                }
-            </Stack>
+                        <StackItem>
+                            <Label style={TreatmentsPageStyle}>
+                                {treatmentsPage}
+                            </Label>
+                        </StackItem>
+                        {showRightArrow() &&
+                            <StackItem onClick={() => { setTreatmentsPage(treatmentsPage + 1); }}>
+                                <Icon
+                                    iconName={ICON_RIGHT_ARROW}
+                                    style={RightArrowStyle}
+                                />
+                            </StackItem>
+                        }
+                    </Stack>
+                </Stack>
+            }
             {props.isLoggedInDoctor &&
                 <Stack style={DoctorControllerStyle}>
                     <Stack horizontal>
@@ -232,6 +238,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                                     Medicines
                                 </Label>
                                 <Multiselect
+                                    key={"id" + addedElements}
                                     placeholder="Select medicines"
                                     options={props.medicines}
                                     onSelect={(selectedList, selectedItem) => { addMedicine(selectedItem) }}

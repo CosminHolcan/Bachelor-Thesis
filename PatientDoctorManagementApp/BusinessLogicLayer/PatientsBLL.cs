@@ -18,7 +18,7 @@ namespace BusinessLogicLayer
             {
                 Id = patient.Id,
                 Name = patient.FirstName + " " + patient.LastName
-            }).ToList();
+            }).OrderBy(patient => patient.Name).ToList();
         }
 
         public Patient GetPatientByEmail(string email)

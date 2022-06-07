@@ -26,17 +26,24 @@ namespace PatientDoctorManagementApp
 
         public JwtSecurityToken Verify(string jwtString)
         {
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            byte[] key = Encoding.ASCII.GetBytes(_securityKey);
-            tokenHandler.ValidateToken(jwtString, new TokenValidationParameters()
+            try
             {
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-            }, out SecurityToken validatedToken);
+                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+                byte[] key = Encoding.ASCII.GetBytes(_securityKey);
+                tokenHandler.ValidateToken(jwtString, new TokenValidationParameters()
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                }, out SecurityToken validatedToken);
 
-            return (JwtSecurityToken)validatedToken;
+                return (JwtSecurityToken)validatedToken;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Invalid credentials");
+            }
         }
     }
 }

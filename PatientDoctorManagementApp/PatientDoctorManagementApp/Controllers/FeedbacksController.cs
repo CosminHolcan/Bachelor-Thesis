@@ -13,7 +13,7 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FeedbacksController: ControllerBase
+    public class FeedbacksController : ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
@@ -50,11 +50,11 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("byDoctor")]
         public IActionResult GetFeedbacksByDoctor(GetFeedbacksByDoctorDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid doctorId = new Guid(token.Issuer);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid doctorId = new Guid(token.Issuer);
+
                 List<FeedbackInfo> feedbacks = this._bllContext.Feedbacks.GetFeedbacksByDoctorForPatientAndDisease(patientId: new Guid(dto.PatientId), doctorId: doctorId, diseaseId: new Guid(dto.DiseaseId));
                 return Ok(new
                 {
@@ -73,10 +73,10 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("add")]
         public IActionResult AddFeedback(AddFeedbackDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+            
                 this._bllContext.Feedbacks.AddFeedback(patientId: new Guid(dto.Feedback.PatientId), doctorId: new Guid(dto.Feedback.DoctorId), diseaseId: new Guid(dto.Feedback.DiseaseId),
                     timeStamp: dto.Feedback.TimeStamp, text: dto.Feedback.Text, givenByPatient: dto.Feedback.GivenByPatient);
                 return Ok(new

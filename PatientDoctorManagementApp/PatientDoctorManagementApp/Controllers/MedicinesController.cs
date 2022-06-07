@@ -12,7 +12,7 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MedicinesController: ControllerBase
+    public class MedicinesController : ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
@@ -26,20 +26,20 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("add")]
         public IActionResult AddMedicine(AddBaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-            Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
-
-            if (administrator == null)
-            {
-                return BadRequest(new
-                {
-                    error = "The authenticated user is not an administrator."
-                });
-            }
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
+
+                if (administrator == null)
+                {
+                    return BadRequest(new
+                    {
+                        error = "The authenticated user is not an administrator."
+                    });
+                }
+
                 this._bllContext.Medicines.AddMedicine(name: dto.Entity.Name, description: dto.Entity.Description);
                 return Ok(new
                 {
@@ -58,32 +58,42 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("all")]
         public IActionResult GetAllMedicines(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-
-            return Ok(new
+            try
             {
-                medicines = this._bllContext.Medicines.GetAllMedicines()
-            });
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+
+                return Ok(new
+                {
+                    medicines = this._bllContext.Medicines.GetAllMedicines()
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
 
         [HttpPost("update")]
         public IActionResult UpdateMedicine(UpdateMedicineDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-            Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
-
-            if (administrator == null)
-            {
-                return BadRequest(new
-                {
-                    error = "The authenticated user is not an administrator."
-                });
-            }
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
+
+                if (administrator == null)
+                {
+                    return BadRequest(new
+                    {
+                        error = "The authenticated user is not an administrator."
+                    });
+                }
+
                 this._bllContext.Medicines.UpdateMedicine(dto.Entity);
                 return Ok(new
                 {

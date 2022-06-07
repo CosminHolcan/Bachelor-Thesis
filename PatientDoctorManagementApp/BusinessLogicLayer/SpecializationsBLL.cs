@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BusinessLogicLayer
 {
-    public class SpecializationsBLL: BaseBLL
+    public class SpecializationsBLL : BaseBLL
     {
-        public SpecializationsBLL (BLLContext bllContext): base(bllContext) { }
+        public SpecializationsBLL(BLLContext bllContext) : base(bllContext) { }
 
         public void AddSpecialization(string specializationName)
         {
@@ -25,7 +25,7 @@ namespace BusinessLogicLayer
 
         public List<Specialization> GetAllSpecializations()
         {
-            return this._bllContext.DALContext.Specializations.GetAllSpecializations();
+            return this._bllContext.DALContext.Specializations.GetAllSpecializations().OrderBy(specialization => specialization.Name).ToList();
         }
 
         public Specialization GetSpecializationById(Guid id)

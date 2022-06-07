@@ -27,20 +27,20 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("add")]
         public IActionResult AddDisease(AddBaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-            Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
-
-            if (administrator == null)
-            {
-                return BadRequest(new
-                {
-                    error = "The authenticated user is not an administrator."
-                });
-            }
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
+
+                if (administrator == null)
+                {
+                    return BadRequest(new
+                    {
+                        error = "The authenticated user is not an administrator."
+                    });
+                }
+
                 this._bllContext.Diseases.AddDisease(name: dto.Entity.Name, description: dto.Entity.Description);
                 return Ok(new
                 {
@@ -59,32 +59,42 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("all")]
         public IActionResult GetAllDiseases(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-
-            return Ok(new
+            try
             {
-                diseases = this._bllContext.Diseases.GetAllDiseases()
-            });
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+
+                return Ok(new
+                {
+                    diseases = this._bllContext.Diseases.GetAllDiseases()
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
 
         [HttpPost("update")]
         public IActionResult UpdateDisease(UpdateDiseaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-            Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
-
-            if (administrator == null)
-            {
-                return BadRequest(new
-                {
-                    error = "The authenticated user is not an administrator."
-                });
-            }
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+                Administrator administrator = this._bllContext.Administrators.GetAdministratorById(userId);
+
+                if (administrator == null)
+                {
+                    return BadRequest(new
+                    {
+                        error = "The authenticated user is not an administrator."
+                    });
+                }
+
                 this._bllContext.Diseases.UpdateDisease(dto.Entity);
                 return Ok(new
                 {

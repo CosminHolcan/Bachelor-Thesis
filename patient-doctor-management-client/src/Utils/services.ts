@@ -54,7 +54,7 @@ export namespace SpecializationService {
         return axios.post(`${BASE_URL}Specializations/update`, updateSpecializationDTO);
     }
 
-    export const GetAllSpecializations = (): Promise<AxiosResponse<any, any>> => {
+    export const GetAllSpecializations = (baseDTO: IBaseDTO): Promise<AxiosResponse<any, any>> => {
         return axios.get(`${BASE_URL}Specializations/all`);
     }
 }

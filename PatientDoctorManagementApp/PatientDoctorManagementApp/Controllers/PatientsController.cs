@@ -11,7 +11,7 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PatientsController: ControllerBase
+    public class PatientsController : ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
@@ -25,12 +25,18 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("all")]
         public IActionResult GetAllPatients(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-
-            return Ok(new
+            try
             {
-                patients = this._bllContext.Patients.GetAllPatients()
-            });
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                return Ok(new
+                {
+                    patients = this._bllContext.Patients.GetAllPatients()
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { message = exception.Message });
+            }
         }
     }
 }

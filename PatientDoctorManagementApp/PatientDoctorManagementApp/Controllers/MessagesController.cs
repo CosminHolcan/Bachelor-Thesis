@@ -11,7 +11,7 @@ namespace PatientDoctorManagementApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MessagesController: ControllerBase
+    public class MessagesController : ControllerBase
     {
         private readonly BLLContext _bllContext;
         private readonly JWTService _jwtService;
@@ -25,11 +25,11 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("forUser")]
         public IActionResult GetMessagesForUser(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid userId = new Guid(token.Issuer);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid userId = new Guid(token.Issuer);
+
                 var messages = this._bllContext.Messages.GetMessagesForUser(userId);
                 return Ok(new
                 {

@@ -26,7 +26,7 @@ namespace BusinessLogicLayer
 
         public List<BaseModel> GetAllDiseases()
         {
-            return this._bllContext.DALContext.Diseases.GetAllDiseases().Select(disease => new BaseModel()
+            return this._bllContext.DALContext.Diseases.GetAllDiseases().OrderBy(disease => disease.Name).Select(disease => new BaseModel()
             {
                 Id = disease.Id,
                 Name = disease.Name,

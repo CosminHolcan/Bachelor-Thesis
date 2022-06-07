@@ -22,12 +22,6 @@ namespace PatientDoctorManagementApp.Controllers
             _bllContext = bllContext;
         }
 
-        [HttpGet("all")]
-        public IEnumerable<Administrator> GetAllAdministrators()
-        {
-            return new List<Administrator>() { new Administrator() { FirstName = "Cosmin" }, new Administrator() { FirstName = "Cezar" } };
-        }
-
         [HttpPost("addAdministrator")]
         public string AddAdministrator(RegisterDTO registerDTO)
         {

@@ -56,11 +56,11 @@ export const AdminPage = (): JSX.Element => {
         }
 
         setLoadingData(true);
-        SpecializationService.GetAllSpecializations()
+        SpecializationService.GetAllSpecializations({ jwt: localStorage.getItem("jwt") ?? '' })
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
-                setSpecializations(response.data);
+                setSpecializations(response.data.specializations);
                 handleOptionChanged(AdminFeatures.UpdateSpecialization);
             })
             .catch(async function (error) {
@@ -125,11 +125,11 @@ export const AdminPage = (): JSX.Element => {
         }
 
         setLoadingData(true);
-        SpecializationService.GetAllSpecializations()
+        SpecializationService.GetAllSpecializations({ jwt: localStorage.getItem("jwt") ?? '' })
             .then(async function (response) {
                 await delay(WAITING_MILLISECONDS);
                 setLoadingData(false);
-                setSpecializations(response.data);
+                setSpecializations(response.data.specializations);
                 handleOptionChanged(AdminFeatures.AddDoctor);
             })
             .catch(async function (error) {

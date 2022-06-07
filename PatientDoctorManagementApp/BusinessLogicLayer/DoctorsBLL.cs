@@ -19,7 +19,7 @@ namespace BusinessLogicLayer
                 Id = doctor.Id,
                 Specialization = doctor.Specialization.Name,
                 Name = doctor.FirstName + " " + doctor.LastName
-            }).ToList();
+            }).OrderBy(doctor => doctor.Name).ToList();
         }
 
         public Doctor GetDoctorByEmail(string email)

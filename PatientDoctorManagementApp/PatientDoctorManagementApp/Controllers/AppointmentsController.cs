@@ -26,11 +26,11 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("add")]
         public IActionResult AddAppointment(AddAppointmentDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid patientId = new Guid(token.Issuer);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid patientId = new Guid(token.Issuer);
+
                 this._bllContext.Appointments.AddAppointment(doctorId: new Guid(dto.Appointment.DoctorId), patientId: patientId, startTime: dto.Appointment.StartTime);
                 return Ok(new
                 {
@@ -49,11 +49,11 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("getByDoctorForPatient")]
         public IActionResult GetAppointmentsByDoctorForPatient(GetAppointmentsByDoctorForPatient dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid patientId = new Guid(token.Issuer);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid patientId = new Guid(token.Issuer);
+
                 AppointmentsByDoctorForPatient result = this._bllContext.Appointments.GetAppointmentsByDoctorForPatient(doctorId: new Guid(dto.DoctorId), patientId: patientId);
                 return Ok(new
                 {
@@ -72,11 +72,11 @@ namespace PatientDoctorManagementApp.Controllers
         [HttpPost("getByDoctor")]
         public IActionResult GetAppointmentsByDoctor(BaseDTO dto)
         {
-            JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
-            Guid doctorId = new Guid(token.Issuer);
-
             try
             {
+                JwtSecurityToken token = _jwtService.Verify(dto.Jwt);
+                Guid doctorId = new Guid(token.Issuer);
+
                 List<AppointmentForDoctor> result = this._bllContext.Appointments.GetAppointmentsByDoctor(doctorId);
                 return Ok(new
                 {
