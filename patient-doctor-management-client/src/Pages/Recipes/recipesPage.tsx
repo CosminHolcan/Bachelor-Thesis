@@ -108,16 +108,14 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 name: "Patient",
                 fieldName: "Patient",
                 minWidth: minWidth,
-                maxWidth: maxWidth,
-                isSorted: true
+                maxWidth: maxWidth
             }]
             : [{
                 key: "Doctor",
                 name: "Doctor",
                 fieldName: "Doctor",
                 minWidth: minWidth,
-                maxWidth: maxWidth,
-                isSorted: true
+                maxWidth: maxWidth
             }];
         columns = columns.concat([
             {
@@ -148,8 +146,7 @@ export const RecipesPages = (props: IRecipesPageProps): JSX.Element => {
                 name: "Date",
                 fieldName: "Date",
                 minWidth: minWidth,
-                maxWidth: maxWidth,
-                isSorted: true
+                maxWidth: maxWidth
             }
         ]);
 

@@ -22,7 +22,7 @@ namespace BusinessLogicLayer
                 Medicines = treatment.Medicines.Select(medicine => medicine.Name).ToList(),
                 StartingDate = treatment.StartingDate,
                 Observations = treatment.Observations
-            }).ToList();
+            }).OrderByDescending(t => t.StartingDate).OrderBy(t => t.Disease).ToList();
         }
 
         public List<TreatmentInfo> GetTreatmentsByDoctor(Guid doctorId)
@@ -35,7 +35,7 @@ namespace BusinessLogicLayer
                 Medicines = treatment.Medicines.Select(medicine => medicine.Name).ToList(),
                 StartingDate = treatment.StartingDate,
                 Observations = treatment.Observations
-            }).ToList();
+            }).OrderByDescending(t => t.StartingDate).OrderBy(t => t.Patient).ToList();
         }
 
         public TreatmentInfo AddTreatment(Guid patientId, Guid doctorId, Guid diseaseId, List<Guid> medicinesId, DateTime startingDate, string observations)
