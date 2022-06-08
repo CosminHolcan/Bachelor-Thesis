@@ -55,7 +55,7 @@ namespace PatientDoctorManagementApp.Controllers
             }
         }
 
-        [HttpGet("all")]
+        [HttpPost("all")]
         public IActionResult GetAllSpecializations(BaseDTO dto)
         {
             try
