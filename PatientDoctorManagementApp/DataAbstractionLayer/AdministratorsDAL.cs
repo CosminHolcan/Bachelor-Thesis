@@ -1,9 +1,7 @@
 ﻿using DataAbstractionLayer.Entities;
+using DataAbstractionLayer.Enums;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAbstractionLayer
 {
@@ -11,9 +9,17 @@ namespace DataAbstractionLayer
     {
         public AdministratorsDAL(DALContext dalContext) : base(dalContext) { }
 
-        public void AddAdministrator(Administrator administrator)
+        public void AddAdministrator(string firstName, string lastName, string email, string password)
         {
-            administrator.Id = new Guid();
+            Administrator administrator = new Administrator()
+            {
+                Id = new Guid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = password,
+                UserType = UserType.Administrator
+            };
             this._dalContext.DbContext.Administrators.Add(administrator);
             this._dalContext.DbContext.SaveChanges();
         }

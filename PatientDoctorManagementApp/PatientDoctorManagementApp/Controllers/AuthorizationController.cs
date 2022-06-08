@@ -1,13 +1,9 @@
 ﻿using BusinessLogicLayer;
 using DataAbstractionLayer.Entities;
 using DataAbstractionLayer.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PatientDoctorManagementApp.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace PatientDoctorManagementApp.Controllers

@@ -1,13 +1,7 @@
 ﻿using BusinessLogicLayer;
-using DataAbstractionLayer.Entities;
-using DataAbstractionLayer.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using PatientDoctorManagementApp.DTO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PatientDoctorManagementApp.Controllers
 {
@@ -23,18 +17,24 @@ namespace PatientDoctorManagementApp.Controllers
         }
 
         [HttpPost("addAdministrator")]
-        public string AddAdministrator(RegisterDTO registerDTO)
+        public IActionResult AddAdministrator(RegisterDTO registerDTO)
         {
-            Administrator administrator = new Administrator()
+            try
             {
-                FirstName = registerDTO.FirstName,
-                LastName = registerDTO.LastName,
-                Email = registerDTO.Email,
-                Password = EncryptionDecryption.Encrypt(registerDTO.Password),
-                UserType = UserType.Administrator
-            };
-            this._bllContext.Administrators.AddAdministrator(administrator);
-            return EncryptionDecryption.Decrypt(administrator.Password);
+                this._bllContext.Administrators.AddAdministrator(firstName: registerDTO.FirstName, lastName: registerDTO.LastName,
+                    email: registerDTO.Email, password: EncryptionDecryption.Encrypt(registerDTO.Password));
+                return Ok(new
+                {
+                    message = "success"
+                });
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new
+                {
+                    message = exception.Message
+                });
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using DataAbstractionLayer.Enums;
-using DataAbstractionLayer.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace DataAbstractionLayer.Entities
 {

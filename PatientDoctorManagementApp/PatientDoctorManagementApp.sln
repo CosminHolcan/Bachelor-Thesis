@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientDoctorManagementApp", "PatientDoctorManagementApp\PatientDoctorManagementApp.csproj", "{5F053F7A-EDC5-4223-88E9-9CDFB166F24D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatientDoctorManagementApp", "PatientDoctorManagementApp\PatientDoctorManagementApp.csproj", "{5F053F7A-EDC5-4223-88E9-9CDFB166F24D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAbstractionLayer", "DataAbstractionLayer\DataAbstractionLayer.csproj", "{6073CC06-6AAC-49E7-9D1F-04EBE0FB311A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAbstractionLayer", "DataAbstractionLayer\DataAbstractionLayer.csproj", "{6073CC06-6AAC-49E7-9D1F-04EBE0FB311A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{70801A89-6823-4331-A176-B6B9668E55F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogicLayer", "BusinessLogicLayer\BusinessLogicLayer.csproj", "{70801A89-6823-4331-A176-B6B9668E55F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

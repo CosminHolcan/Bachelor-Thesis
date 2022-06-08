@@ -1,11 +1,7 @@
 ﻿using BusinessLogicLayer.Models;
-using DataAbstractionLayer.Enums;
 using DataAbstractionLayer.Entities;
+using DataAbstractionLayer.Enums;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogicLayer
 {
