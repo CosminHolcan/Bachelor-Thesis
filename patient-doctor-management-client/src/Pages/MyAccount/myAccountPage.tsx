@@ -42,6 +42,9 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
         UsersService.UpdateUser(dto)
             .then(function (response) {
                 setUpdateMode(false);
+                setPassword('');
+                setRepeatPassword('');
+                setEmail(email);
             })
             .catch(function (error) {
                 setError(error.response.data.message)

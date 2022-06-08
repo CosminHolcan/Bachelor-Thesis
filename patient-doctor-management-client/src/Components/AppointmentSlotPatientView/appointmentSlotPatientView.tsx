@@ -8,15 +8,15 @@ import { IAppointmentSlotPatientViewProps } from "./appointmentSlotPatientView.t
 
 export const AppointmentSlotPatientView = (props: IAppointmentSlotPatientViewProps): JSX.Element => {
     const getStatus = (): StatusAppointmentSlot => {
-        if (props.appointments.patientAppointments.findIndex((time: Date) => time.getTime() === props.startTime.getTime()) !== -1)
-            return StatusAppointmentSlot.RESERVED_TO_CURRENT_PATIENT;
-
         const currentTime: number = new Date().getTime();
         const tommorowDate: Date = new Date();
         tommorowDate.setTime(currentTime + MILLISECONDS_IN_DAY);
         tommorowDate.setHours(0, 0, 0, 0);
         if (props.startTime.getTime() < tommorowDate.getTime())
             return StatusAppointmentSlot.PAST_DATE;
+            
+        if (props.appointments.patientAppointments.findIndex((time: Date) => time.getTime() === props.startTime.getTime()) !== -1)
+            return StatusAppointmentSlot.RESERVED_TO_CURRENT_PATIENT;
 
         if (props.appointments.otherAppointments.findIndex((time: Date) => time.getTime() === props.startTime.getTime()) !== -1)
             return StatusAppointmentSlot.OCCUPIED_BY_OTHER_PATIENT;
