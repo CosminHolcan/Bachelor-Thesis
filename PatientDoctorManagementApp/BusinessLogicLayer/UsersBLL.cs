@@ -120,7 +120,7 @@ namespace BusinessLogicLayer
             }
 
             Administrator existingAdministrator = this._bllContext.DALContext.Administrators.GetAdministratorById(userId);
-            if (existingPatient != null)
+            if (existingAdministrator != null)
             {
                 if (existingAdministrator.Email != email)
                     this.CheckUniqueEmail(email);

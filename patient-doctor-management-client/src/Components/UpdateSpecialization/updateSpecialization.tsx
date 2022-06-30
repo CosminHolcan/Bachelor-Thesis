@@ -74,7 +74,7 @@ export const UpdateSpecialization = (props: IUpdateSpecializationProps): JSX.Ele
                 :
                 <Stack style={UpdateSpecializationContainerStyle}>
                     <Multiselect
-                        placeholder="Select an existing specialization"
+                        placeholder="Select a specialization"
                         singleSelect={true}
                         options={props.specializations}
                         onSelect={(selectedList, selectedItem) => { setSelectedSpecialization(selectedItem) }}

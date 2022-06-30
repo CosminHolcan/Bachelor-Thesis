@@ -160,7 +160,7 @@ export const MyAccountPage = (props: IMyAccountPageProps): JSX.Element => {
                             <button style={ButtonCancelStyle} onClick={handleCancelClicked}>Cancel</button>
                         </Stack>
                         {error != '' &&
-                            <Label style={{ marginTop: "5vh" }}>
+                            <Label style={{ marginTop: "5vh", color: "red" }}>
                                 {error}
                             </Label>
                         }

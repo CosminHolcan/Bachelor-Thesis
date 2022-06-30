@@ -12,7 +12,7 @@ import { ButtonSaveOperationStyle } from "../../Utils/styles"
 import { DoctorControllerStyle, DropdownDiseaseContainerStyle, DropdownsContainerStyle, LabelStyle, LeftArrowStyle, ObservationsAndSaveContainerStyle, RecipesTableContainerStyle, RightArrowStyle, TreatmentsPageStyle } from "./recipesPage.styles"
 import { IRecipesPageProps } from "./recipesPage.types"
 
-const TREATMENTS_PER_PAGE: number = 5;
+const TREATMENTS_PER_PAGE: number = 3;
 const ICON_LEFT_Arrow: string = "CaretSolidLeft";
 const ICON_RIGHT_ARROW: string = "CaretSolidRight";
 
